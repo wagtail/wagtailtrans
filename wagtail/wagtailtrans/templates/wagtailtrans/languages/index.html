@@ -1,0 +1,35 @@
+{% extends "wagtailadmin/generic/index.html" %}
+{% load i18n %}
+
+{% block listing %}
+    <div class="nice-padding">
+        {% if languages %}
+            <div id="sites-list">
+                <table class="listing">
+                    <thead>
+                        <tr>
+                            <th>
+                                {% trans "Name" %}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for language in languages %}
+                            <tr>
+                                <td class="title">
+                                    <h2>
+                                        <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language }}</a>
+                                    </h2>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        {% else %}
+            {% url 'wagtailtrans_languages:add' as add_language_url %}
+            <p>{% blocktrans %}No languages have been created. Why not <a href="{{ add_language_url }}">add one</a>?{% endblocktrans %}</p>
+        {% endif %}
+    </div>
+{% endblock %}

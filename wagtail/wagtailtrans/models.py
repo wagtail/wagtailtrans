@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 
 import uuid
 
+from django.conf import settings
 from django.db import models
 from django.http import Http404
 from django.shortcuts import redirect
@@ -12,22 +13,30 @@ from wagtail.wagtailcore.models import Page
 class Language(models.Model):
     code = models.CharField(
         max_length=12,
-        help_text="One of the languages defined in LANGUAGES"
+        help_text="One of the languages defined in LANGUAGES",
+        choices=settings.LANGUAGES,
+        unique=True,
     )
+
     is_default = models.BooleanField(
         default=False, help_text="""
         Visitors with no language preference will see the site in
         this language
         """)
+
     order = models.IntegerField(
         help_text="""
         Language choices and translations will be displayed in this
         order
         """)
+
     live = models.BooleanField(
         default=True,
         help_text="Is this language available for visitors to view?"
     )
+
+    def __str__(self):
+        return self.code
 
     class Meta:
         ordering = ['order']
