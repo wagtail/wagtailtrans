@@ -6,7 +6,9 @@ from setuptools import setup, find_packages
 setup(
     name='wagtail.wagtailtrans',
     version='0.0.1',
-    description='A Django content management system focused on flexibility and user experience',
+    description=(
+        'A Django content management system focused on '
+        'flexibility and user experience'),
     author='Matthew Westcott',
     author_email='matthew.westcott@torchbox.com',
     url='http://wagtail.io/',
