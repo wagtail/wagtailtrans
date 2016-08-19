@@ -7,6 +7,7 @@ from django.db import models
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import activate
+from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailcore.models import Page
 
 
@@ -53,14 +54,21 @@ class TranslatedPage(Page):
 
     language = models.ForeignKey(Language, on_delete=models.PROTECT)
 
-    class Meta:
-        unique_together = [
-            ('translation_key', 'language'),
-        ]
+    content_panels = Page.content_panels + [
+        FieldPanel('language'),
+    ]
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
-        super(TranslatedPage, self).serve(request, *args, **kwargs)
+        return super(TranslatedPage, self).serve(request, *args, **kwargs)
+
+    def get_translations(self):
+        return TranslatedPage.objects\
+            .select_related('language')\
+            .filter(translation_key=self.translation_key,
+                    language__in=Language.objects.live())\
+            .exclude(language=self.language)\
+            .order_by('language__order')
 
 
 def get_user_languages(request):
