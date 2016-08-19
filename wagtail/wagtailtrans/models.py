@@ -1,13 +1,16 @@
 from __future__ import unicode_literals
 
-import uuid
-
 from django.conf import settings
 from django.db import models
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.translation import activate
-from wagtail.wagtailadmin.edit_handlers import FieldPanel
+from wagtail.utils.decorators import cached_classmethod
+from django.utils.translation import activate, ugettext_lazy
+from wagtail.wagtailadmin.edit_handlers import (FieldPanel, PageChooserPanel,
+                                                MultiFieldPanel, ObjectList,
+                                                TabbedInterface)
+
 from wagtail.wagtailcore.models import Page
 
 
@@ -45,17 +48,19 @@ class Language(models.Model):
 
 class TranslatedPage(Page):
 
-    translated_page_ptr = models.OneToOneField(
-        'TranslatedPage',
-        parent_link=True, related_name='+',
-        null=True, on_delete=models.SET_NULL,
+    canonical_page = models.ForeignKey(
+        'self',
+        related_name='translations',
+        blank=True, null=True, on_delete=models.SET_NULL,
     )
-    translation_key = models.UUIDField(db_index=True, default=uuid.uuid4)
 
     language = models.ForeignKey(Language, on_delete=models.PROTECT)
 
-    content_panels = Page.content_panels + [
-        FieldPanel('language'),
+    translation_panels = [
+        MultiFieldPanel([
+            FieldPanel('language'),
+            PageChooserPanel('canonical_page'),
+        ])
     ]
 
     def serve(self, request, *args, **kwargs):
@@ -63,16 +68,45 @@ class TranslatedPage(Page):
         return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
     def get_translations(self):
-        return TranslatedPage.objects\
-            .select_related('language')\
-            .filter(translation_key=self.translation_key,
-                    language__in=Language.objects.live())\
-            .exclude(language=self.language)\
-            .order_by('language__order')
+        return TranslatedPage.objects.filter(
+            Q(canonical_page=self) |
+            Q(translations__in=[self])
+        ).filter(
+            language__live=True
+        ).order_by('language__order')
+
+
+@cached_classmethod
+def get_edit_handler(cls):
+    tabs = []
+    if cls.content_panels:
+        tabs.append(ObjectList(cls.content_panels,
+                               heading=ugettext_lazy('Content')))
+    if cls.promote_panels:
+        tabs.append(ObjectList(cls.promote_panels,
+                               heading=ugettext_lazy('Promote')))
+    if cls.settings_panels:
+        tabs.append(ObjectList(cls.settings_panels,
+                               heading=ugettext_lazy('Settings'),
+                               classname='settings'))
+    if cls.translation_panels:
+        tabs.append(ObjectList(cls.translation_panels,
+                               heading=ugettext_lazy('Translations')))
+
+    EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)
+    return EditHandler.bind_to_model(cls)
+
+
+TranslatedPage.get_edit_handler = get_edit_handler
 
 
 def get_user_languages(request):
-    return Language.objects.all()
+    if hasattr(request, 'LANGUAGE_CODE'):
+        languages = Language.objects.filter(
+            code=request.LANGUAGE_CODE)
+        if languages.exists():
+            return languages
+    return Language.objects.filter(is_default=True)
 
 
 class AbstractTranslationIndexPage(Page):
