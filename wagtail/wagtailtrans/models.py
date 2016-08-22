@@ -68,12 +68,34 @@ class TranslatedPage(Page):
         return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
     def get_translations(self):
-        return TranslatedPage.objects.filter(
-            Q(canonical_page=self) |
-            Q(translations__in=[self])
-        ).filter(
+        if self.canonical_page:
+            pages = TranslatedPage.objects.filter(
+                Q(canonical_page=self) |
+                Q(canonical_page=self.canonical_page) |
+                Q(pk=self.canonical_page.pk)
+            )
+        else:
+            pages = TranslatedPage.objects.filter(
+                Q(canonical_page=self) |
+                Q(pk=self.pk)
+            )
+
+        pages = pages.filter(
             language__live=True
         ).order_by('language__order')
+        return pages
+
+    def create_translation(self, language):
+        if TranslatedPage.objects.filter(
+                canonical_page=self,
+                language=language).exists():
+            raise Exception("Translation already exists")
+        new_page = TranslatedPage(
+            slug=self.slug,
+            title=self.title,
+            language=language,
+            canonical_page=self)
+        return new_page
 
 
 @cached_classmethod
