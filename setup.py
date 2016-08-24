@@ -7,11 +7,11 @@ setup(
     name='wagtail.wagtailtrans',
     version='0.0.1',
     description=(
-        'A Django content management system focused on '
-        'flexibility and user experience'),
-    author='Matthew Westcott',
-    author_email='matthew.westcott@torchbox.com',
-    url='http://wagtail.io/',
+        'A Wagtail add-on for supporting '
+        'multilingual sites'),
+    author='Lukkien BV',
+    author_email='support@lukkien.com',
+    url='https://lukkien.com/',
     packages=find_packages(),
     include_package_data=True,
     license='BSD',
@@ -36,4 +36,7 @@ setup(
     ],
     install_requires=['wagtail'],
     namespace_packages=['wagtail'],
+    scripts=[
+        'wagtail/wagtailtrans/tests/wagtailtrans.py',
+    ]
 )
