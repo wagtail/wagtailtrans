@@ -2,6 +2,7 @@
 from django.conf.urls import include, url
 from django.core import urlresolvers
 from wagtail.wagtailadmin.menu import MenuItem
+from wagtail.wagtailadmin import widgets
 from wagtail.wagtailcore import hooks
 from wagtail.wagtailtrans import urls
 
@@ -25,11 +26,9 @@ def register_language_menu_item():
     )
 
 
-class TranslationsUserBar(object):
-    def render(self, request):
-        return '<li>aha</li>'
-
-
-@hooks.register('construct_wagtail_userbar')
-def add_translations_menu(request, items):
-    return items.append(TranslationsUserBar())
+@hooks.register('register_page_listing_buttons')
+def page_translations_menu(page, page_perms, is_parent=False):
+    yield widgets.PageListingButton(
+        'translations',
+        '/some/url',
+        priority=10)
