@@ -23,3 +23,13 @@ def register_language_menu_item():
         classnames='icon icon-snippet',
         order=1000,
     )
+
+
+class TranslationsUserBar(object):
+    def render(self, request):
+        return '<li>aha</li>'
+
+
+@hooks.register('construct_wagtail_userbar')
+def add_translations_menu(request, items):
+    return items.append(TranslationsUserBar())
