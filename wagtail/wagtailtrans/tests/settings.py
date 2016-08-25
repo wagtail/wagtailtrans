@@ -142,10 +142,8 @@ WAGTAIL_SITE_NAME = "sandbox"
 BASE_URL = 'http://example.com'
 
 DEBUG = True
-      
+
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'pg+*o8yg*l74l^k$&a%0why^-_!ufi%7p#@uqmn4wkqjgf#bc!'
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-
