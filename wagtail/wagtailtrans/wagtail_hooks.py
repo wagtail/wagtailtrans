@@ -35,8 +35,11 @@ def register_language_menu_item():
 def page_translations_menu(page, page_perms, is_parent=False):
     if not hasattr(page, 'language'):
         return
+    if hasattr(page, 'canonical_page') and page.canonical_page:
+        return
+
     yield widgets.ButtonWithDropdownFromHook(
-        'Translations',
+        'Translate into',
         hook_name='wagtailtrans_dropdown_hook',
         page=page,
         page_perms=page_perms,
@@ -48,6 +51,7 @@ def page_translations_menu(page, page_perms, is_parent=False):
 def page_translations_menu_items(page, page_perms, is_parent=False):
     prio = 1
     exclude_lang = None
+
     if hasattr(page, 'language') and page.language:
         exclude_lang = page.language
 
@@ -56,6 +60,11 @@ def page_translations_menu_items(page, page_perms, is_parent=False):
     if exclude_lang:
         languages = languages.exclude(pk=exclude_lang.pk)
 
+    translations = page.get_translations()
+
+    languages = languages.exclude(
+        code__in=[x.language.code for x in translations]
+    )
     for language in languages:
         lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
         yield widgets.Button(

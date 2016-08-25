@@ -45,6 +45,9 @@ class Language(models.Model):
     class Meta:
         ordering = ['order']
 
+    def verbose(self):
+        return [x for x in settings.LANGUAGES if x[0] == self.code][0][1]
+
 
 class TranslatedPage(Page):
 
@@ -85,17 +88,31 @@ class TranslatedPage(Page):
         ).order_by('language__order')
         return pages
 
-    def create_translation(self, language):
+    def create_translation(self, language, copy_fields=False):
         if TranslatedPage.objects.filter(
                 canonical_page=self,
                 language=language).exists():
             raise Exception("Translation already exists")
-        new_page = TranslatedPage(
-            slug=self.slug,
+
+        model_class = self.content_type.model_class()
+
+        new_slug = '%s-%s' % (
+            self.slug, language.code
+        )
+        if copy_fields:
+            return self.copy(
+                update_attrs={
+                    'slug': new_slug,
+                    'language': language,
+                    'canonical_page': self,
+                }
+            )
+
+        return model_class.objects.create(
+            slug=new_slug,
             title=self.title,
             language=language,
             canonical_page=self)
-        return new_page
 
 
 @cached_classmethod
