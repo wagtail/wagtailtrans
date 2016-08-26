@@ -7,6 +7,7 @@ from django.http import Http404
 from django.shortcuts import redirect
 from wagtail.utils.decorators import cached_classmethod
 from django.utils.translation import activate, ugettext_lazy
+from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailadmin.edit_handlers import (FieldPanel, PageChooserPanel,
                                                 MultiFieldPanel, ObjectList,
                                                 TabbedInterface)
@@ -49,6 +50,17 @@ class Language(models.Model):
         return [x for x in settings.LANGUAGES if x[0] == self.code][0][1]
 
 
+def get_default_language():
+    return Language.objects.filter(live=True, is_default=True).first()
+
+
+class AdminTranslatedPageForm(WagtailAdminPageForm):
+
+    def clean_language(self):
+        return self.instance.force_parent_language(
+            self.parent_page) or get_default_language()
+
+
 class TranslatedPage(Page):
 
     canonical_page = models.ForeignKey(
@@ -57,7 +69,11 @@ class TranslatedPage(Page):
         blank=True, null=True, on_delete=models.SET_NULL,
     )
 
-    language = models.ForeignKey(Language, on_delete=models.PROTECT)
+    language = models.ForeignKey(
+        Language,
+        on_delete=models.PROTECT,
+        default=get_default_language
+    )
 
     translation_panels = [
         MultiFieldPanel([
@@ -65,6 +81,8 @@ class TranslatedPage(Page):
             PageChooserPanel('canonical_page'),
         ])
     ]
+
+    base_form_class = AdminTranslatedPageForm
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
@@ -132,6 +150,16 @@ class TranslatedPage(Page):
                 new_page = self.add_sibling(instance=new_page)
 
         return new_page
+
+    def force_parent_language(self, parent=None):
+        if not parent:
+            parent = self.get_parent()
+        if parent:
+            parent = parent.content_type.get_object_for_this_type(pk=parent.pk)
+            if hasattr(parent, 'language'):
+                if self.language != parent.language:
+                    self.language = parent.language
+        return self.language
 
 
 @cached_classmethod
