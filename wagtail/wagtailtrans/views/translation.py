@@ -10,7 +10,7 @@ from wagtail.wagtailtrans.models import Language, TranslatedPage
 
 
 class TranslationForm(forms.Form):
-    copy_from_canonical = forms.BooleanField()
+    copy_from_canonical = forms.BooleanField(required=False)
 
 
 class Add(FormView):
