@@ -70,3 +70,15 @@ class TestTranslatedPage(object):
         nl = Language.objects.get(code='nl')
         page = self.create_translation(languages, nl, copy_fields=False)
         assert page.title
+
+    def test_force_parent_language(self, languages):
+        en = Language.objects.get(code='en')
+        nl = Language.objects.get(code='nl')
+        page_nl = self.create_translation(languages, nl, copy_fields=True)
+        subpage = TranslatedPage(
+            slug='sub-nl',
+            language=en,
+            title='Subpage in NL tree')
+        assert subpage.language == en
+        subpage = page_nl.add_child(instance=subpage)
+        assert subpage.language == nl

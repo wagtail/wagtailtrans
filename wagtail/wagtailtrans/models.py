@@ -88,6 +88,11 @@ class TranslatedPage(Page):
         activate(self.language.code)
         return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
+    def save(self, *args, **kwargs):
+        super(TranslatedPage, self).save(*args, **kwargs)
+        if hasattr(self, 'force_parent_language'):
+            self.force_parent_language()
+
     def get_translations(self, only_live=True):
         if self.canonical_page:
             pages = TranslatedPage.objects.filter(
