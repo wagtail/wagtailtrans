@@ -1,7 +1,7 @@
 
 
-Add Page Translations support to Wagtail
-----------------------------------------
+Page Translations support to Wagtail
+------------------------------------
 
 
 Changes
@@ -11,5 +11,8 @@ Changes
 - Add Language admin-UI in settings-menu
 - Support storing translated pages
 - Add TAB for translations
+- Add dropdown page menu for adding translations
+- Support copying content of canonical page when creating translation
+- Force language of child-pages to language of parent
 
 
