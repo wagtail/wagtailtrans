@@ -70,7 +70,7 @@ class TranslatedPage(Page):
         activate(self.language.code)
         return super(TranslatedPage, self).serve(request, *args, **kwargs)
 
-    def get_translations(self):
+    def get_translations(self, only_live=True):
         if self.canonical_page:
             pages = TranslatedPage.objects.filter(
                 Q(canonical_page=self) |
@@ -83,6 +83,8 @@ class TranslatedPage(Page):
                 Q(pk=self.pk)
             )
 
+        if only_live:
+            pages = pages.filter(live=True)
         pages = pages.filter(
             language__live=True
         ).order_by('language__order')
@@ -96,23 +98,40 @@ class TranslatedPage(Page):
 
         model_class = self.content_type.model_class()
 
+        parent = self.get_parent()
+        new_parent = parent
+        if hasattr(parent, 'get_translations'):
+            new_parent = parent.get_translations(only_live=False).filter(
+                language=language)
+
         new_slug = '%s-%s' % (
             self.slug, language.code
         )
         if copy_fields:
-            return self.copy(
+            new_page = self.copy(
                 update_attrs={
                     'slug': new_slug,
                     'language': language,
+                    'live': False,
                     'canonical_page': self,
                 }
             )
+            if parent != new_parent:
+                new_page = new_page.move(new_parent)
+        else:
+            new_page = model_class(
+                slug=new_slug,
+                title=self.title,
+                language=language,
+                live=False,
+                canonical_page=self)
 
-        return model_class.objects.create(
-            slug=new_slug,
-            title=self.title,
-            language=language,
-            canonical_page=self)
+            if new_parent:
+                new_page = new_parent.add_child(instance=new_page)
+            else:
+                new_page = self.add_sibling(instance=new_page)
+
+        return new_page
 
 
 @cached_classmethod

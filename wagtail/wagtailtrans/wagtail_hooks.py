@@ -60,7 +60,7 @@ def page_translations_menu_items(page, page_perms, is_parent=False):
     if exclude_lang:
         languages = languages.exclude(pk=exclude_lang.pk)
 
-    translations = page.get_translations()
+    translations = page.get_translations(only_live=False)
 
     languages = languages.exclude(
         code__in=[x.language.code for x in translations]

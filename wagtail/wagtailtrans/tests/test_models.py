@@ -1,29 +1,22 @@
 import pytest
-from wagtail.wagtailtrans.models import (AbstractTranslationIndexPage,
-                                         Language, TranslatedPage)
+from wagtail.wagtailtrans.models import Language, TranslatedPage
+from wagtail.wagtailcore.models import Page
+
+
+@pytest.fixture
+def languages():
+    order = 1
+    for code in ['en', 'nl', 'de', 'fr']:
+        Language.objects.create(
+            code=code,
+            is_default=True,
+            order=order,
+            live=True)
+        order += 1
 
 
 @pytest.mark.django_db
-class TestAbstractTranslationIndexPage(object):
-
-    def test_create(self):
-        pass
-
-
-class TestBase(object):
-    def setup_languages(self):
-        order = 1
-        for code in ['en', 'nl', 'de', 'fr']:
-            Language.objects.create(
-                code=code,
-                is_default=True,
-                order=order,
-                live=True)
-            order += 1
-
-
-@pytest.mark.django_db
-class TestLanguage(TestBase):
+class TestLanguage(object):
 
     def test_create(self):
         en = Language.objects.create(
@@ -33,17 +26,15 @@ class TestLanguage(TestBase):
             live=True)
         assert isinstance(en, Language)
 
-    def test_create_many(self):
-        self.setup_languages()
+    def test_create_many(self, languages):
         languages = Language.objects.all()
         assert languages.count() == 4
 
 
 @pytest.mark.django_db
-class TestTranslatedPage(TestBase):
+class TestTranslatedPage(object):
 
-    def test_create(self):
-        self.setup_languages()
+    def test_create(self, languages):
         language = Language.objects.get(code='en')
         root = TranslatedPage(
             language=language,
@@ -51,18 +42,31 @@ class TestTranslatedPage(TestBase):
         )
         assert root.language == language
 
-    def test_tree(self):
-        self.setup_languages()
+    def create_translation(self, languages, language, copy_fields):
         en = Language.objects.get(code='en')
-        nl = Language.objects.get(code='nl')
-        page_en = TranslatedPage(
+        root = Page.add_root(
+            title='Site Root')
+        root.save()
+
+        canonical_page = TranslatedPage(
             slug='test-en',
             language=en,
             title='root EN'
         )
-        page_nl = page_en.create_translation(
-            language=nl
+        root.add_child(instance=canonical_page)
+
+        new_page = canonical_page.create_translation(
+            language=language, copy_fields=copy_fields
         )
-        assert page_nl.canonical_page == page_en
-        assert page_nl.title == page_en.title
-        assert page_nl.slug == page_en.slug
+        assert new_page.canonical_page == canonical_page
+        return new_page
+
+    def test_copy_fields(self, languages):
+        nl = Language.objects.get(code='nl')
+        page = self.create_translation(languages, nl, copy_fields=True)
+        assert page.title
+
+    def test_no_copy_fields(self, languages):
+        nl = Language.objects.get(code='nl')
+        page = self.create_translation(languages, nl, copy_fields=False)
+        assert page.title

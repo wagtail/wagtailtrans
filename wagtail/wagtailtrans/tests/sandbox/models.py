@@ -9,7 +9,10 @@ from wagtail.wagtailtrans.models import (AbstractTranslationIndexPage,
 
 
 class HomePage(TranslatedPage):
-    body = RichTextField()
+    body = RichTextField(
+        blank=True,
+        default="",
+    )
     image = models.ForeignKey(
         'wagtailimages.Image',
         null=True,
