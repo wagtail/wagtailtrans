@@ -5,13 +5,12 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from wagtail.utils.decorators import cached_classmethod
 from django.utils.translation import activate, ugettext_lazy
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-from wagtail.wagtailadmin.edit_handlers import (FieldPanel, PageChooserPanel,
-                                                MultiFieldPanel, ObjectList,
-                                                TabbedInterface)
 
+from wagtail.utils.decorators import cached_classmethod
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
+from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
 

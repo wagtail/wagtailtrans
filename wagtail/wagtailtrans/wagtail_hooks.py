@@ -2,11 +2,12 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.core import urlresolvers
-from wagtail.wagtailadmin.menu import MenuItem
+
 from wagtail.wagtailadmin import widgets
+from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
-from wagtail.wagtailtrans.urls import languages, translations
 from wagtail.wagtailtrans.models import Language
+from wagtail.wagtailtrans.urls import languages, translations
 
 
 @hooks.register('register_admin_urls')

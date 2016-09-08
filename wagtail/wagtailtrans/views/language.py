@@ -2,8 +2,9 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.utils.translation import ugettext_lazy
-from wagtail.wagtailadmin.views.generic import (CreateView, DeleteView,
-                                                EditView, IndexView)
+
+from wagtail.wagtailadmin.views.generic import (
+    CreateView, DeleteView, EditView, IndexView)
 from wagtail.wagtailtrans.models import Language
 
 
