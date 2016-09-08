@@ -4,8 +4,9 @@ from django import forms
 from django.http import Http404
 from django.shortcuts import redirect
 from django.views.generic.edit import FormView
-from wagtail.wagtailadmin.edit_handlers import (FieldPanel, ObjectList,
-                                                TabbedInterface)
+
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel, ObjectList, TabbedInterface)
 from wagtail.wagtailtrans.models import Language, TranslatedPage
 
 

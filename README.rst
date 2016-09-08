@@ -1,5 +1,3 @@
-
-
 Page Translations support to Wagtail
 ------------------------------------
 

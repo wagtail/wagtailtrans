@@ -1,5 +1,9 @@
 *.swp
-*.egg-info/
 *.pyc
-.cache/
 *.swo
+*.python-version
+
+*.egg-info/
+
+.cache/
+.idea/
