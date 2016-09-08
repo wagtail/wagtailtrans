@@ -6,9 +6,7 @@ from setuptools import setup, find_packages
 setup(
     name='wagtail.wagtailtrans',
     version='0.0.1',
-    description=(
-        'A Wagtail add-on for supporting '
-        'multilingual sites'),
+    description='A Wagtail add-on for supporting multilingual sites',
     author='Lukkien BV',
     author_email='support@lukkien.com',
     url='https://lukkien.com/',
@@ -34,7 +32,9 @@ setup(
         'Framework :: Django :: 1.9',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ],
-    install_requires=['wagtail'],
+    install_requires=[
+        'wagtail>=1.6,<1.7'
+    ],
     namespace_packages=['wagtail'],
     scripts=[
         'wagtail/wagtailtrans/tests/wagtailtrans.py',
