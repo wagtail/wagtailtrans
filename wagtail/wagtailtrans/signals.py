@@ -13,6 +13,7 @@ def synchronize_trees(sender, instance, **kwargs):
     if (
         not kwargs.get('created') or
         not settings.WAGTAILTRANS_SYNC_TREE or
+        not getattr(instance, 'language', False) or
         not instance.language.is_default
     ):
         return
