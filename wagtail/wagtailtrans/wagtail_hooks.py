@@ -1,4 +1,3 @@
-
 from django.conf import settings
 from django.conf.urls import include, url
 from django.core import urlresolvers
@@ -32,47 +31,52 @@ def register_language_menu_item():
     )
 
 
-@hooks.register('register_page_listing_buttons')
-def page_translations_menu(page, page_perms, is_parent=False):
-    if not hasattr(page, 'language'):
-        return
-    if hasattr(page, 'canonical_page') and page.canonical_page:
-        return
+if not settings.WAGTAILTRANS_SYNC_TREE:
+    """
+    Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled
 
-    yield widgets.ButtonWithDropdownFromHook(
-        'Translate into',
-        hook_name='wagtailtrans_dropdown_hook',
-        page=page,
-        page_perms=page_perms,
-        is_parent=is_parent,
-        priority=10)
+    """
+    @hooks.register('register_page_listing_buttons')
+    def page_translations_menu(page, page_perms, is_parent=False):
+        if not hasattr(page, 'language'):
+            return
+        if hasattr(page, 'canonical_page') and page.canonical_page:
+            return
+
+        yield widgets.ButtonWithDropdownFromHook(
+            'Translate into',
+            hook_name='wagtailtrans_dropdown_hook',
+            page=page,
+            page_perms=page_perms,
+            is_parent=is_parent,
+            priority=10)
 
 
-@hooks.register('wagtailtrans_dropdown_hook')
-def page_translations_menu_items(page, page_perms, is_parent=False):
-    prio = 1
-    exclude_lang = None
+    @hooks.register('wagtailtrans_dropdown_hook')
+    def page_translations_menu_items(page, page_perms, is_parent=False):
+        prio = 1
+        exclude_lang = None
 
-    if hasattr(page, 'language') and page.language:
-        exclude_lang = page.language
+        if hasattr(page, 'language') and page.language:
+            exclude_lang = page.language
 
-    languages = Language.objects.filter(
-        live=True)
-    if exclude_lang:
-        languages = languages.exclude(pk=exclude_lang.pk)
+        languages = Language.objects.filter(
+            live=True)
+        if exclude_lang:
+            languages = languages.exclude(pk=exclude_lang.pk)
 
-    translations = page.get_translations(only_live=False)
+        translations = page.get_translations(only_live=False)
 
-    languages = languages.exclude(
-        code__in=[x.language.code for x in translations]
-    )
-    for language in languages:
-        lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
-        yield widgets.Button(
-            '%s' % lang[1],
-            urlresolvers.reverse(
-                'wagtailtrans_translations:add', kwargs={
-                    'page': page.pk, 'language': language.code}),
-            priority=prio)
+        languages = languages.exclude(
+            code__in=[x.language.code for x in translations]
+        )
+        for language in languages:
+            lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
+            yield widgets.Button(
+                '%s' % lang[1],
+                urlresolvers.reverse(
+                    'wagtailtrans_translations:add', kwargs={
+                        'page': page.pk, 'language': language.code}),
+                priority=prio)
 
-        prio += 1
+            prio += 1
