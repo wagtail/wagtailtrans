@@ -2,6 +2,7 @@
 *.pyc
 *.swo
 *.python-version
+*.coverage
 
 *.egg-info/
 

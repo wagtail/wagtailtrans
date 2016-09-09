@@ -1,0 +1,3 @@
+[run]
+omit =
+    wagtail/wagtailtrans/tests/*.py
