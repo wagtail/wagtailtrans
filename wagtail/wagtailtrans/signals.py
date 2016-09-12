@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 from django.db.models.signals import post_save
 from wagtail.wagtailcore.models import get_page_models
 
@@ -21,9 +22,12 @@ def synchronize_trees(sender, instance, **kwargs):
         not instance.language.is_default
     ):
         return
+    is_root = TranslatedPage.objects.filter(
+        ~Q(pk=instance.pk), language=get_default_language()).exists()
 
     for lang in Language.objects.filter(is_default=False):
-        instance.create_translation(language=lang, copy_fields=True)
+        instance.create_translation(
+            language=lang, copy_fields=True, is_trans_root=is_root)
 
 
 def create_new_language_tree(sender, instance, **kwargs):
@@ -40,7 +44,8 @@ def create_new_language_tree(sender, instance, **kwargs):
         return
     root = TranslatedPage.objects.filter(
         language=get_default_language()).order_by('depth').first()
-
+    if not root:
+        return
     root.create_translation(
         language=instance, copy_fields=True, is_trans_root=True)
     for child_page in root.get_descendants():
