@@ -44,7 +44,8 @@ class TestTranslatedPage(object):
         assert root.language == language
 
     def create_translation(
-        self, languages, language, copy_fields, is_root=True):
+        self, languages, language, copy_fields, is_root=True
+    ):
         en = Language.objects.get(code='en')
         root = Page.add_root(
             title='Site Root')

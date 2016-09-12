@@ -51,7 +51,6 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
             is_parent=is_parent,
             priority=10)
 
-
     @hooks.register('wagtailtrans_dropdown_hook')
     def page_translations_menu_items(page, page_perms, is_parent=False):
         prio = 1

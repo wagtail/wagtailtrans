@@ -93,8 +93,7 @@ class TranslatedPage(Page):
             self.force_parent_language()
 
     def get_translations(self, only_live=True):
-        """
-        Get translation of this page
+        """Get translation of this page
 
         :param only_live: Boolean to filter on live pages
         :return: TranslatedPage instance
@@ -118,11 +117,11 @@ class TranslatedPage(Page):
         ).order_by('language__order')
         return pages
 
-    def create_translation(self, language, copy_fields=False,
-                           is_trans_root=False):
-        """
-        Create a translation for this page. If tree syncing is enabled the copy
-        will also be moved to the corresponding language tree.
+    def create_translation(
+        self, language, copy_fields=False, is_trans_root=False
+    ):
+        """Create a translation for this page. If tree syncing is enabled the
+        copy will also be moved to the corresponding language tree.
 
         :param language: Language instance
         :param copy_fields: Boolean specifying if the content should be copied
@@ -175,8 +174,7 @@ class TranslatedPage(Page):
         return new_page
 
     def force_parent_language(self, parent=None):
-        """
-        Set Page instance language to the parent language.
+        """Set Page instance language to the parent language.
 
         :param parent: Parent page of self
         :return: Language instance
@@ -216,8 +214,7 @@ TranslatedPage.get_edit_handler = get_edit_handler
 
 
 def get_user_languages(request):
-    """
-    Get the Language corresponding to a request.
+    """Get the Language corresponding to a request.
     return default language if Language does not exist in site
 
     :param request: Request object
