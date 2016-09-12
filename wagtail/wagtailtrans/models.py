@@ -93,6 +93,12 @@ class TranslatedPage(Page):
             self.force_parent_language()
 
     def get_translations(self, only_live=True):
+        """
+        Get translation of this page
+
+        :param only_live: Boolean to filter on live pages
+        :return: TranslatedPage instance
+        """
         if self.canonical_page:
             pages = TranslatedPage.objects.filter(
                 Q(canonical_page=self) |
@@ -169,6 +175,12 @@ class TranslatedPage(Page):
         return new_page
 
     def force_parent_language(self, parent=None):
+        """
+        Set Page instance language to the parent language.
+
+        :param parent: Parent page of self
+        :return: Language instance
+        """
         if not parent:
             parent = self.get_parent()
         if parent:
@@ -204,24 +216,28 @@ TranslatedPage.get_edit_handler = get_edit_handler
 
 
 def get_user_languages(request):
+    """
+    Get the Language corresponding to a request.
+    return default language if Language does not exist in site
+
+    :param request: Request object
+    :return: Language instance
+    """
     if hasattr(request, 'LANGUAGE_CODE'):
         languages = Language.objects.filter(
             code=request.LANGUAGE_CODE)
         if languages.exists():
             return languages
-    return Language.objects.filter(is_default=True)
+    return get_default_language()
 
 
 class AbstractTranslationIndexPage(Page):
     def serve(self, request):
         languages = get_user_languages(request)
-        candidate_pages = TranslatedPage.objects\
-            .live().specific()\
-            .child_of(self)
+        candidates = TranslatedPage.objects.live().specific().child_of(self)
         for language in languages:
             try:
-                translation = candidate_pages.filter(
-                    language=language).get()
+                translation = candidates.filter(language=language).get()
                 return redirect(translation.url)
             except TranslatedPage.DoesNotExist:
                 continue
