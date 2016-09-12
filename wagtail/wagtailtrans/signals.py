@@ -27,8 +27,15 @@ def synchronize_trees(sender, instance, **kwargs):
 def create_new_language_tree(sender, instance, **kwargs):
     if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
         return
-    for page in TranslatedPage.objects.filter(language=get_default_language()):
-        page.create_translation(language=instance, copy_fields=True)
+    root = TranslatedPage.objects.filter(
+        language=get_default_language()).order_by('depth').first()
+
+    root.create_translation(
+        language=instance, copy_fields=True, trans_root=True)
+    import ipdb;ipdb.set_trace()
+    for child_page in root.get_descendants():
+        child_page.specific.create_translation(
+            language=instance, copy_fields=True)
 
 
 def register_signal_handlers():
