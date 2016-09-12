@@ -112,7 +112,17 @@ class TranslatedPage(Page):
         ).order_by('language__order')
         return pages
 
-    def create_translation(self, language, copy_fields=False, trans_root=False):
+    def create_translation(self, language, copy_fields=False,
+                           is_trans_root=False):
+        """
+        Create a translation for this page. If tree syncing is enabled the copy
+        will also be moved to the corresponding language tree.
+
+        :param language: Language instance
+        :param copy_fields: Boolean specifying if the content should be copied
+        :param trans_root: Boolean specifying if instance is a translation root
+        :return: new Translated page (or subclass) instance
+        """
         if TranslatedPage.objects.filter(
                 canonical_page=self,
                 language=language).exists():
@@ -152,7 +162,7 @@ class TranslatedPage(Page):
                 new_page = new_parent.add_child(instance=new_page)
             else:
                 new_page = self.add_sibling(instance=new_page)
-        if settings.WAGTAILTRANS_SYNC_TREE and not trans_root:
+        if settings.WAGTAILTRANS_SYNC_TREE and not is_trans_root:
             new_parent = TranslatedPage.objects.get(
                 canonical_page=self.get_parent(), language=language)
             new_page.move(new_parent, pos='last-child')
