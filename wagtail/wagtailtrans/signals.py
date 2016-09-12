@@ -32,7 +32,6 @@ def create_new_language_tree(sender, instance, **kwargs):
 
     root.create_translation(
         language=instance, copy_fields=True, trans_root=True)
-    import ipdb;ipdb.set_trace()
     for child_page in root.get_descendants():
         child_page.specific.create_translation(
             language=instance, copy_fields=True)
