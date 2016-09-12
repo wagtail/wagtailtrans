@@ -71,4 +71,4 @@ def register_signal_handlers():
 
     for model in get_page_models():
         post_save.connect(synchronize_trees, sender=model)
-        pre_delete.connect(synchtonize_deletions, sender=model)
+        pre_delete.connect(synchronize_deletions, sender=model)
