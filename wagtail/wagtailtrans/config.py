@@ -1,6 +1,11 @@
+import logging
+
 from django.apps import AppConfig
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
+
+
+logger = logging.getLogger()
 
 
 class WagtailTransConfig(AppConfig):
@@ -13,7 +18,9 @@ class WagtailTransConfig(AppConfig):
         register_signal_handlers()
 
         from django.conf import settings
+        # check ig WAGTAILTRANS_SYNC_TREE is set, if not use default (True)
         if not hasattr(settings, 'WAGTAILTRANS_SYNC_TREE'):
-            raise ImproperlyConfigured(
+            setattr(settings, 'WAGTAILTRANS_SYNC_TREE', True)
+            logger.warning(
                 "Setting WAGTAILTRANS_SYNC_TREE undefined. Please specify "
                 "WAGTAILTRANS_SYNC_TREE in your projects settings file.")
