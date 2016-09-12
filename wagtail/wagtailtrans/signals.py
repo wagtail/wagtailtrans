@@ -28,7 +28,7 @@ def synchronize_trees(sender, instance, **kwargs):
             language=lang, copy_fields=True, is_trans_root=is_root)
 
 
-def synchtonize_deletions(sender, instance, **kwargs):
+def synchronize_deletions(sender, instance, **kwargs):
     """We use pre_delete because when sync is disabled the foreign_key on
     canonical pages on_delete is set_null.
 
