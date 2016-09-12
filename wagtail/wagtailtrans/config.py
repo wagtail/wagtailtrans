@@ -18,7 +18,7 @@ class WagtailTransConfig(AppConfig):
         register_signal_handlers()
 
         from django.conf import settings
-        # check ig WAGTAILTRANS_SYNC_TREE is set, if not use default (True)
+        # check if WAGTAILTRANS_SYNC_TREE is set, if not use default (True)
         if not hasattr(settings, 'WAGTAILTRANS_SYNC_TREE'):
             setattr(settings, 'WAGTAILTRANS_SYNC_TREE', True)
             logger.warning(
