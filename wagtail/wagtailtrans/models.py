@@ -167,11 +167,12 @@ class TranslatedPage(Page):
                 new_page = new_parent.add_child(instance=new_page)
             else:
                 new_page = self.add_sibling(instance=new_page)
-        if settings.WAGTAILTRANS_SYNC_TREE and not is_trans_root:
-            new_parent = TranslatedPage.objects.get(
-                canonical_page=self.get_parent(), language=language)
-            new_page.move(new_parent, pos='last-child')
         return new_page
+
+    def move_translation(self, language):
+        new_parent = TranslatedPage.objects.get(
+            canonical_page=self.get_parent(), language=language)
+        self.move(new_parent, pos='last-child')
 
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.

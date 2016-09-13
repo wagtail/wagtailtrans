@@ -24,8 +24,9 @@ def synchronize_trees(sender, instance, **kwargs):
     is_root = not TranslatedPage.objects.filter(
         ~Q(pk=instance.pk), language=get_default_language()).exists()
     for lang in Language.objects.filter(is_default=False):
-        instance.create_translation(
+        new_page = instance.create_translation(
             language=lang, copy_fields=True, is_trans_root=is_root)
+        new_page.move_translation(lang)
 
 
 def synchronize_deletions(sender, instance, **kwargs):
@@ -58,8 +59,9 @@ def create_new_language_tree(sender, instance, **kwargs):
     root.create_translation(
         language=instance, copy_fields=True, is_trans_root=True)
     for child_page in root.get_descendants():
-        child_page.specific.create_translation(
+        new_page = child_page.specific.create_translation(
             language=instance, copy_fields=True)
+        new_page.move_translation(instance)
 
 
 def register_signal_handlers():
