@@ -92,6 +92,25 @@ class TranslatedPage(Page):
         if hasattr(self, 'force_parent_language'):
             self.force_parent_language()
 
+    def move(self, target, pos=None):
+        super(TranslatedPage, self).move(target, pos)
+
+        if settings.WAGTAILTRANS_SYNC_TREE and self.language.is_default:
+            self.move_translated_pages(canonical_target=target, pos=pos)
+
+    def move_translated_pages(self, canonical_target, pos=None):
+        """Move only the translated pages of this instance (not self)
+        this is only called when WAGTAILTRANS_SYNC_TREE is enabled
+        :param canonical_target: Parent of the canonical page
+        :param pos: position
+        """
+        translations = self.get_translations(only_live=False)
+        for page in translations.filter(~Q(pk=self.pk)):
+            # get target because at this point we assume the tree is in sync.
+            target = TranslatedPage.objects.filter(
+                language=page.language, canonical_page=canonical_target).get()
+            page.move(target=target, pos=pos)
+
     def get_translations(self, only_live=True):
         """Get translation of this page
 

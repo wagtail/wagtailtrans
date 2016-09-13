@@ -26,6 +26,7 @@ def synchronize_trees(sender, instance, **kwargs):
     for lang in Language.objects.filter(is_default=False):
         new_page = instance.create_translation(
             language=lang, copy_fields=True, is_trans_root=is_root)
+        new_page.language = lang
         new_page.move_translation(lang)
 
 
@@ -61,6 +62,7 @@ def create_new_language_tree(sender, instance, **kwargs):
     for child_page in root.get_descendants():
         new_page = child_page.specific.create_translation(
             language=instance, copy_fields=True)
+        new_page.language = instance
         new_page.move_translation(instance)
 
 
