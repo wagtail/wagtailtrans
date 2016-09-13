@@ -29,7 +29,7 @@ class Add(FormView):
 
     def get(self, *args, **kwargs):
         page = get_object_or_404(TranslatedPage, pk=kwargs['page'])
-        language = Language.objects.get(code=kwargs['language'])
+        language = get_object_or_404(Language, code=kwargs['language'])
 
         self.page = page.content_type.get_object_for_this_type(pk=page.pk)
         self.language = language
@@ -37,7 +37,7 @@ class Add(FormView):
 
     def post(self, *args, **kwargs):
         page = get_object_or_404(TranslatedPage, pk=kwargs['page'])
-        language = Language.objects.get(code=kwargs['language'])
+        language = get_object_or_404(Language, code=kwargs['language'])
 
         copy_from_canonical = self.request.POST.get('copy_from_canonical')
         if copy_from_canonical == u'on':
