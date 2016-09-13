@@ -136,9 +136,7 @@ class TranslatedPage(Page):
         ).order_by('language__order')
         return pages
 
-    def create_translation(
-        self, language, copy_fields=False, is_trans_root=False
-    ):
+    def create_translation(self, language, copy_fields=False):
         """Create a translation for this page. If tree syncing is enabled the
         copy will also be moved to the corresponding language tree.
 

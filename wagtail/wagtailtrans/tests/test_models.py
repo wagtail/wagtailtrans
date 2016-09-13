@@ -43,9 +43,7 @@ class TestTranslatedPage(object):
         )
         assert root.language == language
 
-    def create_translation(
-        self, languages, language, copy_fields, is_root=True
-    ):
+    def create_translation(self, languages, language, copy_fields):
         en = Language.objects.get(code='en')
         root = Page.add_root(
             title='Site Root')
@@ -59,7 +57,7 @@ class TestTranslatedPage(object):
         root.add_child(instance=canonical_page)
 
         new_page = canonical_page.create_translation(
-            language=language, copy_fields=copy_fields, is_trans_root=is_root
+            language=language, copy_fields=copy_fields
         )
         assert new_page.canonical_page == canonical_page
         return new_page

@@ -24,10 +24,10 @@ def synchronize_trees(sender, instance, **kwargs):
     is_root = not TranslatedPage.objects.filter(
         ~Q(pk=instance.pk), language=get_default_language()).exists()
     for lang in Language.objects.filter(is_default=False):
-        new_page = instance.create_translation(
-            language=lang, copy_fields=True, is_trans_root=is_root)
+        new_page = instance.create_translation(language=lang, copy_fields=True)
         new_page.language = lang
-        new_page.move_translation(lang)
+        if not is_root:
+            new_page.move_translation(lang)
 
 
 def synchronize_deletions(sender, instance, **kwargs):
@@ -38,8 +38,9 @@ def synchronize_deletions(sender, instance, **kwargs):
     :param instance: TranslatedPage Instance
     :param kwargs: kwargs
     """
-    if settings.WAGTAILTRANS_SYNC_TREE:
-        TranslatedPage.objects.filter(canonical_page=instance).delete()
+    page = TranslatedPage.objects.filter(pk=instance.pk).first()
+    if settings.WAGTAILTRANS_SYNC_TREE and page:
+        TranslatedPage.objects.filter(canonical_page=page).delete()
 
 
 def create_new_language_tree(sender, instance, **kwargs):
@@ -58,7 +59,7 @@ def create_new_language_tree(sender, instance, **kwargs):
     if not root:
         return
     root.create_translation(
-        language=instance, copy_fields=True, is_trans_root=True)
+        language=instance, copy_fields=True)
     for child_page in root.get_descendants():
         new_page = child_page.specific.create_translation(
             language=instance, copy_fields=True)
