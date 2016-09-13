@@ -2,7 +2,7 @@ from __future__ import absolute_import, unicode_literals
 
 from django import forms
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.edit import FormView
 
 from wagtail.wagtailadmin.edit_handlers import (
@@ -28,30 +28,16 @@ class Add(FormView):
     ])
 
     def get(self, *args, **kwargs):
-        try:
-            page = TranslatedPage.objects.get(pk=kwargs['page'])
-        except TranslatedPage.DoesNotExist:
-            return Http404
-
-        try:
-            language = Language.objects.get(code=kwargs['language'])
-        except Language.DoesNotExist:
-            return Http404
+        page = get_object_or_404(TranslatedPage, pk=kwargs['page'])
+        language = get_object_or_404(Language, code=kwargs['language'])
 
         self.page = page.content_type.get_object_for_this_type(pk=page.pk)
         self.language = language
         return super(Add, self).get(*args, **kwargs)
 
     def post(self, *args, **kwargs):
-        try:
-            page = TranslatedPage.objects.get(pk=kwargs['page'])
-        except TranslatedPage.DoesNotExist:
-            return Http404
-
-        try:
-            language = Language.objects.get(code=kwargs['language'])
-        except Language.DoesNotExist:
-            return Http404
+        page = get_object_or_404(TranslatedPage, pk=kwargs['page'])
+        language = get_object_or_404(Language, code=kwargs['language'])
 
         copy_from_canonical = self.request.POST.get('copy_from_canonical')
         if copy_from_canonical == u'on':
