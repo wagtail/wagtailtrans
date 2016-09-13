@@ -92,9 +92,27 @@ class TranslatedPage(Page):
         if hasattr(self, 'force_parent_language'):
             self.force_parent_language()
 
-    def get_translations(self, only_live=True):
+    def move(self, target, pos=None):
+        super(TranslatedPage, self).move(target, pos)
+
+        if settings.WAGTAILTRANS_SYNC_TREE and self.language.is_default:
+            self.move_translated_pages(canonical_target=target, pos=pos)
+
+    def move_translated_pages(self, canonical_target, pos=None):
+        """Move only the translated pages of this instance (not self)
+        this is only called when WAGTAILTRANS_SYNC_TREE is enabled
+        :param canonical_target: Parent of the canonical page
+        :param pos: position
         """
-        Get translation of this page
+        translations = self.get_translations(only_live=False)
+        for page in translations.filter(~Q(pk=self.pk)):
+            # get target because at this point we assume the tree is in sync.
+            target = TranslatedPage.objects.filter(
+                language=page.language, canonical_page=canonical_target).get()
+            page.move(target=target, pos=pos)
+
+    def get_translations(self, only_live=True):
+        """Get translation of this page
 
         :param only_live: Boolean to filter on live pages
         :return: TranslatedPage instance
@@ -118,11 +136,11 @@ class TranslatedPage(Page):
         ).order_by('language__order')
         return pages
 
-    def create_translation(self, language, copy_fields=False,
-                           is_trans_root=False):
-        """
-        Create a translation for this page. If tree syncing is enabled the copy
-        will also be moved to the corresponding language tree.
+    def create_translation(
+        self, language, copy_fields=False, is_trans_root=False
+    ):
+        """Create a translation for this page. If tree syncing is enabled the
+        copy will also be moved to the corresponding language tree.
 
         :param language: Language instance
         :param copy_fields: Boolean specifying if the content should be copied
@@ -168,15 +186,15 @@ class TranslatedPage(Page):
                 new_page = new_parent.add_child(instance=new_page)
             else:
                 new_page = self.add_sibling(instance=new_page)
-        if settings.WAGTAILTRANS_SYNC_TREE and not is_trans_root:
-            new_parent = TranslatedPage.objects.get(
-                canonical_page=self.get_parent(), language=language)
-            new_page.move(new_parent, pos='last-child')
         return new_page
 
+    def move_translation(self, language):
+        new_parent = TranslatedPage.objects.get(
+            canonical_page=self.get_parent(), language=language)
+        self.move(new_parent, pos='last-child')
+
     def force_parent_language(self, parent=None):
-        """
-        Set Page instance language to the parent language.
+        """Set Page instance language to the parent language.
 
         :param parent: Parent page of self
         :return: Language instance
@@ -216,8 +234,7 @@ TranslatedPage.get_edit_handler = get_edit_handler
 
 
 def get_user_languages(request):
-    """
-    Get the Language corresponding to a request.
+    """Get the Language corresponding to a request.
     return default language if Language does not exist in site
 
     :param request: Request object

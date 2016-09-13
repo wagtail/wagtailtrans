@@ -32,9 +32,7 @@ def register_language_menu_item():
 
 
 if not settings.WAGTAILTRANS_SYNC_TREE:
-    """
-    Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled
-
+    """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled
     """
     @hooks.register('register_page_listing_buttons')
     def page_translations_menu(page, page_perms, is_parent=False):
@@ -50,7 +48,6 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
             page_perms=page_perms,
             is_parent=is_parent,
             priority=10)
-
 
     @hooks.register('wagtailtrans_dropdown_hook')
     def page_translations_menu_items(page, page_perms, is_parent=False):

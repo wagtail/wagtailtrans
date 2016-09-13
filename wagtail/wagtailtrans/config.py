@@ -1,7 +1,6 @@
 import logging
 
 from django.apps import AppConfig
-from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import ugettext_lazy as _
 
 
