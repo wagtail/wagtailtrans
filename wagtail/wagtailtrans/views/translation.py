@@ -48,7 +48,7 @@ class Add(FormView):
         page = page.content_type.get_object_for_this_type(pk=page.pk)
         new_page = page.create_translation(language, copy_fields)
         return redirect(
-            'wagtailadmin_pages:edit', new_page.id)
+            'wagtailadmin_pages:move', new_page.id)
 
     def get_context_data(self):
         context = super(Add, self).get_context_data()

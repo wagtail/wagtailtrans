@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -191,6 +192,17 @@ class TranslatedPage(Page):
             canonical_page=self.get_parent(), language=language)
         self.move(new_parent, pos='last-child')
 
+    def can_move_to(self, parent):
+        translation_parent = TranslatedPage.objects.filter(pk=parent.pk).first()
+        if not self.language_exists:
+            return super(TranslatedPage, self).can_move_to(parent)
+        if not translation_parent:
+            return False
+        return(
+            super(TranslatedPage, self).can_move_to(translation_parent) and
+            self.language == translation_parent.language
+        )
+
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
 
@@ -205,6 +217,12 @@ class TranslatedPage(Page):
                 if self.language != parent.language:
                     self.language = parent.language
         return self.language
+
+    @property
+    def language_exists(self):
+        """Check if language tree of this page already exists"""
+        return TranslatedPage.objects.filter(
+            ~Q(pk=self.pk), language=self.language).exists()
 
 
 @cached_classmethod
