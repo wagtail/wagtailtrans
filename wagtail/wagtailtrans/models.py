@@ -206,12 +206,6 @@ class TranslatedPage(Page):
                     self.language = parent.language
         return self.language
 
-    @property
-    def language_exists(self):
-        """Check if language tree of this page already exists"""
-        return TranslatedPage.objects.filter(
-            ~Q(pk=self.pk), language=self.language).exists()
-
 
 @cached_classmethod
 def get_edit_handler(cls):
