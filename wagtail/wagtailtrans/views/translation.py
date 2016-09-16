@@ -41,7 +41,7 @@ class TranslationForm(forms.Form):
         qs = TranslatedPage.objects.filter(language=get_default_language())
         keys = [p.pk for p in qs]
         roots = [p.get_parent().pk for p in qs if (
-            p.get_parent().pk not in keys and p.get_site == self.site
+            p.get_parent().pk not in keys and p.get_site() == self.site
         )]
         return Page.objects.filter(pk__in=roots)
 
