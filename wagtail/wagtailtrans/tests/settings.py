@@ -149,4 +149,4 @@ SECRET_KEY = 'pg+*o8yg*l74l^k$&a%0why^-_!ufi%7p#@uqmn4wkqjgf#bc!'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # wagtailtrans setting
-WAGTAILTRANS_SYNC_TREE = False
+WAGTAILTRANS_SYNC_TREE = True

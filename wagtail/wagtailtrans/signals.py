@@ -21,12 +21,15 @@ def synchronize_trees(sender, instance, **kwargs):
         not instance.language.is_default
     ):
         return
-    is_root = not TranslatedPage.objects.filter(
-        ~Q(pk=instance.pk), language=get_default_language()).exists()
+    site = instance.get_site()
+
+    relatives = TranslatedPage.objects.filter(
+        ~Q(pk=instance.pk), language=get_default_language())
+    relatives = [p for p in relatives if p.get_site() == site]
     for lang in Language.objects.filter(is_default=False):
         new_page = instance.create_translation(language=lang, copy_fields=True)
         new_page.language = lang
-        if not is_root:
+        if relatives:
             new_page.move_translation(lang)
 
 
