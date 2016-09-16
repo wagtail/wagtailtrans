@@ -1,7 +1,6 @@
 from __future__ import absolute_import, unicode_literals
 
 from django import forms
-from django.http import Http404
 from django.shortcuts import redirect, get_object_or_404
 from django.views.generic.edit import FormView
 
@@ -9,7 +8,8 @@ from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, ObjectList, TabbedInterface, PageChooserPanel)
 from wagtail.wagtailcore.models import Page
 
-from wagtail.wagtailtrans.models import Language, TranslatedPage
+from wagtail.wagtailtrans.models import (
+    Language, TranslatedPage, get_default_language)
 
 
 class TranslationForm(forms.Form):
@@ -25,15 +25,25 @@ class TranslationForm(forms.Form):
         page = get_object_or_404(TranslatedPage, pk=kwargs.pop('page'))
         self.language = get_object_or_404(Language, code=kwargs.pop('language'))
         self.page = page.content_type.get_object_for_this_type(pk=page.pk)
+        self.site = self.page.get_site()
         self.base_fields['parent_page'].queryset = self.get_queryset()
         super(TranslationForm, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
         qs = TranslatedPage.objects.filter(language=self.language)
-        allowed_pages = [p.pk for p in qs if self.page.can_move_to(p)]
+        allowed_pages = [p.pk for p in qs if (
+            self.page.can_move_to(p) and p.get_site() == self.site
+        )]
         qs = TranslatedPage.objects.filter(pk__in=allowed_pages)
-        return qs if qs else Page.objects.filter(
-            pk=self.page.get_parent().pk)
+        return qs if qs else self.as_language_home()
+
+    def as_language_home(self):
+        qs = TranslatedPage.objects.filter(language=get_default_language())
+        keys = [p.pk for p in qs]
+        roots = [p.get_parent().pk for p in qs if (
+            p.get_parent().pk not in keys and p.get_site == self.site
+        )]
+        return Page.objects.filter(pk__in=roots)
 
 
 class Add(FormView):
