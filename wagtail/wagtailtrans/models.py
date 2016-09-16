@@ -191,17 +191,6 @@ class TranslatedPage(Page):
             canonical_page=self.get_parent(), language=language)
         self.move(new_parent, pos='last-child')
 
-    def can_move_to(self, parent):
-        translation_parent = TranslatedPage.objects.filter(pk=parent.pk).first()
-        if not self.language_exists:
-            return super(TranslatedPage, self).can_move_to(parent)
-        if not translation_parent:
-            return False
-        return(
-            super(TranslatedPage, self).can_move_to(translation_parent) and
-            self.language == translation_parent.language
-        )
-
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
 
