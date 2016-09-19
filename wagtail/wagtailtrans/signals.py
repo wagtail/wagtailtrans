@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
 from wagtail.wagtailcore.models import get_page_models, Site
@@ -21,7 +22,10 @@ def synchronize_trees(sender, instance, **kwargs):
         not instance.language.is_default
     ):
         return
-    site = instance.get_site()
+    try:
+        site = instance.get_site()
+    except ObjectDoesNotExist:
+        return
 
     relatives = TranslatedPage.objects.filter(
         ~Q(pk=instance.pk), language=get_default_language())
@@ -60,16 +64,15 @@ def create_new_language_tree(sender, instance, **kwargs):
     for site in Site.objects.all():
         root = TranslatedPage.objects.filter(
             pk__in=[p.pk for p in site.root_page.get_children()],
-            language=get_default_language()).get()
-        if not root:
-            pass
-        root.create_translation(
-            language=instance, copy_fields=True)
-        for child_page in root.get_descendants():
-            new_page = child_page.specific.create_translation(
+            language=get_default_language()).first()
+        if root:
+            root.create_translation(
                 language=instance, copy_fields=True)
-            new_page.language = instance
-            new_page.move_translation(instance)
+            for child_page in root.get_descendants():
+                new_page = child_page.specific.create_translation(
+                    language=instance, copy_fields=True)
+                new_page.language = instance
+                new_page.move_translation(instance)
 
 
 def register_signal_handlers():
