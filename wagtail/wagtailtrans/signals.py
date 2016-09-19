@@ -63,7 +63,7 @@ def create_new_language_tree(sender, instance, **kwargs):
         return
     for site in Site.objects.all():
         root = TranslatedPage.objects.filter(
-            pk__in=[p.pk for p in site.root_page.get_children()],
+            pk__in=site.root_page.get_children().values_list('pk', flat=True),
             language=get_default_language()).first()
         if root:
             root.create_translation(
