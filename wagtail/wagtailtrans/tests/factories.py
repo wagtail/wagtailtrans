@@ -1,4 +1,3 @@
-import pytest
 import factory
 
 from wagtail.wagtailtrans import models

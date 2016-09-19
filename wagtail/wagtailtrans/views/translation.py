@@ -14,16 +14,16 @@ from wagtail.wagtailtrans.models import (
 
 class TranslationForm(forms.Form):
     copy_from_canonical = forms.BooleanField(required=False)
-    parent_page = forms.ModelChoiceField(queryset=TranslatedPage.objects.filter(
-        language__is_default=False
-    ))
+    parent_page = forms.ModelChoiceField(
+        queryset=TranslatedPage.objects.filter(language__is_default=False))
 
     def __init__(self, *args, **kwargs):
         if kwargs.get('data'):
             super(TranslationForm, self).__init__(*args, **kwargs)
             return
         page = get_object_or_404(TranslatedPage, pk=kwargs.pop('page'))
-        self.language = get_object_or_404(Language, code=kwargs.pop('language'))
+        self.language = get_object_or_404(
+            Language, code=kwargs.pop('language'))
         self.page = page.content_type.get_object_for_this_type(pk=page.pk)
         self.site = self.page.get_site()
         self.base_fields['parent_page'].queryset = self.get_queryset()
