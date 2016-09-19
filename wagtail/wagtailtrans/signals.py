@@ -1,7 +1,8 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
-from wagtail.wagtailcore.models import get_page_models
+from wagtail.wagtailcore.models import get_page_models, Site
 
 from wagtail.wagtailtrans.models import (
     Language, TranslatedPage, get_default_language)
@@ -21,12 +22,18 @@ def synchronize_trees(sender, instance, **kwargs):
         not instance.language.is_default
     ):
         return
-    is_root = not TranslatedPage.objects.filter(
-        ~Q(pk=instance.pk), language=get_default_language()).exists()
+    try:
+        site = instance.get_site()
+    except ObjectDoesNotExist:
+        return
+
+    relatives = TranslatedPage.objects.filter(
+        ~Q(pk=instance.pk), language=get_default_language())
+    relatives = [p for p in relatives if p.get_site() == site]
     for lang in Language.objects.filter(is_default=False):
         new_page = instance.create_translation(language=lang, copy_fields=True)
         new_page.language = lang
-        if not is_root:
+        if relatives:
             new_page.move_translation(lang)
 
 
@@ -54,17 +61,18 @@ def create_new_language_tree(sender, instance, **kwargs):
     """
     if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
         return
-    root = TranslatedPage.objects.filter(
-        language=get_default_language()).order_by('depth').first()
-    if not root:
-        return
-    root.create_translation(
-        language=instance, copy_fields=True)
-    for child_page in root.get_descendants():
-        new_page = child_page.specific.create_translation(
-            language=instance, copy_fields=True)
-        new_page.language = instance
-        new_page.move_translation(instance)
+    for site in Site.objects.all():
+        root = TranslatedPage.objects.filter(
+            pk__in=site.root_page.get_children().values_list('pk', flat=True),
+            language=get_default_language()).first()
+        if root:
+            root.create_translation(
+                language=instance, copy_fields=True)
+            for child_page in root.get_descendants():
+                new_page = child_page.specific.create_translation(
+                    language=instance, copy_fields=True)
+                new_page.language = instance
+                new_page.move_translation(instance)
 
 
 def register_signal_handlers():

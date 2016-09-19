@@ -1,6 +1,7 @@
 import factory
 
 from wagtail.wagtailtrans import models
+from wagtail.wagtailcore.models import Site
 
 
 class LanguageFactory(factory.DjangoModelFactory):
@@ -40,5 +41,27 @@ def create_page_tree(*items):
 
     rootpage = TranslatedPageFactory(title=items[0])
     for item in items[1:]:
+        rootpage = rootpage.add_child(title=item)
+    return rootpage
+
+
+class SiteFactory(factory.DjangoModelFactory):
+    hostname = 'localhost'
+    port = 8000
+    site_name = 'TestSite'
+    root_page = factory.SubFactory(TranslatedPageFactory)
+    is_default_site = True
+
+    class Meta:
+        model = Site
+
+
+def create_site_tree(*items):
+    site = SiteFactory()
+    if not items:
+        items = ['english homepage', 'subpage1', 'subpage2']
+
+    rootpage = site.root_page
+    for item in items:
         rootpage = rootpage.add_child(title=item)
     return rootpage
