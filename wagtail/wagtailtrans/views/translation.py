@@ -72,6 +72,8 @@ class Add(FormView):
             'language': self.language.code,
         }
 
+    # FIXME: Should be checking FORM data instead of POST
+    # CHECKME: Maybe the FormView works with a `def form_valid` as well
     def post(self, *args, **kwargs):
         page = get_object_or_404(TranslatedPage, pk=kwargs['page'])
         parent = get_object_or_404(
