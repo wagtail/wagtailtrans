@@ -13,6 +13,8 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
+from wagtail.wagtailtrans.permissions import create_group_page_permission
+
 
 class Language(models.Model):
     code = models.CharField(
@@ -184,6 +186,9 @@ class TranslatedPage(Page):
                 new_page = new_parent.add_child(instance=new_page)
             else:
                 new_page = self.add_sibling(instance=new_page)
+        if new_page.is_first_of_language(language):
+            create_group_page_permission(new_page, language)
+
         return new_page
 
     def move_translation(self, language):
@@ -205,6 +210,18 @@ class TranslatedPage(Page):
                 if self.language != parent.language:
                     self.language = parent.language
         return self.language
+
+    def is_first_of_language(self, language):
+        """Check if page is first of translation
+
+        :param language: Language instance
+        :return: Boolean
+        """
+        site = self.get_site()
+        translated_pages = TranslatedPage.objects.filter(
+            ~Q(pk=self.pk), language=language)
+        relatives = [p for p in translated_pages if p.get_site() == site]
+        return False if relatives else True
 
 
 @cached_classmethod
