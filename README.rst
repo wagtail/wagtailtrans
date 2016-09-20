@@ -19,5 +19,5 @@ Changes
 Mandatory setting
 =================
 Please define: WAGTAILTRANS_SYNC_TREE = True if you want to keep all
-language trees syncronized. Use WAGTAILTRANS_SYNC_TREE = False to
+language trees synchronized. Use WAGTAILTRANS_SYNC_TREE = False to
 disable sync and have free flowing trees.
