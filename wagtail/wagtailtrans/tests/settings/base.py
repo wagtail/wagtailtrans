@@ -96,8 +96,8 @@ WSGI_APPLICATION = 'wagtail.wagtailtrans.tests.sandbox.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/tmp/sandbox.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'wagtailtrans_sandbox',
     }
 }
 
