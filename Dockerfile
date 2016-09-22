@@ -13,13 +13,14 @@ RUN mkdir -p /opt/sandbox/public/media && \
 COPY ./docker/uwsgi.ini /opt/sandbox/etc/uwsgi.ini
 COPY ./docker/nginx.conf /etc/nginx/sites-enabled/default
 COPY ./docker/supervisor.conf /etc/supervisor/conf.d/supervisord.conf
+COPY ./wagtail/wagtailtrans/tests/sandbox/fixtures/users.json /tmp/users.json
 
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 ADD ./dist /tmp
 RUN pip install --upgrade `find /tmp/ -name '*.tar.gz' | tail -1` --use-wheel
 RUN wagtailtrans.py migrate
-
+RUN wagtailtrans.py loaddata /tmp/users.json
 
 EXPOSE 22 80
 CMD ["/usr/bin/supervisord"]
