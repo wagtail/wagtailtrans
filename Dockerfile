@@ -1,6 +1,6 @@
 FROM python:2.7
 MAINTAINER LUKKIEN <hj.vanhasselaar@lukkien.com>
-ENV DJANGO_SETTINGS_MODULE="wagtail.wagtailtrans.tests.settings"
+ENV DJANGO_SETTINGS_MODULE="wagtail.wagtailtrans.tests.settings.docker"
 
 RUN mkdir -p /opt/sandbox/public/media && \
 	mkdir -p /opt/sandbox/public/static && \
@@ -21,7 +21,7 @@ ADD ./dist /tmp
 RUN pip install --upgrade `find /tmp/ -name '*.tar.gz' | tail -1` --use-wheel && \
     wagtailtrans.py migrate && \
     wagtailtrans.py loaddata /tmp/users.json && \
-    mkdir /usr/local/lib/python2.7/site-packages/wagtail/wagtailtrans/static/ && \
+    mkdir /usr/local/lib/python2.7/site-packages/wagtail/wagtailtrans/tests/static/ && \
     wagtailtrans.py collectstatic --no-input
 
 

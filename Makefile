@@ -1,4 +1,4 @@
-PROJECT = sandbox
+PROJECT = wagtailtrans-sandbox
 
 default: develop
 
