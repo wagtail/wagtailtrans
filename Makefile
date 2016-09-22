@@ -1,3 +1,5 @@
+PROJECT = sandbox
+
 default: develop
 
 clean:
@@ -23,3 +25,17 @@ lint:
 
 isort:
 	isort `find . -name '*.py' -not -path '*/migrations/*'`
+
+
+# Docker commands
+package:
+	python setup.py sdist
+
+build: package
+	docker build -t $(PROJECT) .
+
+run: build
+	docker run --name $(PROJECT) -d -P -p 8000:80 $(PROJECT)
+
+ssh:
+	docker exec -it $(PROJECT) /bin/bash
