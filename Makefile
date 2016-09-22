@@ -1,3 +1,4 @@
+TAG = $(BUILD_NUMBER)
 PROJECT = wagtailtrans-sandbox
 
 default: develop
@@ -39,3 +40,10 @@ run: build
 
 ssh:
 	docker exec -it $(PROJECT) /bin/bash
+
+push: build
+	docker tag $(PROJECT) registry.lukkien.com/$(PROJECT):$(TAG)
+	docker push registry.lukkien.com/$(PROJECT):$(TAG)
+
+deploy-test: push
+	ssh deploy-lukkien@192.168.226.18 ./tools/docker/restart $(PROJECT) $(TAG)

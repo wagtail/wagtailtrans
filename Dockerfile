@@ -1,5 +1,5 @@
 FROM python:2.7
-MAINTAINER LUKKIEN <hj.vanhasselaar@lukkien.com>
+MAINTAINER Henk-Jan van Hasselaar <hj.vanhasselaar@lukkien.com>
 ENV DJANGO_SETTINGS_MODULE="wagtail.wagtailtrans.tests.settings.docker"
 
 RUN mkdir -p /opt/sandbox/public/media && \
@@ -27,4 +27,3 @@ RUN pip install --upgrade `find /tmp/ -name '*.tar.gz' | tail -1` --use-wheel &&
 
 EXPOSE 22 80
 CMD ["/usr/bin/supervisord"]
-
