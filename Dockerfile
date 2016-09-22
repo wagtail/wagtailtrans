@@ -18,9 +18,12 @@ COPY ./wagtail/wagtailtrans/tests/sandbox/fixtures/users.json /tmp/users.json
 RUN echo "daemon off;" >> /etc/nginx/nginx.conf
 
 ADD ./dist /tmp
-RUN pip install --upgrade `find /tmp/ -name '*.tar.gz' | tail -1` --use-wheel
-RUN wagtailtrans.py migrate
-RUN wagtailtrans.py loaddata /tmp/users.json
+RUN pip install --upgrade `find /tmp/ -name '*.tar.gz' | tail -1` --use-wheel && \
+    wagtailtrans.py migrate && \
+    wagtailtrans.py loaddata /tmp/users.json && \
+    mkdir /usr/local/lib/python2.7/site-packages/wagtail/wagtailtrans/static/ && \
+    wagtailtrans.py collectstatic --no-input
+
 
 EXPOSE 22 80
 CMD ["/usr/bin/supervisord"]
