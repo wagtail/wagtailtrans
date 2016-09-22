@@ -13,6 +13,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail.wagtailtrans.tests.settings")  # noqa
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "wagtail.wagtailtrans.tests.settings.docker")  # noqa
 
 application = get_wsgi_application()
