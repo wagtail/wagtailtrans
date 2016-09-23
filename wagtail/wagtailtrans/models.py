@@ -13,7 +13,8 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
-from wagtail.wagtailtrans.permissions import create_group_page_permission
+from wagtail.wagtailtrans.permissions import (
+    create_group_page_permission, TranslatableUserPagePermissionProxy)
 
 
 class Language(models.Model):
@@ -277,3 +278,9 @@ class AbstractTranslationIndexPage(Page):
 
     class Meta:
         abstract = True
+
+
+def page_permissions_for_user(self, user):
+    user_perms = TranslatableUserPagePermissionProxy(user)
+    return user_perms.for_page(self)
+Page.permissions_for_user = page_permissions_for_user

@@ -1,5 +1,7 @@
+from django.conf import settings
 from django.contrib.auth.models import Group
-from wagtail.wagtailcore.models import GroupPagePermission
+from wagtail.wagtailcore.models import (
+    GroupPagePermission, UserPagePermissionsProxy, PagePermissionTester)
 
 
 def get_or_create_language_group(language):
@@ -29,3 +31,16 @@ def create_group_page_permission(page, language):
             page=page,
             permission_type=perm
         )
+
+
+class TranslatablePagePermissionsTester(PagePermissionTester):
+    def can_delete(self):
+        if self.page.specific.canonical_page and settings.WAGTAILTRANS_SYNC_TREE:
+            return False
+        return super(TranslatablePagePermissionsTester, self).can_delete()
+
+
+class TranslatableUserPagePermissionProxy(UserPagePermissionsProxy):
+
+    def for_page(self, page):
+        return TranslatablePagePermissionsTester(self, page)
