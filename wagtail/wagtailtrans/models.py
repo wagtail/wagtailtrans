@@ -14,7 +14,7 @@ from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
 from wagtail.wagtailtrans.permissions import (
-    create_group_page_permission, TranslatableUserPagePermissionProxy)
+    create_group_page_permission, TranslatableUserPagePermissionsProxy)
 
 
 class Language(models.Model):
@@ -245,7 +245,6 @@ def get_edit_handler(cls):
     EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)
     return EditHandler.bind_to_model(cls)
 
-
 TranslatedPage.get_edit_handler = get_edit_handler
 
 
@@ -269,7 +268,8 @@ class AbstractTranslatableSiteRootPage(Page):
     This page should be used as the root page because it will route the
     requests to the right language.
     """
-    def serve(self, request):
+
+    def serve(self, request, *args, **kwargs):
         """Serve TranslatedPages in the correct language
 
         :param request: request object
@@ -292,9 +292,15 @@ class AbstractTranslatableSiteRootPage(Page):
 def page_permissions_for_user(self, user):
     """Patch for the page permissions adding our custom proxy
 
+    Note: Since wagtail doesn't call this method on the
+          specific page we need to patch the default page
+          implementation for this.
+
     :param user: User instance
     :return: user permissions for page
+
     """
-    user_perms = TranslatableUserPagePermissionProxy(user)
+    user_perms = TranslatableUserPagePermissionsProxy(user)
     return user_perms.for_page(self)
+
 Page.permissions_for_user = page_permissions_for_user

@@ -38,6 +38,7 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
     def page_translations_menu(page, page_perms, is_parent=False):
         if not hasattr(page, 'language'):
             return
+
         if hasattr(page, 'canonical_page') and page.canonical_page:
             return
 
@@ -48,6 +49,7 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
             page_perms=page_perms,
             is_parent=is_parent,
             priority=10)
+
 
     @hooks.register('wagtailtrans_dropdown_hook')
     def page_translations_menu_items(page, page_perms, is_parent=False):

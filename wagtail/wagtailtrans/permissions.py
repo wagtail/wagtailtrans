@@ -33,7 +33,8 @@ def create_group_page_permission(page, language):
         )
 
 
-class TranslatablePagePermissionsTester(PagePermissionTester):
+class TranslatablePagePermissionTester(PagePermissionTester):
+    """Custom permissions tester for translatable pages."""
 
     def can_delete(self):
         """Check if a page can be deleted
@@ -45,10 +46,10 @@ class TranslatablePagePermissionsTester(PagePermissionTester):
         has_canonical = getattr(self.page.specific, 'canonical_page', False)
         if has_canonical and settings.WAGTAILTRANS_SYNC_TREE:
             return False
-        return super(TranslatablePagePermissionsTester, self).can_delete()
+        return super(TranslatablePagePermissionTester, self).can_delete()
 
 
-class TranslatableUserPagePermissionProxy(UserPagePermissionsProxy):
+class TranslatableUserPagePermissionsProxy(UserPagePermissionsProxy):
     """Custom Permission proxy to insert our custom tester"""
 
     def for_page(self, page):
@@ -58,4 +59,4 @@ class TranslatableUserPagePermissionProxy(UserPagePermissionsProxy):
         :param page: Page object
         :return: TranslatablePagePermissionsTester instance
         """
-        return TranslatablePagePermissionsTester(self, page)
+        return TranslatablePagePermissionTester(self, page)
