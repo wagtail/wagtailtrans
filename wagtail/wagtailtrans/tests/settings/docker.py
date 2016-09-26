@@ -1,4 +1,4 @@
-from wagtail.wagtailtrans.tests.settings.base import *
+from wagtail.wagtailtrans.tests.settings.base import *  # noqa
 
 STATIC_ROOT = '/opt/sandbox/public/static/'
 MEDIA_ROOT = '/opt/sandbox/public/media/'
