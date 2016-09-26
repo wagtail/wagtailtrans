@@ -17,7 +17,7 @@
                 {% endblocktrans %}
             {% endif %}
         </p>
-        {% get_canonical_pages_count page as translations %}
+        {% get_canonical_pages_for_delete page as translations %}
         {% if translations %}
         <div>
             <p>{% trans 'Deleting this page will also delete the following translated page(s) and theit subpages'%}</p>

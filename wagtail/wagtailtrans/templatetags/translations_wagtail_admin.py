@@ -7,11 +7,11 @@ register = template.Library()
 
 
 @register.simple_tag
-def get_canonical_pages_count(page):
-    """Get the number of translations made for this page
+def get_canonical_pages_for_delete(page):
+    """Get the translations made for this page
 
     :param page: Page instance
-    :return: int
+    :return: queryset or False
     """
     page = page.specific
     if (
@@ -20,4 +20,4 @@ def get_canonical_pages_count(page):
         not page.canonical_page
     ):
         return TranslatedPage.objects.filter(canonical_page=page).all()
-    return 0
+    return False
