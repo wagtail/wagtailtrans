@@ -34,8 +34,10 @@ def create_group_page_permission(page, language):
 
 
 class TranslatablePagePermissionsTester(PagePermissionTester):
+
     def can_delete(self):
-        if self.page.specific.canonical_page and settings.WAGTAILTRANS_SYNC_TREE:
+        has_canonical = getattr(self.page.specific, 'canonical_page', False)
+        if has_canonical and settings.WAGTAILTRANS_SYNC_TREE:
             return False
         return super(TranslatablePagePermissionsTester, self).can_delete()
 
