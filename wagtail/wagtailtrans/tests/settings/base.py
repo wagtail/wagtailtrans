@@ -97,7 +97,10 @@ WSGI_APPLICATION = 'wagtail.wagtailtrans.tests.sandbox.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'wagtailtrans_sandbox',
+        'NAME': os.getenv('POSTGRES_DB', 'wagtailtrans_sandbox'),
+        'HOST': os.getenv('POSTGRES_HOST', ''),
+        'USER': os.getenv('POSTGRES_USER', ''),
+        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
     }
 }
 

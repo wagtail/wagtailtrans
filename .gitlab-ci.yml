@@ -5,35 +5,35 @@ before_script:
 
 stages:
    - lint
-   # - test
+   - test
 
 flake8:
   stage: lint
   script:
     - flake8 wagtail --count
 
-# test:2.7:
-#   stage: test
-#   image: python:2.7
-#   services:
-#     - postgres:latest
-#   variables:
-#     POSTGRES_HOST: postgres
-#     POSTGRES_DB: wagtailtrans_sandbox
-#     POSTGRES_USER: wagtailtrans
-#     POSTGRES_PASSWORD: wagtailtrans
-#   script:
-#     - make test
+test:2.7:
+  stage: test
+  image: python:2.7
+  services:
+    - postgres:latest
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_DB: wagtailtrans_sandbox
+    POSTGRES_USER: wagtailtrans
+    POSTGRES_PASSWORD: wagtailtrans
+  script:
+    py.test -q wagtail/wagtailtrans/tests --tb=short
 
-# test:3.5:
-#   stage: test
-#   image: python:3.5
-#   services:
-#     - postgres:latest
-#   variables:
-#     POSTGRES_HOST: postgres
-#     POSTGRES_DB: wagtailtrans_sandbox
-#     POSTGRES_USER: wagtailtrans
-#     POSTGRES_PASSWORD: wagtailtrans
-#   script:
-#     - make tests
+test:3.5:
+  stage: test
+  image: python:3.5
+  services:
+    - postgres:latest
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_DB: wagtailtrans_sandbox
+    POSTGRES_USER: wagtailtrans
+    POSTGRES_PASSWORD: wagtailtrans
+  script:
+    py.test -q wagtail/wagtailtrans/tests --tb=short
