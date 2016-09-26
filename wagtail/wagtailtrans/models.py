@@ -259,7 +259,7 @@ def get_user_language(request):
         language = Language.objects.filter(
             code=request.LANGUAGE_CODE).first()
         if language:
-            return language.first()
+            return language
     return get_default_language()
 
 
