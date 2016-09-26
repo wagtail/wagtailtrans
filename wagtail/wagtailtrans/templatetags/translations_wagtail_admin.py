@@ -19,5 +19,5 @@ def get_canonical_pages_for_delete(page):
         getattr(page, 'language', False) and
         not page.canonical_page
     ):
-        return TranslatedPage.objects.filter(canonical_page=page).all()
+        return TranslatedPage.objects.filter(canonical_page=page)
     return False
