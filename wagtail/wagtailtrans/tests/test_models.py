@@ -8,7 +8,7 @@ from wagtail.wagtailtrans.models import Language, TranslatedPage
 def languages():
     order = 1
     for code in ['en', 'nl', 'de', 'fr']:
-        Language.objects.create(
+        Language.objects.get_or_create(
             code=code,
             is_default=True,
             order=order,
@@ -20,7 +20,7 @@ def languages():
 class TestLanguage(object):
 
     def test_create(self):
-        en = Language.objects.create(
+        en, created = Language.objects.get_or_create(
             code='en',
             is_default=True,
             order=1,

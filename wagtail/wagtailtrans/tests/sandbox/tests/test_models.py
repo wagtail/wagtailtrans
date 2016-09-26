@@ -6,7 +6,7 @@ from wagtail.wagtailtrans.models import Language
 from wagtail.wagtailtrans.tests.sandbox.models import (
     HomePage, TranslationSiteRootPage)
 
-LANG_CODES = ['en', 'fr', 'de', 'nl']
+LANG_CODES = ['es', 'fr', 'de', 'nl']
 
 
 @pytest.fixture
@@ -54,10 +54,10 @@ class TestTranslationSiteRootPage(object):
 @pytest.mark.django_db
 class TestHomePage(object):
     def test_create(self, languages, sites):
-        site = sites.get(hostname='en.localhost')
+        site = sites.get(hostname='es.localhost')
         request = HttpRequest()
         request.path = '/'
-        request.META['HTTP_HOST'] = 'en.localhost'
+        request.META['HTTP_HOST'] = 'es.localhost'
         request.META['SERVER_PORT'] = 8000
 
         assert Site.find_for_request(request) == site

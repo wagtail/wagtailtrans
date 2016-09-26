@@ -6,7 +6,7 @@ from wagtail.wagtailcore.models import Site
 
 class LanguageFactory(factory.DjangoModelFactory):
     order = 1
-    code = 'en'
+    code = 'en-gb'
     is_default = True
     live = True
 
