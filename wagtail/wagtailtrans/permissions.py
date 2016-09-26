@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.models import Group
+from django.contrib.auth.models import Group, Permission
 from wagtail.wagtailcore.models import (
     GroupPagePermission, UserPagePermissionsProxy, PagePermissionTester)
 
@@ -12,6 +12,10 @@ def get_or_create_language_group(language):
     """
     group, created = Group.objects.get_or_create(
         name='translator-%s' % language.code)
+    if created:
+        group.permissions.add(Permission.objects.get_by_natural_key(
+            u'access_admin', u'wagtailadmin', u'admin'
+        ))
     return group
 
 
