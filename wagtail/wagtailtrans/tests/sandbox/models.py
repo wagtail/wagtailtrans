@@ -6,7 +6,7 @@ from wagtail.wagtailadmin.edit_handlers import FieldPanel
 from wagtail.wagtailcore.fields import RichTextField
 from wagtail.wagtailimages.edit_handlers import ImageChooserPanel
 from wagtail.wagtailtrans.models import (
-    AbstractTranslationIndexPage, TranslatedPage)
+    AbstractTranslatableSiteRootPage, TranslatedPage)
 
 
 class HomePage(TranslatedPage):
@@ -30,5 +30,5 @@ class HomePage(TranslatedPage):
     subpage_types = ['HomePage']
 
 
-class TranslationHomePage(AbstractTranslationIndexPage):
+class TranslatableSiteRootPage(AbstractTranslatableSiteRootPage):
     subpage_types = ['HomePage']

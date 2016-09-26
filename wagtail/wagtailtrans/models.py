@@ -264,8 +264,17 @@ def get_user_languages(request):
     return get_default_language()
 
 
-class AbstractTranslationIndexPage(Page):
+class AbstractTranslatableSiteRootPage(Page):
+    """Root page of any translated site.
+    This page should be used as the root page because it will route the
+    requests to the right language.
+    """
     def serve(self, request):
+        """Serve TranslatedPages in the correct language
+
+        :param request: request object
+        :return: Http403 or Http404
+        """
         languages = get_user_languages(request)
         candidates = TranslatedPage.objects.live().specific().child_of(self)
         for language in languages:
@@ -281,6 +290,11 @@ class AbstractTranslationIndexPage(Page):
 
 
 def page_permissions_for_user(self, user):
+    """Patch for the page permissions adding our custom proxy
+
+    :param user: User instance
+    :return: user permissions for page
+    """
     user_perms = TranslatableUserPagePermissionProxy(user)
     return user_perms.for_page(self)
 Page.permissions_for_user = page_permissions_for_user
