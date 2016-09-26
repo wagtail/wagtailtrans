@@ -44,6 +44,8 @@ class TranslatablePagePermissionsTester(PagePermissionTester):
         """
         has_canonical = getattr(self.page.specific, 'canonical_page', False)
         if has_canonical and settings.WAGTAILTRANS_SYNC_TREE:
+            return False
+        return super(TranslatablePagePermissionsTester, self).can_delete()
 
 
 class TranslatableUserPagePermissionProxy(UserPagePermissionsProxy):
