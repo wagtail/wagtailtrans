@@ -4,7 +4,7 @@ from django.http import HttpRequest
 from wagtail.wagtailcore.models import Site
 from wagtail.wagtailtrans.models import Language
 from wagtail.wagtailtrans.tests.sandbox.models import (
-    HomePage, TranslationSiteRootPage)
+    HomePage, TranslatableSiteRootPage)
 
 LANG_CODES = ['es', 'fr', 'de', 'nl']
 
@@ -24,7 +24,7 @@ def languages():
 @pytest.fixture
 def sites():
     for code in LANG_CODES:
-        site_root = TranslationSiteRootPage.add_root(
+        site_root = TranslatableSiteRootPage.add_root(
             title='site root %s.localhost' % code,
         )
         site_root.save()
@@ -43,9 +43,9 @@ def sites():
 
 
 @pytest.mark.django_db
-class TestTranslationSiteRootPage(object):
+class TestTranslatableSiteRootPage(object):
     def test_create(self):
-        site_root = TranslationSiteRootPage(
+        site_root = TranslatableSiteRootPage(
             title='site root'
         )
         assert site_root

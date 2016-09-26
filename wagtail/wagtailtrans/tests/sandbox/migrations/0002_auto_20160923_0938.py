@@ -6,7 +6,7 @@ from django.db import migrations
 
 
 def create_page_structure(apps, schema_editor):
-    TranslationSiteRootPage = apps.get_model('sandbox', 'TranslationSiteRootPage')
+    TranslatableSiteRootPage = apps.get_model('sandbox','TranslatableSiteRootPage')
     HomePage = apps.get_model('sandbox', 'HomePage')
     Language = apps.get_model('wagtailtrans', 'Language')
     ContentType = apps.get_model('contenttypes.ContentType')
@@ -24,10 +24,10 @@ def create_page_structure(apps, schema_editor):
     )
 
     # Create a new rootpage
-    trans_root = TranslationSiteRootPage.objects.create(
+    trans_root = TranslatableSiteRootPage.objects.create(
         title='translation root',
         slug='translation-root',
-        content_type=ContentType.objects.get_for_model(TranslationSiteRootPage),
+        content_type=ContentType.objects.get_for_model(TranslatableSiteRootPage),
         path='00010001',
         depth=2,
         numchild=1,

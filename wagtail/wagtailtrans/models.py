@@ -264,7 +264,7 @@ def get_user_languages(request):
     return get_default_language()
 
 
-class AbstractTranslationSiteRootPage(Page):
+class AbstractTranslatableSiteRootPage(Page):
     """Root page of any translated site.
     This page should be used as the root page because it will route the
     requests to the right language.
