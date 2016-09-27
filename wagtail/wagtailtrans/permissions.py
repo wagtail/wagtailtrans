@@ -17,9 +17,13 @@ def create_group_permissions(group, language):
         Permission.objects.get_by_natural_key(
             u'change_document', u'wagtaildocs', u'document'),
         Permission.objects.get_by_natural_key(
+            u'delete_document', u'wagtaildocs', u'document'),
+        Permission.objects.get_by_natural_key(
             u'change_image', u'wagtailimages', u'image'),
         Permission.objects.get_by_natural_key(
             u'add_image', u'wagtailimages', u'image'),
+        Permission.objects.get_by_natural_key(
+            u'delete_image', u'wagtailimages', u'image'),
     ]
     # access wagtail admin permission
     group.permissions.add(Permission.objects.get_by_natural_key(
