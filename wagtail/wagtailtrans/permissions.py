@@ -1,7 +1,42 @@
 from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from wagtail.wagtailcore.models import (
-    GroupPagePermission, UserPagePermissionsProxy, PagePermissionTester)
+    GroupPagePermission, UserPagePermissionsProxy, PagePermissionTester,
+    Collection, GroupCollectionPermission)
+
+
+def create_group_permissions(group, language):
+    """create all required permissions on the translator group
+
+    :param group:  Group instance
+    :param language: Language instance
+    """
+    collection_perms = [
+        Permission.objects.get_by_natural_key(
+            u'add_document', u'wagtaildocs', u'document'),
+        Permission.objects.get_by_natural_key(
+            u'change_document', u'wagtaildocs', u'document'),
+        Permission.objects.get_by_natural_key(
+            u'change_image', u'wagtailimages', u'image'),
+        Permission.objects.get_by_natural_key(
+            u'add_image', u'wagtailimages', u'image'),
+    ]
+    # access wagtail admin permission
+    group.permissions.add(Permission.objects.get_by_natural_key(
+        u'access_admin', u'wagtailadmin', u'admin'
+    ))
+
+    collection = Collection.objects.filter(
+        name='collection-%s' % language.code).first()
+    if not collection:
+        root = Collection.objects.first().get_root()
+        collection = root.add_child(name='collection-%s' % language.code)
+        for perm in collection_perms:
+            GroupCollectionPermission.objects.create(
+                permission=perm,
+                group=group,
+                collection=collection
+            )
 
 
 def get_or_create_language_group(language):
@@ -13,9 +48,7 @@ def get_or_create_language_group(language):
     group, created = Group.objects.get_or_create(
         name='translator-%s' % language.code)
     if created:
-        group.permissions.add(Permission.objects.get_by_natural_key(
-            u'access_admin', u'wagtailadmin', u'admin'
-        ))
+        create_group_permissions(group, language)
     return group
 
 
