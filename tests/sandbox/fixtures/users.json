@@ -1,0 +1,20 @@
+[
+{
+    "model": "auth.user",
+    "pk": 1,
+    "fields": {
+        "password": "pbkdf2_sha256$30000$8gCLmYIYblAQ$Z4rYl4j6/0AAKEphMtySmKPUencETmVh51aAY9LfEn4=",
+        "last_login": null,
+        "is_superuser": true,
+        "username": "admin",
+        "first_name": "",
+        "last_name": "",
+        "email": "admin@admin.nl",
+        "is_staff": true,
+        "is_active": true,
+        "date_joined": "2016-09-22T09:34:13.651Z",
+        "groups": [],
+        "user_permissions": []
+    }
+}
+]
