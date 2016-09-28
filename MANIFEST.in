@@ -1,5 +1,4 @@
 include LICENSE
 include README.rst
 
-recursive-include wagtail/wagtailtrans/templates *.*
-recursive-include wagtail/wagtailtrans/tests/sandbox/templates *.*
+recursive-include src/wagtailtrans/templates *.*
