@@ -11,6 +11,12 @@
                             <th>
                                 {% trans "Name" %}
                             </th>
+                            <th>
+                                {% trans "Code" %}
+                            </th>
+                            <th>
+                                {% trans "Is default" %}
+                            </th>
                         </tr>
                     </thead>
                     <tbody>
@@ -19,6 +25,11 @@
                                 <td class="title">
                                     <h2>
                                         <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language.get_code_display }}</a>
+                                    </h2>
+                                </td>
+                                <td class="title">
+                                    <h2>
+                                        {{ language.code }}
                                     </h2>
                                 </td>
                                 {% if language.is_default %}
