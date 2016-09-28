@@ -13,6 +13,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
+from wagtail.wagtailtrans.edit_handlers import ReadOnlyWidget
 from wagtail.wagtailtrans.permissions import (
     create_group_page_permission, TranslatableUserPagePermissionsProxy)
 
@@ -57,6 +58,15 @@ def get_default_language():
 
 
 class AdminTranslatedPageForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminTranslatedPageForm, self).__init__(*args, **kwargs)
+        canonical = self.initial.get('canonical_page', False)
+        if settings.WAGTAILTRANS_SYNC_TREE and canonical:
+            self.fields.get('language').widget = ReadOnlyWidget(
+                text_display=Language.objects.get(pk=self.initial['language']))
+
+            self.fields.get('canonical_page').widget = ReadOnlyWidget(
+                text_display=TranslatedPage.objects.get(pk=canonical))
 
     def clean_language(self):
         return self.instance.force_parent_language(
