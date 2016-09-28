@@ -13,6 +13,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
+from wagtailtrans.edit_handlers import ReadOnlyWidget
 from wagtailtrans.permissions import (
     create_group_page_permission, TranslatableUserPagePermissionsProxy)
 
@@ -50,6 +51,15 @@ def get_default_language():
 
 
 class AdminTranslatedPageForm(WagtailAdminPageForm):
+    def __init__(self, *args, **kwargs):
+        super(AdminTranslatedPageForm, self).__init__(*args, **kwargs)
+        canonical = self.initial.get('canonical_page', False)
+        if settings.WAGTAILTRANS_SYNC_TREE and canonical:
+            self.fields.get('language').widget = ReadOnlyWidget(
+                text_display=Language.objects.get(pk=self.initial['language']))
+
+            self.fields.get('canonical_page').widget = ReadOnlyWidget(
+                text_display=TranslatedPage.objects.get(pk=canonical))
 
     def clean_language(self):
         return self.instance.force_parent_language(
@@ -233,7 +243,7 @@ def get_edit_handler(cls):
 TranslatedPage.get_edit_handler = get_edit_handler
 
 
-def get_user_languages(request):
+def get_user_language(request):
     """Get the Language corresponding to a request.
     return default language if Language does not exist in site
 
@@ -241,10 +251,10 @@ def get_user_languages(request):
     :return: Language instance
     """
     if hasattr(request, 'LANGUAGE_CODE'):
-        languages = Language.objects.filter(
-            code=request.LANGUAGE_CODE)
-        if languages.exists():
-            return languages
+        language = Language.objects.filter(
+            code=request.LANGUAGE_CODE).first()
+        if language:
+            return language
     return get_default_language()
 
 
@@ -260,15 +270,13 @@ class AbstractTranslatableSiteRootPage(Page):
         :param request: request object
         :return: Http403 or Http404
         """
-        languages = get_user_languages(request)
+        language = get_user_language(request)
         candidates = TranslatedPage.objects.live().specific().child_of(self)
-        for language in languages:
-            try:
-                translation = candidates.filter(language=language).get()
-                return redirect(translation.url)
-            except TranslatedPage.DoesNotExist:
-                continue
-        raise Http404
+        try:
+            translation = candidates.filter(language=language).get()
+            return redirect(translation.url)
+        except TranslatedPage.DoesNotExist:
+            raise Http404
 
     class Meta:
         abstract = True

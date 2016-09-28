@@ -2,3 +2,4 @@
 omit =
     wagtail/wagtailtrans/tests/*.py
     wagtail/**/migrations/*.py
+    wagtail/wagtailtrans/wagtail_hooks.py

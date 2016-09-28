@@ -5,7 +5,12 @@ from django.utils.translation import ugettext_lazy
 
 from wagtail.wagtailadmin.views.generic import (
     CreateView, DeleteView, EditView, IndexView)
+from wagtail.wagtailcore.permission_policies import ModelPermissionPolicy
+
 from wagtailtrans.models import Language
+
+
+language_permission_policy = ModelPermissionPolicy(Language)
 
 
 class LanguageForm(forms.ModelForm):
@@ -21,6 +26,7 @@ class LanguageForm(forms.ModelForm):
 
 class Index(IndexView):
     model = Language
+    permission_policy = language_permission_policy
     context_object_name = 'languages'
     template_name = 'wagtailtrans/languages/index.html'
     add_url_name = 'wagtailtrans_languages:add'
@@ -31,6 +37,7 @@ class Index(IndexView):
 
 class Create(CreateView):
     form_class = LanguageForm
+    permission_policy = language_permission_policy
     page_title = ugettext_lazy("Add language")
     success_message = ugettext_lazy("Language '{0}' created.")
     add_url_name = 'wagtailtrans_languages:add'
@@ -41,6 +48,7 @@ class Create(CreateView):
 
 class Edit(EditView):
     model = Language
+    permission_policy = language_permission_policy
     form_class = LanguageForm
     success_message = ugettext_lazy("Language '{0}' updated.")
     error_message = ugettext_lazy(
@@ -55,6 +63,7 @@ class Edit(EditView):
 
 class Delete(DeleteView):
     model = Language
+    permission_policy = language_permission_policy
     success_message = ugettext_lazy("Language '{0}' deleted.")
     index_url_name = 'wagtailtrans_languages:index'
     delete_url_name = 'wagtailtrans_languages:delete'

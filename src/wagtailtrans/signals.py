@@ -6,7 +6,8 @@ from wagtail.wagtailcore.models import get_page_models, Site
 
 from wagtailtrans.models import (
     Language, TranslatedPage, get_default_language)
-from wagtailtrans.permissions import get_or_create_language_group
+from wagtailtrans.permissions import (
+    get_or_create_language_group, create_group_permissions)
 
 
 def synchronize_trees(sender, instance, **kwargs):
@@ -60,7 +61,11 @@ def create_new_language_tree(sender, instance, **kwargs):
     :param instance: Language instance
     :param kwargs: kwargs e.g. created
     """
-    get_or_create_language_group(instance)
+    if kwargs.get('created'):
+        # create group amd fix permissions
+        group = get_or_create_language_group(instance)
+        create_group_permissions(group, instance)
+
     if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
         return
     for site in Site.objects.all():
