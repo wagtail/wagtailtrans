@@ -8,37 +8,25 @@
                 <table class="listing">
                     <thead>
                         <tr>
-                            <th>
-                                {% trans "Name" %}
-                            </th>
-                            <th>
-                                {% trans "Code" %}
-                            </th>
-                            <th>
-                                {% trans "Is default" %}
-                            </th>
+                            <th>{% trans "Name" %}</th>
+                            <th>{% trans "Code" %}</th>
+                            <th>{% trans "Position" %}</th>
+                            <th>{% trans "Default" %}</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for language in languages %}
                             <tr>
                                 <td class="title">
-                                    <h2>
-                                        <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language.get_code_display }}</a>
-                                    </h2>
+                                    <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language.get_code_display }}</a>
                                 </td>
+                                <td class="title">{{ language.code }}</td>
+                                <td>{{ language.order }}</td>
                                 <td class="title">
-                                    <h2>
-                                        {{ language.code }}
-                                    </h2>
-                                </td>
                                 {% if language.is_default %}
-                                <td class="title">
-                                    <h2>
-                                        {% trans 'Default' %}
-                                    </h2>
-                                </td>
+                                    {% trans 'Yes' %}
                                 {% endif %}
+                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>

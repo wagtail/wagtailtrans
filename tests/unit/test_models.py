@@ -6,25 +6,20 @@ from wagtailtrans.models import Language, TranslatedPage
 
 @pytest.fixture
 def languages():
-    order = 1
-    for code in ['en', 'nl', 'de', 'fr']:
+    for i, code in enumerate(['en', 'nl', 'de', 'fr']):
         Language.objects.get_or_create(
-            code=code,
-            is_default=True,
-            order=order,
-            live=True)
-        order += 1
+            code=code, is_default=True, position=i, live=True)
 
 
 @pytest.mark.django_db
 class TestLanguage(object):
 
     def test_create(self):
-        en, created = Language.objects.get_or_create(
-            code='en',
-            is_default=True,
-            order=1,
-            live=True)
+        en, created = Language.objects.get_or_create(code='en', defaults={
+            'is_default': True,
+            'position': 1,
+            'live': True
+        })
         assert isinstance(en, Language)
 
     def test_create_many(self, languages):
@@ -37,28 +32,20 @@ class TestTranslatedPage(object):
 
     def test_create(self, languages):
         language = Language.objects.get(code='en')
-        root = TranslatedPage(
-            language=language,
-            title='root EN'
-        )
+        root = TranslatedPage(language=language, title='root EN')
         assert root.language == language
 
     def create_translation(self, languages, language, copy_fields):
         en = Language.objects.get(code='en')
-        root = Page.add_root(
-            title='Site Root')
+        root = Page.add_root(title='Site Root')
         root.save()
 
         canonical_page = TranslatedPage(
-            slug='test-en',
-            language=en,
-            title='root EN'
-        )
+            slug='test-en', language=en, title='root EN')
         root.add_child(instance=canonical_page)
-
         new_page = canonical_page.create_translation(
-            language=language, copy_fields=copy_fields
-        )
+            language=language, copy_fields=copy_fields)
+
         assert new_page.canonical_page == canonical_page
         return new_page
 
@@ -77,9 +64,8 @@ class TestTranslatedPage(object):
         nl = Language.objects.get(code='nl')
         page_nl = self.create_translation(languages, nl, copy_fields=True)
         subpage = TranslatedPage(
-            slug='sub-nl',
-            language=en,
-            title='Subpage in NL tree')
+            slug='sub-nl', language=en, title='Subpage in NL tree')
+
         assert subpage.language == en
         subpage = page_nl.add_child(instance=subpage)
         assert subpage.language == nl

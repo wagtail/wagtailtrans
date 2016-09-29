@@ -27,7 +27,7 @@ class Language(models.Model):
         Visitors with no language preference will see the site in
         this language
         """)
-    order = models.IntegerField(
+    position = models.IntegerField(
         default=0, help_text="""
         Language choices and translations will be displayed in this
         order
@@ -40,7 +40,7 @@ class Language(models.Model):
         return self.code
 
     class Meta:
-        ordering = ['order']
+        ordering = ['position']
 
     def verbose(self):
         return [x for x in settings.LANGUAGES if x[0] == self.code][0][1]
@@ -132,7 +132,7 @@ class TranslatedPage(Page):
             pages = pages.filter(live=True)
         pages = pages.filter(
             language__live=True
-        ).order_by('language__order')
+        ).order_by('language__position')
         return pages
 
     def create_translation(self, language, copy_fields=False):
