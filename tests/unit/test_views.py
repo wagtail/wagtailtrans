@@ -19,7 +19,7 @@ class TestAddTranslationView(object):
 
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
             self.new_lang = language.LanguageFactory(is_default=False,
-                                                     code='fr', order=2)
+                                                     code='fr', position=2)
 
     def test_get(self, rf):
         request = rf.get('/')
