@@ -14,14 +14,16 @@ class TestSignals(object):
 
     @override_settings(WAGTAILTRANS_SYNC_TREE=True)
     def test_add_language(self):
-        lang = language.LanguageFactory(is_default=False, code='fr', order=2)
+        lang = language.LanguageFactory(is_default=False, code='fr', position=2)
         assert TranslatedPage.objects.filter(language=lang).count() > 1
 
     @override_settings(WAGTAILTRANS_SYNC_TREE=True)
     def test_delete_canonical_page(self):
-        lang = language.LanguageFactory(is_default=False, code='fr', order=2)
+        lang = language.LanguageFactory(is_default=False, code='fr', position=2)
+
         assert TranslatedPage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()
+
         self.last_page.delete()
         assert not TranslatedPage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()

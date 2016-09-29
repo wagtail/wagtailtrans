@@ -23,7 +23,8 @@ class TestTranslationView(object):
     def test_post(self, rf):
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
             parent = pages.TranslatedPageFactory(language=self.page.language)
-            lang = language.LanguageFactory(is_default=False, code='fr', order=2)
+            lang = language.LanguageFactory(
+                is_default=False, code='fr', position=2)
             request = rf.post('/', {'parent_page': parent.pk})
             response = self.view(request, page=self.page.pk, language=lang)
             assert response.status_code == 302

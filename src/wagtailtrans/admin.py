@@ -4,7 +4,7 @@ from wagtailtrans import models
 
 
 class LanguageAdmin(admin.ModelAdmin):
-    list_display = ('code', 'order', 'is_default')
+    list_display = ('code', 'position', 'is_default')
 
 
 class TranslatedPageAdmin(admin.ModelAdmin):

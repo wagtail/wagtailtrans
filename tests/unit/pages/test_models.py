@@ -12,10 +12,7 @@ LANG_CODES = ['es', 'fr', 'de', 'nl']
 def languages():
     order = 1
     for code in LANG_CODES:
-        Language.objects.create(
-            code=code,
-            order=order
-        )
+        Language.objects.create(code=code, position=order)
         order += 1
     return Language.objects.all()
 
