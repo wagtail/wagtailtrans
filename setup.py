@@ -8,6 +8,7 @@ tests_require = [
     'pytest==3.0.2',
     'pytest-django==3.0.0',
     'pytest-warnings==0.1.0',
+    'psycopg2>=2.6',
 ]
 
 setup(
