@@ -38,6 +38,9 @@ build: package
 run: build
 	docker run --name $(PROJECT) -d -P -p 8000:80 $(PROJECT)
 
+destroy:
+	docker rm -f $(PROJECT)
+
 ssh:
 	docker exec -it $(PROJECT) /bin/bash
 
