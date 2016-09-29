@@ -29,11 +29,21 @@ class TestLanguage(object):
 
 @pytest.mark.django_db
 class TestTranslatedPage(object):
+    def setup(self):
+        """Setup a Site root and add an english page.
+
+
+        We'll use this page as canonical page throughout the tests.
+        """
+        en = Language.objects.get(code='en')
+        self.root = Page.add_root(
+            title='Site Root')
+        self.root.save()
+        self.canonical_page = TranslatedPage(language=en, title='root EN')
+        self.root.add_child(instance=self.canonical_page)
 
     def test_create(self, languages):
-        language = Language.objects.get(code='en')
-        root = TranslatedPage(language=language, title='root EN')
-        assert root.language == language
+        assert self.canonical_page.language.code == 'en'
 
     def create_translation(self, languages, language, copy_fields):
         en = Language.objects.get(code='en')
@@ -51,21 +61,28 @@ class TestTranslatedPage(object):
 
     def test_copy_fields(self, languages):
         nl = Language.objects.get(code='nl')
-        page = self.create_translation(languages, nl, copy_fields=True)
+        page = self._create_translation(nl, copy_fields=True)
         assert page.title
 
     def test_no_copy_fields(self, languages):
         nl = Language.objects.get(code='nl')
-        page = self.create_translation(languages, nl, copy_fields=False)
+        page = self._create_translation(nl, copy_fields=False)
         assert page.title
 
     def test_force_parent_language(self, languages):
         en = Language.objects.get(code='en')
         nl = Language.objects.get(code='nl')
-        page_nl = self.create_translation(languages, nl, copy_fields=True)
+        page_nl = self._create_translation(nl, copy_fields=True)
         subpage = TranslatedPage(
             slug='sub-nl', language=en, title='Subpage in NL tree')
 
         assert subpage.language == en
         subpage = page_nl.add_child(instance=subpage)
         assert subpage.language == nl
+
+    def _create_translation(self, language, copy_fields):
+        new_page = self.canonical_page.create_translation(
+            language=language, copy_fields=copy_fields
+        )
+        assert new_page.canonical_page == self.canonical_page
+        return new_page

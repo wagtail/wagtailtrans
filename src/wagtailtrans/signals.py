@@ -68,6 +68,7 @@ def create_new_language_tree(sender, instance, **kwargs):
 
     if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
         return
+
     for site in Site.objects.all():
         root = TranslatedPage.objects.filter(
             pk__in=site.root_page.get_children().values_list('pk', flat=True),

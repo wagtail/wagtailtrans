@@ -104,6 +104,7 @@ class TranslatedPage(Page):
         :param pos: position
         """
         translations = self.get_translations(only_live=False)
+        # TL: replace by ``for page in translations.exclude(pk=self.pk):``?
         for page in translations.filter(~Q(pk=self.pk)):
             # get target because at this point we assume the tree is in sync.
             target = TranslatedPage.objects.filter(
@@ -202,6 +203,7 @@ class TranslatedPage(Page):
         if not parent:
             parent = self.get_parent()
         if parent:
+            # TL: is the following line really necessary?
             parent = parent.content_type.get_object_for_this_type(pk=parent.pk)
             if hasattr(parent, 'language'):
                 if self.language != parent.language:
@@ -215,6 +217,7 @@ class TranslatedPage(Page):
         :return: Boolean
         """
         site = self.get_site()
+        # TL: Change into .exclude
         translated_pages = TranslatedPage.objects.filter(
             ~Q(pk=self.pk), language=language)
         relatives = [p for p in translated_pages if p.get_site() == site]
@@ -280,6 +283,11 @@ class AbstractTranslatableSiteRootPage(Page):
 
     class Meta:
         abstract = True
+
+
+class TranslatableSiteRoot(AbstractTranslatableSiteRootPage):
+    """TODO: Can't we just get rid of the AbstractTranslatableSiteRootPage?"""
+    pass
 
 
 def page_permissions_for_user(self, user):

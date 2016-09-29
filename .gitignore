@@ -9,5 +9,6 @@
 .cache/
 .idea/
 dist/
+/htmlcov/
 
 db.sqlite3

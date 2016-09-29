@@ -1,16 +1,17 @@
 import pytest
 from django.test import override_settings
 
-from wagtailtrans.models import TranslatedPage
-
-from tests.factories import sites, language
+from tests.factories import language, sites
+from wagtailtrans.models import Language, TranslatedPage
 
 
 @pytest.mark.django_db
 class TestSignals(object):
 
     def setup(self):
-        self.last_page = sites.create_site_tree()
+        self.default_language = Language.objects.get(code='en')
+        pages = sites.create_site_tree(language=self.default_language)
+        self.last_page = pages[-1]
 
     @override_settings(WAGTAILTRANS_SYNC_TREE=True)
     def test_add_language(self):
