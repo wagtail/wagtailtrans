@@ -8,11 +8,11 @@ clean:
 	@find src -name '*.egg-info' | xargs rm -rf
 
 develop: clean requirements
-	./sandbox/manage.py migrate
+	@python manage.py migrate
 
 requirements:
-	pip install --upgrade -e .
-	pip install --upgrade -e .[test]
+	@pip install --upgrade -e .
+	@pip install --upgrade -e .[test]
 
 qt:
 	@py.test -q --reuse-db wagtail/wagtailtrans/tests --tb=short

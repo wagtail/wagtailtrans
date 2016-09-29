@@ -1,7 +1,7 @@
 from django import template
 from django.conf import settings
 
-from wagtail.wagtailtrans.models import TranslatedPage
+from wagtailtrans.models import TranslatedPage
 
 register = template.Library()
 

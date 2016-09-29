@@ -1,7 +1,7 @@
 import pytest
-
 from wagtail.wagtailcore.models import Page
-from wagtail.wagtailtrans.models import Language, TranslatedPage
+
+from wagtailtrans.models import Language, TranslatedPage
 
 
 @pytest.fixture

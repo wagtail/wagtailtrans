@@ -2,9 +2,8 @@ import pytest
 from django.http import HttpRequest
 
 from wagtail.wagtailcore.models import Site
-from wagtail.wagtailtrans.models import Language
-from wagtail.wagtailtrans.tests.sandbox.models import (
-    HomePage, TranslatableSiteRootPage)
+from wagtailtrans.models import Language
+from tests._sandbox.pages.models import HomePage, TranslatableSiteRootPage
 
 LANG_CODES = ['es', 'fr', 'de', 'nl']
 
