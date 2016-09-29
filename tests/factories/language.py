@@ -4,7 +4,7 @@ from wagtailtrans import models
 
 
 class LanguageFactory(factory.DjangoModelFactory):
-    order = 1
+    order = 0
     code = 'en-gb'
     is_default = True
     live = True

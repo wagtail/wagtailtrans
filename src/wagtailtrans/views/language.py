@@ -1,6 +1,5 @@
 from __future__ import absolute_import, unicode_literals
 
-from django import forms
 from django.utils.translation import ugettext_lazy
 
 from wagtail.wagtailadmin.views.generic import (
@@ -8,20 +7,9 @@ from wagtail.wagtailadmin.views.generic import (
 from wagtail.wagtailcore.permission_policies import ModelPermissionPolicy
 
 from wagtailtrans.models import Language
-
+from wagtailtrans.forms import LanguageForm
 
 language_permission_policy = ModelPermissionPolicy(Language)
-
-
-class LanguageForm(forms.ModelForm):
-    class Meta:
-        model = Language
-        fields = (
-            'code',
-            'is_default',
-            'order',
-            'live',
-        )
 
 
 class Index(IndexView):

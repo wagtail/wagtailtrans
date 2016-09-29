@@ -1,23 +1,39 @@
-====================================
-Page Translations support to Wagtail
-====================================
+Wagtail multilanguage module
+============================
+
+Features
+========
+
+* Support multiple language for your wagtail site
 
 
-Changes
-~~~~~~~
+Getting started
+===============
 
-- Implement models following RFC9
-- Add Language admin-UI in settings-menu
-- Support storing translated pages
-- Add TAB for translations
-- Add dropdown page menu for adding translations
-- Support copying content of canonical page when creating translation
-- Force language of child-pages to language of parent
+1. To install wagtailtrans, run this command in your terminal:
 
+.. code-block:: console
+    ``pip install wagtailtrans``
 
-=================
-Mandatory setting
-=================
-Please define: WAGTAILTRANS_SYNC_TREE = True if you want to keep all
-language trees synchronized. Use WAGTAILTRANS_SYNC_TREE = False to
-disable sync and have free flowing trees.
+2. Add ``wagtailtrans`` to your INSTALLED_APPS
+
+3. Create a class of type ``AbstractTranslatableSiteRootPage``:
+
+.. code-block:: python
+    class TranslatableSiteRootPage(AbstractTranslatableSiteRootPage):
+        subpage_types = ['TranslatedPage']
+
+4. Perform a migration
+
+.. code-block:: console
+    ``python manage.py migrate wagtailtrans``
+
+You're set!
+
+Settings
+========
+
+The settings ``WAGTAILTRANS_SYNC_TREE`` can be used to configure the module to keep your language trees synchronized or not.
+This is set to ``True`` by default.
+
+Use ``WAGTAILTRANS_SYNC_TREE = False`` to disable sync and have free flowing trees.

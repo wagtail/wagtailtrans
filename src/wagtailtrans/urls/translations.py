@@ -5,6 +5,6 @@ from django.conf.urls import url
 from wagtailtrans.views import translation
 
 urlpatterns = [
-    url(r'^(?P<page>\w+)/add/(?P<language>\w+)/$',
+    url(r'^(?P<page_pk>\w+)/add/(?P<language_code>\w+)/$',
         translation.Add.as_view(), name='add'),
 ]

@@ -74,7 +74,7 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
                 '%s' % lang[1],
                 urlresolvers.reverse(
                     'wagtailtrans_translations:add', kwargs={
-                        'page': page.pk, 'language': language.code}),
+                        'page_pk': page.pk, 'language_code': language.code}),
                 priority=prio)
 
             prio += 1

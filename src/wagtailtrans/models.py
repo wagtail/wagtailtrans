@@ -285,6 +285,11 @@ class AbstractTranslatableSiteRootPage(Page):
         abstract = True
 
 
+class TranslatableSiteRoot(AbstractTranslatableSiteRootPage):
+    """TODO: Can't we just get rid of the AbstractTranslatableSiteRootPage?"""
+    pass
+
+
 def page_permissions_for_user(self, user):
     """Patch for the page permissions adding our custom proxy
 
