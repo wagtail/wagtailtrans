@@ -9,4 +9,5 @@
 .cache/
 .idea/
 dist/
-wagtail/wagtailtrans/media/
+
+db.sqlite3

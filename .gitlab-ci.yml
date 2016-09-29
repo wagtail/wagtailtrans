@@ -12,18 +12,18 @@ flake8:
   script:
     - flake8 wagtail --count
 
-# test:2.7:
-#   stage: test
-#   image: python:2.7
-#   services:
-#     - postgres:latest
-#   variables:
-#     POSTGRES_HOST: postgres
-#     POSTGRES_DB: wagtailtrans_sandbox
-#     POSTGRES_USER: wagtailtrans
-#     POSTGRES_PASSWORD: wagtailtrans
-#   script:
-#     py.test -q wagtail/wagtailtrans/tests --tb=short
+test:2.7:
+  stage: test
+  image: python:2.7
+  services:
+    - postgres:latest
+  variables:
+    POSTGRES_HOST: postgres
+    POSTGRES_DB: wagtailtrans_sandbox
+    POSTGRES_USER: wagtailtrans
+    POSTGRES_PASSWORD: wagtailtrans
+  script:
+    py.test -q tests/ --tb=short
 
 test:3.5:
   stage: test
@@ -36,4 +36,4 @@ test:3.5:
     POSTGRES_USER: wagtailtrans
     POSTGRES_PASSWORD: wagtailtrans
   script:
-    py.test -q wagtail/wagtailtrans/tests --tb=short
+    py.test -q tests/ --tb=short
