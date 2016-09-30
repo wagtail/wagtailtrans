@@ -43,7 +43,7 @@ class Language(models.Model):
         ordering = ['position']
 
     def verbose(self):
-        return [x for x in settings.LANGUAGES if x[0] == self.code][0][1]
+        return dict(settings.LANGUAGES).get(self.code)
 
 
 def get_default_language():

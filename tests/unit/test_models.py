@@ -2,8 +2,7 @@ import pytest
 from wagtail.wagtailcore.models import Page
 
 from wagtailtrans import models
-
-
+from tests.factories.language import LanguageFactory
 
 
 @pytest.mark.django_db
@@ -20,6 +19,10 @@ class TestLanguage(object):
     def test_create_many(self, languages):
         assert models.Language.objects.count() == 5
 
+    def test_verbose(self):
+        language = LanguageFactory()
+        assert language.verbose() == 'British English'
+
 
 @pytest.mark.django_db
 class TestTranslatablePage(object):
@@ -33,7 +36,8 @@ class TestTranslatablePage(object):
         self.root = Page.add_root(
             title='Site Root')
         self.root.save()
-        self.canonical_page = models.TranslatablePage(language=en, title='root EN')
+        self.canonical_page = models.TranslatablePage(
+            language=en, title='root EN')
         self.root.add_child(instance=self.canonical_page)
 
     def test_create(self, languages):
