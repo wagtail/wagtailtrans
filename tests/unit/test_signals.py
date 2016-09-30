@@ -2,7 +2,7 @@ import pytest
 from django.test import override_settings
 
 from tests.factories import language, sites
-from wagtailtrans.models import Language, TranslatedPage
+from wagtailtrans.models import Language, TranslatablePage
 
 
 @pytest.mark.django_db
@@ -16,15 +16,15 @@ class TestSignals(object):
     @override_settings(WAGTAILTRANS_SYNC_TREE=True)
     def test_add_language(self):
         lang = language.LanguageFactory(is_default=False, code='fr', position=2)
-        assert TranslatedPage.objects.filter(language=lang).count() > 1
+        assert TranslatablePage.objects.filter(language=lang).count() > 1
 
     @override_settings(WAGTAILTRANS_SYNC_TREE=True)
     def test_delete_canonical_page(self):
         lang = language.LanguageFactory(is_default=False, code='fr', position=2)
 
-        assert TranslatedPage.objects.filter(
+        assert TranslatablePage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()
 
         self.last_page.delete()
-        assert not TranslatedPage.objects.filter(
+        assert not TranslatablePage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()

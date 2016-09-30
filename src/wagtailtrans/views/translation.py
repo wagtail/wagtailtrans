@@ -7,7 +7,7 @@ from wagtail.wagtailadmin.edit_handlers import (FieldPanel, ObjectList,
                                                 TabbedInterface)
 
 from wagtailtrans.forms import TranslationForm
-from wagtailtrans.models import Language, TranslatedPage
+from wagtailtrans.models import Language, TranslatablePage
 
 
 class Add(FormView):
@@ -27,7 +27,7 @@ class Add(FormView):
     ])
 
     def dispatch(self, request, page_pk, language_code, *args, **kwargs):
-        self.page = get_object_or_404(TranslatedPage, pk=page_pk)
+        self.page = get_object_or_404(TranslatablePage, pk=page_pk)
         self.language = get_object_or_404(Language, code=language_code)
         return super(Add, self).dispatch(request, *args, **kwargs)
 

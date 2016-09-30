@@ -50,23 +50,24 @@ def get_default_language():
     return Language.objects.filter(live=True, is_default=True).first()
 
 
-class AdminTranslatedPageForm(WagtailAdminPageForm):
+class AdminTranslatablePageForm(WagtailAdminPageForm):
+
     def __init__(self, *args, **kwargs):
-        super(AdminTranslatedPageForm, self).__init__(*args, **kwargs)
+        super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
         canonical = self.initial.get('canonical_page', False)
         if settings.WAGTAILTRANS_SYNC_TREE and canonical:
             self.fields.get('language').widget = ReadOnlyWidget(
                 text_display=Language.objects.get(pk=self.initial['language']))
 
             self.fields.get('canonical_page').widget = ReadOnlyWidget(
-                text_display=TranslatedPage.objects.get(pk=canonical))
+                text_display=TranslatablePage.objects.get(pk=canonical))
 
     def clean_language(self):
         return self.instance.force_parent_language(
             self.parent_page) or get_default_language()
 
 
-class TranslatedPage(Page):
+class TranslatablePage(Page):
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
@@ -80,19 +81,19 @@ class TranslatedPage(Page):
         ])
     ]
 
-    base_form_class = AdminTranslatedPageForm
+    base_form_class = AdminTranslatablePageForm
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
-        return super(TranslatedPage, self).serve(request, *args, **kwargs)
+        return super(TranslatablePage, self).serve(request, *args, **kwargs)
 
     def save(self, *args, **kwargs):
-        super(TranslatedPage, self).save(*args, **kwargs)
+        super(TranslatablePage, self).save(*args, **kwargs)
         if hasattr(self, 'force_parent_language'):
             self.force_parent_language()
 
     def move(self, target, pos=None):
-        super(TranslatedPage, self).move(target, pos)
+        super(TranslatablePage, self).move(target, pos)
 
         if settings.WAGTAILTRANS_SYNC_TREE and self.language.is_default:
             self.move_translated_pages(canonical_target=target, pos=pos)
@@ -100,14 +101,16 @@ class TranslatedPage(Page):
     def move_translated_pages(self, canonical_target, pos=None):
         """Move only the translated pages of this instance (not self)
         this is only called when WAGTAILTRANS_SYNC_TREE is enabled
+
         :param canonical_target: Parent of the canonical page
         :param pos: position
+
         """
         translations = self.get_translations(only_live=False)
         # TL: replace by ``for page in translations.exclude(pk=self.pk):``?
         for page in translations.filter(~Q(pk=self.pk)):
             # get target because at this point we assume the tree is in sync.
-            target = TranslatedPage.objects.filter(
+            target = TranslatablePage.objects.filter(
                 language=page.language, canonical_page=canonical_target).get()
             page.move(target=target, pos=pos)
 
@@ -115,16 +118,17 @@ class TranslatedPage(Page):
         """Get translation of this page
 
         :param only_live: Boolean to filter on live pages
-        :return: TranslatedPage instance
+        :return: TranslatablePage instance
+
         """
         if self.canonical_page:
-            pages = TranslatedPage.objects.filter(
+            pages = TranslatablePage.objects.filter(
                 Q(canonical_page=self) |
                 Q(canonical_page=self.canonical_page) |
                 Q(pk=self.canonical_page.pk)
             )
         else:
-            pages = TranslatedPage.objects.filter(
+            pages = TranslatablePage.objects.filter(
                 Q(canonical_page=self) |
                 Q(pk=self.pk)
             )
@@ -144,8 +148,9 @@ class TranslatedPage(Page):
         :param copy_fields: Boolean specifying if the content should be copied
         :param trans_root: Boolean specifying if instance is a translation root
         :return: new Translated page (or subclass) instance
+
         """
-        if TranslatedPage.objects.filter(
+        if TranslatablePage.objects.filter(
                 canonical_page=self,
                 language=language).exists():
             raise Exception("Translation already exists")
@@ -190,7 +195,7 @@ class TranslatedPage(Page):
         return new_page
 
     def move_translation(self, language):
-        new_parent = TranslatedPage.objects.get(
+        new_parent = TranslatablePage.objects.get(
             canonical_page=self.get_parent(), language=language)
         self.move(new_parent, pos='last-child')
 
@@ -199,6 +204,7 @@ class TranslatedPage(Page):
 
         :param parent: Parent page of self
         :return: Language instance
+
         """
         if not parent:
             parent = self.get_parent()
@@ -215,10 +221,11 @@ class TranslatedPage(Page):
 
         :param language: Language instance
         :return: Boolean
+
         """
         site = self.get_site()
         # TL: Change into .exclude
-        translated_pages = TranslatedPage.objects.filter(
+        translated_pages = TranslatablePage.objects.filter(
             ~Q(pk=self.pk), language=language)
         relatives = [p for p in translated_pages if p.get_site() == site]
         return False if relatives else True
@@ -243,7 +250,7 @@ def get_edit_handler(cls):
     EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)
     return EditHandler.bind_to_model(cls)
 
-TranslatedPage.get_edit_handler = get_edit_handler
+TranslatablePage.get_edit_handler = get_edit_handler
 
 
 def get_user_language(request):
@@ -261,33 +268,28 @@ def get_user_language(request):
     return get_default_language()
 
 
-class AbstractTranslatableSiteRootPage(Page):
-    """Root page of any translated site.
-    This page should be used as the root page because it will route the
-    requests to the right language.
+class TranslatableSiteRootPage(Page):
+    """Root page of any translatable site.
+
+    This page should be used as the root page because it will
+    route the requests to the right language.
+
     """
 
     def serve(self, request, *args, **kwargs):
-        """Serve TranslatedPages in the correct language
+        """Serve TranslatablePage in the correct language
 
         :param request: request object
         :return: Http403 or Http404
+
         """
         language = get_user_language(request)
-        candidates = TranslatedPage.objects.live().specific().child_of(self)
+        candidates = TranslatablePage.objects.live().specific().child_of(self)
         try:
             translation = candidates.filter(language=language).get()
             return redirect(translation.url)
-        except TranslatedPage.DoesNotExist:
+        except TranslatablePage.DoesNotExist:
             raise Http404
-
-    class Meta:
-        abstract = True
-
-
-class TranslatableSiteRoot(AbstractTranslatableSiteRootPage):
-    """TODO: Can't we just get rid of the AbstractTranslatableSiteRootPage?"""
-    pass
 
 
 def page_permissions_for_user(self, user):

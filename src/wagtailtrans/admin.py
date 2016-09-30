@@ -7,9 +7,9 @@ class LanguageAdmin(admin.ModelAdmin):
     list_display = ('code', 'position', 'is_default')
 
 
-class TranslatedPageAdmin(admin.ModelAdmin):
+class TranslatablePageAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug', 'language')
 
 
 admin.site.register(models.Language, LanguageAdmin)
-admin.site.register(models.TranslatedPage, TranslatedPageAdmin)
+admin.site.register(models.TranslatablePage, TranslatablePageAdmin)
