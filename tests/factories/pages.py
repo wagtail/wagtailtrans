@@ -26,7 +26,7 @@ class TranslatedPageFactory(factory.DjangoModelFactory):
     def _build(cls, *args, **kwargs):
         obj = super(TranslatedPageFactory, cls)._build(*args, **kwargs)
         if not obj.title:
-            obj.title = "Page ({})".format(obj.language.code)
+            obj.title = "Page-{}".format(obj.language.code)
         return obj
 
 

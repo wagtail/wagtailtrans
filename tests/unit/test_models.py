@@ -1,5 +1,7 @@
 import pytest
 from django.core.exceptions import ValidationError
+from django.test import override_settings
+from django.utils import six
 from wagtail.wagtailcore.models import Page
 
 from tests.factories.language import LanguageFactory
@@ -22,6 +24,10 @@ class TestLanguage(object):
 
     def test_create_many(self, languages):
         assert models.Language.objects.count() == 5
+
+    def test_str(self):
+        language = LanguageFactory()
+        assert six.text_type(language) == 'en-gb'
 
     def test_verbose(self):
         language = LanguageFactory()
@@ -151,6 +157,123 @@ class TestTranslatablePage(object):
 
         assert not subpage.is_first_of_language()
         assert not self.en_root.is_first_of_language()
+
+    def test_get_translations(self, languages):
+        """Test `get_translations()`."""
+        nl = languages.get(code='nl')
+        fr = languages.get(code='fr')
+
+        nl_root = self.en_root.create_translation(
+            language=nl, copy_fields=True)
+        fr_root = self.en_root.create_translation(
+            language=fr, copy_fields=True)
+
+        # Let's only make nl_root live
+        nl_root.live = True
+        nl_root.save()
+
+        en_translations = [p.specific for p in self.en_root.get_translations(
+            only_live=False)]
+        assert nl_root in en_translations
+        assert fr_root in en_translations
+        assert self.en_root not in en_translations
+
+        nl_translations = [p.specific for p in nl_root.get_translations(
+            only_live=False)]
+        assert self.en_root in nl_translations
+        assert fr_root in nl_translations
+        assert nl_root not in nl_translations
+
+        fr_translations = [p.specific for p in fr_root.get_translations(
+            only_live=False)]
+        assert self.en_root in fr_translations
+        assert nl_root in fr_translations
+        assert fr_root not in fr_translations
+
+        # Some variations
+        en_translations = [p.specific for p in self.en_root.get_translations()]
+        assert nl_root in en_translations
+        assert fr_root not in en_translations
+        assert self.en_root not in en_translations
+
+        en_translations = [p.specific for p in self.en_root.get_translations(
+            include_self=True, only_live=False)]
+        assert nl_root in en_translations
+        assert fr_root in en_translations
+        assert self.en_root in en_translations
+
+    def test_move_translated_pages(self, languages):
+        """Test `move_translated_pages()`."""
+        en = languages.get(code='en')
+        nl = languages.get(code='nl')
+
+        # Let's first create the following structure
+        #
+        #    en_root
+        #         |- subpage1
+        #         |        |- leaf_page
+        #         |- subpage2
+        #    nl_root
+        #         |- subpage1
+        #         |        |- leaf_page
+        #         |- subpage2
+
+        nl_root = self.en_root.create_translation(
+            language=nl, copy_fields=True)
+        subpage1 = TranslatedPageFactory.build(language=en,
+                                               title='subpage1 in EN tree')
+        subpage2 = TranslatedPageFactory.build(language=en,
+                                               title='subpage2 in EN tree')
+
+        leaf_page = TranslatedPageFactory.build(language=en,
+                                                title='leafpage in EN tree')
+        self.en_root.add_child(instance=subpage1)
+        self.en_root.add_child(instance=subpage2)
+        subpage1.add_child(instance=leaf_page)
+
+        nl_subpage1 = TranslatedPageFactory.build(language=nl,
+                                                  title='subpage1 in NL tree',
+                                                  canonical_page=subpage1)
+        nl_subpage2 = TranslatedPageFactory.build(language=nl,
+                                                  title='subpage2 in NL tree',
+                                                  canonical_page=subpage2)
+        nl_leaf_page = TranslatedPageFactory.build(language=nl,
+                                                   title='leafpage in NL tree',
+                                                   canonical_page=leaf_page)
+        nl_root.add_child(instance=nl_subpage1)
+        nl_root.add_child(instance=nl_subpage2)
+        nl_subpage1.add_child(instance=nl_leaf_page)
+
+        # Sanitiy checks
+        assert len(subpage1.get_children()) == 1
+        assert len(subpage2.get_children()) == 0
+        assert len(nl_subpage1.get_children()) == 1
+        assert len(nl_subpage2.get_children()) == 0
+
+        def _refresh():
+            subpage1.refresh_from_db()
+            subpage2.refresh_from_db()
+            nl_subpage1.refresh_from_db()
+            nl_subpage2.refresh_from_db()
+
+        # Let's now move the leave page from subpage1 to subpage2
+        # and see if the translated pages will follow
+        with override_settings(WAGTAILTRANS_SYNC_TREE=False):
+            leaf_page.move(subpage2, pos='last-child')
+        _refresh()
+
+        assert len(subpage1.get_children()) == 0
+        assert len(subpage2.get_children()) == 1
+        assert len(nl_subpage1.get_children()) == 1
+        assert len(nl_subpage2.get_children()) == 0
+
+        leaf_page.move_translated_pages(subpage2)
+        _refresh()
+
+        assert len(subpage1.get_children()) == 0
+        assert len(subpage2.get_children()) == 1
+        assert len(nl_subpage1.get_children()) == 0
+        assert len(nl_subpage2.get_children()) == 1
 
 
 @pytest.mark.django_db

@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import activate, ugettext_lazy
+from django.utils.encoding import python_2_unicode_compatible
 
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
@@ -20,12 +21,17 @@ from .permissions import (
 
 
 class LanguageManager(models.Manager):
+    """Custom manager for the `Language` model."""
+
     def default(self):
         """Return the first choice of default languages."""
         return self.filter(live=True, is_default=True).first()
 
 
+@python_2_unicode_compatible
 class Language(models.Model):
+    """User defined language."""
+
     code = models.CharField(
         max_length=12, choices=settings.LANGUAGES, unique=True,
         help_text="One of the languages defined in LANGUAGES")
@@ -56,6 +62,7 @@ class Language(models.Model):
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
+    """Form to be used in the wagtail admin."""
 
     def __init__(self, *args, **kwargs):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
@@ -75,7 +82,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 def _language_default():
     return Language.objects.default()
 
-
+@python_2_unicode_compatible
 class TranslatablePage(Page):
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
@@ -92,14 +99,24 @@ class TranslatablePage(Page):
 
     base_form_class = AdminTranslatablePageForm
 
+    def __str__(self):
+        return "{} ({})".format(self.title, self.language)
+
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
         return super(TranslatablePage, self).serve(request, *args, **kwargs)
 
-    def move(self, target, pos=None):
+    def move(self, target, pos=None, suppress_sync=False):
+        """Move the page to another target.
+
+        :param target: the new target to move the page to
+        :param pos: position of the page in the new target
+        :param suppress_sync: suppress syncing the translated pages
+        """
         super(TranslatablePage, self).move(target, pos)
 
-        if settings.WAGTAILTRANS_SYNC_TREE and self.language.is_default:
+        if not suppress_sync and settings.WAGTAILTRANS_SYNC_TREE and \
+           self.language.is_default:
             self.move_translated_pages(canonical_target=target, pos=pos)
 
     def move_translated_pages(self, canonical_target, pos=None):
@@ -112,38 +129,38 @@ class TranslatablePage(Page):
 
         """
         translations = self.get_translations(only_live=False)
-        # TL: replace by ``for page in translations.exclude(pk=self.pk):``?
-        for page in translations.filter(~Q(pk=self.pk)):
+
+        for page in translations:
             # get target because at this point we assume the tree is in sync.
             target = TranslatablePage.objects.filter(
                 language=page.language, canonical_page=canonical_target).get()
-            page.move(target=target, pos=pos)
+            page.move(target=target, pos=pos, suppress_sync=True)
 
-    def get_translations(self, only_live=True):
+    def get_translations(self, only_live=True, include_self=False):
         """Get translation of this page.
 
         :param only_live: Boolean to filter on live pages
+        :param include_self: Should this page be part of the result set
         :return: TranslatablePage instance
-
         """
-        if self.canonical_page:
-            pages = TranslatablePage.objects.filter(
-                Q(canonical_page=self) |
-                Q(canonical_page=self.canonical_page) |
-                Q(pk=self.canonical_page.pk)
-            )
-        else:
-            pages = TranslatablePage.objects.filter(
-                Q(canonical_page=self) |
-                Q(pk=self.pk)
-            )
+        canonical_page = self.canonical_page
+        if not canonical_page:
+            canonical_page = self
+
+        translations = TranslatablePage.objects.filter(
+            Q(canonical_page=canonical_page) |
+            Q(pk=canonical_page.pk)
+        )
 
         if only_live:
-            pages = pages.filter(live=True)
-        pages = pages.filter(
+            translations = translations.filter(live=True)
+        if not include_self:
+            translations = translations.exclude(pk=self.pk)
+        translations = translations.filter(
             language__live=True
         ).order_by('language__position')
-        return pages
+
+        return translations
 
     def create_translation(self, language, copy_fields=False):
         """Create a translation for this page.
