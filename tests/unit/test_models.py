@@ -1,19 +1,20 @@
 import pytest
 from wagtail.wagtailcore.models import Page
 
-from wagtailtrans import models
 from tests.factories.language import LanguageFactory
+from wagtailtrans import models
 
 
 @pytest.mark.django_db
 class TestLanguage(object):
 
     def test_create(self):
-        en, created = models.Language.objects.get_or_create(code='en', defaults={
-            'is_default': True,
-            'position': 1,
-            'live': True
-        })
+        en, created = models.Language.objects.get_or_create(
+            code='en', defaults={
+                'is_default': True,
+                'position': 1,
+                'live': True
+            })
         assert isinstance(en, models.Language)
 
     def test_create_many(self, languages):
@@ -22,6 +23,9 @@ class TestLanguage(object):
     def test_verbose(self):
         language = LanguageFactory()
         assert language.verbose() == 'British English'
+
+    def test_default(self, languages):
+        assert models.Language.objects.default().code == 'en'
 
 
 @pytest.mark.django_db
@@ -84,7 +88,6 @@ class TestTranslatablePage(object):
         )
         assert new_page.canonical_page == self.canonical_page
         return new_page
-
 
 
 @pytest.mark.django_db
