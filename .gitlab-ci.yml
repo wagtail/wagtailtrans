@@ -2,7 +2,6 @@ before_script:
    - pip install psycopg2
    - pip install -e .[test]
 
-
 stages:
    - lint
    - test
