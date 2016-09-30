@@ -1,7 +1,7 @@
 from django import template
 from django.conf import settings
 
-from wagtailtrans.models import TranslatedPage
+from wagtailtrans.models import TranslatablePage
 
 register = template.Library()
 
@@ -19,5 +19,5 @@ def get_canonical_pages_for_delete(page):
         getattr(page, 'language', False) and
         not page.canonical_page
     ):
-        return TranslatedPage.objects.filter(canonical_page=page)
+        return TranslatablePage.objects.filter(canonical_page=page)
     return False

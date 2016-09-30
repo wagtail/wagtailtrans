@@ -10,7 +10,7 @@ class TranslatableSiteRootFactory(factory.DjangoModelFactory):
     path = '0001'
 
     class Meta:
-        model = models.TranslatableSiteRoot
+        model = models.TranslatableSiteRootPage
 
 
 class TranslatedPageFactory(factory.DjangoModelFactory):
@@ -18,4 +18,4 @@ class TranslatedPageFactory(factory.DjangoModelFactory):
     title = 'Foo Bar'
 
     class Meta:
-        model = models.TranslatedPage
+        model = models.TranslatablePage

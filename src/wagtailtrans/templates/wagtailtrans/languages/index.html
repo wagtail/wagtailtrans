@@ -21,7 +21,7 @@
                                     <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language.get_code_display }}</a>
                                 </td>
                                 <td class="title">{{ language.code }}</td>
-                                <td>{{ language.order }}</td>
+                                <td>{{ language.position }}</td>
                                 <td class="title">
                                 {% if language.is_default %}
                                     {% trans 'Yes' %}

@@ -60,7 +60,7 @@ def create_group_page_permission(page, language):
     """Create new GroupPagePermissions for
     the newly created page
 
-    :param page: TranslatedPage instance
+    :param page: TranslatablePage instance
     :param language: Language instance
     """
     translator_perms = ['edit', 'publish']
