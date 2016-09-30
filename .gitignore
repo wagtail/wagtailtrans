@@ -9,6 +9,7 @@
 .cache/
 .idea/
 dist/
+/tests/_sandbox/assets
 /htmlcov/
 
 db.sqlite3

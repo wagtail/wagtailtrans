@@ -13,8 +13,9 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
-from wagtailtrans.edit_handlers import ReadOnlyWidget
-from wagtailtrans.permissions import (
+from .exceptions import TranslationMutationError
+from .edit_handlers import ReadOnlyWidget
+from .permissions import (
     create_group_page_permission, TranslatableUserPagePermissionsProxy)
 
 
@@ -94,11 +95,6 @@ class TranslatablePage(Page):
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
         return super(TranslatablePage, self).serve(request, *args, **kwargs)
-
-    def save(self, *args, **kwargs):
-        super(TranslatablePage, self).save(*args, **kwargs)
-        if hasattr(self, 'force_parent_language'):
-            self.force_parent_language()
 
     def move(self, target, pos=None):
         super(TranslatablePage, self).move(target, pos)
@@ -200,18 +196,59 @@ class TranslatablePage(Page):
                 new_page = new_parent.add_child(instance=new_page)
             else:
                 new_page = self.add_sibling(instance=new_page)
-        if new_page.is_first_of_language(language):
+        if new_page.is_first_of_language():
             create_group_page_permission(new_page, language)
 
         return new_page
 
     def move_translation(self, language):
-        new_parent = TranslatablePage.objects.get(
-            canonical_page=self.get_parent(), language=language)
+        """Place the page in the correct language tree.
+
+        TODO: rename this method to change_language.
+        However, it is being used by `signals` and there it is explicitally
+        used to move the page (which is already set to the correct language) to
+        the right place in the tree. We'll have to decide what
+        the best design is
+
+        :param language: the `Language` of the tree to move to
+        """
+        parent = self.get_parent()
+        if not parent:
+            raise TranslationMutationError("No parent found, don't know where "
+                                           "to place the modified page.")
+        parent = parent.specific
+
+        canonical_parent = parent.canonical_page
+        if not canonical_parent:
+            # If None it usually means the page it self is a canonical page
+            # (so part of a default language).
+            # No need to check for the language being default or not, we
+            # cannot do much with that information anyway
+            canonical_parent = parent
+
+        try:
+            new_parent = TranslatablePage.objects.get(
+                Q(canonical_page=canonical_parent) | Q(pk=canonical_parent.pk),
+                language=language
+            )
+        except TranslatablePage.DoesNotExist:
+            raise TranslationMutationError(
+                "No new parent found, don't know where "
+                "to place the modified page.")
+
+        self.language = language
+        self.save()
         self.move(new_parent, pos='last-child')
 
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
+
+        TODO: This used to be called from the `save()` method, but
+        afterwards wasn't saved. Saving it would lead to recursion
+        errors especially in combination with the defined signal handlers.
+        We'll have to see if we can perform `force_parent_language` upon
+        save (either by override `save()` or by using
+        `pre_save` or `post_save` signals)
 
         :param parent: Parent page of self
         :return: Language instance
@@ -220,24 +257,22 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_parent()
         if parent:
-            # TL: is the following line really necessary?
-            parent = parent.content_type.get_object_for_this_type(pk=parent.pk)
-            if hasattr(parent, 'language'):
-                if self.language != parent.language:
-                    self.language = parent.language
+            parent = parent.specific  # Get the specific instance
+            if isinstance(parent, TranslatablePage) and \
+               self.language != parent.language:
+                self.language = parent.language
+                self.save()
         return self.language
 
-    def is_first_of_language(self, language):
+    def is_first_of_language(self):
         """Check if page is first of translation.
 
         :param language: Language instance
         :return: Boolean
-
         """
         site = self.get_site()
-        # TL: Change into .exclude
         translated_pages = TranslatablePage.objects.filter(
-            ~Q(pk=self.pk), language=language)
+            language=self.language).exclude(pk=self.pk)
         relatives = [p for p in translated_pages if p.get_site() == site]
         return False if relatives else True
 

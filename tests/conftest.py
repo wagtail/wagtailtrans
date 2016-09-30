@@ -34,10 +34,15 @@ def sites():
         site_root.save()
         language = Language.objects.get(code=code)
         page = HomePage(
-            title='%s title' % code, language=language, body=u'%s body' % code)
+            title='{} title'.format(code),
+            subtitle='{} subtitle'.format(code),
+            language=language,
+            body=u'{} body'.format(code))
         site_root.add_child(instance=page)
         Site.objects.create(
-            hostname='%s.localhost' % code, port=8000, root_page=site_root)
+            hostname='{}.localhost'.format(code),
+            port=8000,
+            root_page=site_root)
     return Site.objects.all()
 
 
