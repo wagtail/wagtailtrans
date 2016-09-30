@@ -267,7 +267,7 @@ class TestTranslatablePage(object):
         assert len(nl_subpage1.get_children()) == 1
         assert len(nl_subpage2.get_children()) == 0
 
-        leaf_page.move_translated_pages(subpage2)
+        leaf_page.move_translated_pages(subpage2, pos='last-child')
         _refresh()
 
         assert len(subpage1.get_children()) == 0
