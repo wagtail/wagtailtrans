@@ -253,8 +253,10 @@ class TestTranslatablePage(object):
         def _refresh():
             subpage1.refresh_from_db()
             subpage2.refresh_from_db()
+            leaf_page.refresh_from_db()
             nl_subpage1.refresh_from_db()
             nl_subpage2.refresh_from_db()
+            nl_leaf_page.refresh_from_db()
 
         # Let's now move the leave page from subpage1 to subpage2
         # and see if the translated pages will follow
@@ -274,6 +276,16 @@ class TestTranslatablePage(object):
         assert len(subpage2.get_children()) == 1
         assert len(nl_subpage1.get_children()) == 0
         assert len(nl_subpage2.get_children()) == 1
+
+        # Test vice-versa, and now by just calling `move`.
+        # That should trigger move_translated_pages for us
+        nl_leaf_page.move(nl_subpage1, pos='last-child')
+        _refresh()
+
+        assert len(subpage1.get_children()) == 1
+        assert len(subpage2.get_children()) == 0
+        assert len(nl_subpage1.get_children()) == 1
+        assert len(nl_subpage2.get_children()) == 0
 
 
 @pytest.mark.django_db

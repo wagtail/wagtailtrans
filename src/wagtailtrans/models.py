@@ -129,11 +129,15 @@ class TranslatablePage(Page):
 
         """
         translations = self.get_translations(only_live=False)
+        if canonical_target.canonical_page:
+            canonical_target = canonical_target.canonical_page
 
         for page in translations:
             # get target because at this point we assume the tree is in sync.
             target = TranslatablePage.objects.filter(
-                language=page.language, canonical_page=canonical_target).get()
+                language=page.language).filter(
+                Q(canonical_page=canonical_target) | Q(pk=canonical_target.pk)
+            ).get()
             page.move(target=target, pos=pos, suppress_sync=True)
 
     def get_translations(self, only_live=True, include_self=False):
