@@ -17,27 +17,19 @@ def synchronize_trees(sender, instance, **kwargs):
     :param sender: Sender model
     :param instance: TranslatablePage instance
     :param kwargs: kwargs e.g. created
+
     """
     if (
         not kwargs.get('created') or
         not settings.WAGTAILTRANS_SYNC_TREE or
         not getattr(instance, 'language', False) or
-        not instance.language.is_default
+        not instance.language.is_default or
+        not instance.get_site()
     ):
         return
-    try:
-        site = instance.get_site()
-    except ObjectDoesNotExist:
-        return
 
-    relatives = TranslatablePage.objects.filter(
-        ~Q(pk=instance.pk), language=get_default_language())
-    relatives = [p for p in relatives if p.get_site() == site]
-    for lang in Language.objects.filter(is_default=False):
-        new_page = instance.create_translation(language=lang, copy_fields=True)
-        new_page.language = lang
-        if relatives:
-            new_page.move_translation(lang)
+    for language in Language.objects.filter(is_default=False):
+        instance.create_translation(language, copy_fields=True)
 
 
 def synchronize_deletions(sender, instance, **kwargs):
@@ -47,6 +39,7 @@ def synchronize_deletions(sender, instance, **kwargs):
     :param sender: Sender model
     :param instance: TranslatablePage Instance
     :param kwargs: kwargs
+
     """
     page = TranslatablePage.objects.filter(pk=instance.pk).first()
     if settings.WAGTAILTRANS_SYNC_TREE and page:
@@ -61,9 +54,10 @@ def create_new_language_tree(sender, instance, **kwargs):
     :param sender: Sender model
     :param instance: Language instance
     :param kwargs: kwargs e.g. created
+
     """
     if kwargs.get('created'):
-        # create group amd fix permissions
+        # create group and page permissions
         group = get_or_create_language_group(instance)
         create_group_permissions(group, instance)
 
@@ -71,17 +65,14 @@ def create_new_language_tree(sender, instance, **kwargs):
         return
 
     for site in Site.objects.all():
-        root = TranslatablePage.objects.filter(
-            pk__in=site.root_page.get_children().values_list('pk', flat=True),
-            language=get_default_language()).first()
-        if root:
-            root.create_translation(
-                language=instance, copy_fields=True)
-            for child_page in root.get_descendants():
-                new_page = child_page.specific.create_translation(
-                    language=instance, copy_fields=True)
-                new_page.language = instance
-                new_page.move_translation(instance)
+        site_pages = site.root_page.get_children().values_list('pk', flat=True)
+        canonical_home_page = (
+            TranslatablePage.objects
+            .filter(pk__in=site_pages, language=get_default_language())
+            .first())
+
+        for child_page in canonical_home_page.get_descendants(inclusive=True):
+            child_page.specific.create_translation(instance, copy_fields=True)
 
 
 def register_signal_handlers():

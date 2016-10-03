@@ -34,7 +34,7 @@ class TestAddTranslationView(object):
         # but no parent pages are available yet
         assert parent_page_qs.count() == 0
 
-        french_root = pages.TranslatedPageFactory.build(
+        french_root = pages.TranslatablePageFactory.build(
             language=self.new_lang, title="French root")
         self.pages[0].add_child(instance=french_root)
 

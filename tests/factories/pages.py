@@ -1,19 +1,28 @@
 import factory
+from wagtail.wagtailcore.models import Page
 
 from wagtailtrans import models
 from tests.factories import language
 
 
 class TranslatableSiteRootFactory(factory.DjangoModelFactory):
-    title = 'Translatable Root'
-    depth = 1
-    path = '0001'
+    title = 'translatable-site-root'
+    depth = 2
 
     class Meta:
         model = models.TranslatableSiteRootPage
 
+    @classmethod
+    def _create(cls, *args, **kwargs):
+        try:
+            root = Page.objects.get(depth=0)
+        except Page.DoesNotExist:
+            root = Page.add_root(title='root')
 
-class TranslatedPageFactory(factory.DjangoModelFactory):
+        return root.add_child(title=kwargs['title'])
+
+
+class TranslatablePageFactory(factory.DjangoModelFactory):
     language = factory.SubFactory(language.LanguageFactory)
     title = 'Foo Bar'
 

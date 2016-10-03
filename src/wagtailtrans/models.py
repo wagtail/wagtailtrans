@@ -83,6 +83,23 @@ class TranslatablePage(Page):
 
     base_form_class = AdminTranslatablePageForm
 
+    def is_first_of_language(self, language):
+        """Check if page is first of new language translation.
+
+        :param language: Language instance
+        :return: Boolean
+
+        """
+        site = self.get_site()
+        translated_pages = (
+            TranslatablePage.objects
+            .filter(
+                language=language,
+                url_path__startswith=site.get_site_root_paths()
+            ))
+
+        return not translated_pages.exists()
+
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
         return super(TranslatablePage, self).serve(request, *args, **kwargs)
@@ -140,64 +157,64 @@ class TranslatablePage(Page):
         ).order_by('language__position')
         return pages
 
-    def create_translation(self, language, copy_fields=False):
+    def has_translation(self, language):
+        """Check if page isn't already translated in given language.
+
+        :param language: Language instance
+        :return: Boolean
+
+        """
+        return (
+            TranslatablePage.objects
+            .filter(canonical_page=self, language=language)
+            .exists())
+
+    def create_translation(self, language, copy_fields=False, parent=None):
         """Create a translation for this page. If tree syncing is enabled the
         copy will also be moved to the corresponding language tree.
 
         :param language: Language instance
         :param copy_fields: Boolean specifying if the content should be copied
-        :param trans_root: Boolean specifying if instance is a translation root
+        :param parent: Parent page instance for the translation
         :return: new Translated page (or subclass) instance
 
         """
-        if TranslatablePage.objects.filter(
-                canonical_page=self,
-                language=language).exists():
+        if self.has_translation(language):
             raise Exception("Translation already exists")
 
-        model_class = self.content_type.model_class()
+        if not parent:
+            parent = self.get_translation_parent(language)
 
-        parent = self.get_parent()
-        new_parent = parent
-        if hasattr(parent, 'get_translations'):
-            new_parent = parent.get_translations(only_live=False).filter(
-                language=language)
+        update_attrs = {
+            'slug': '%s-%s' % (self.slug, language.code),
+            'language': language,
+            'live': False,
+            'canonical_page': self,
+        }
 
-        new_slug = '%s-%s' % (
-            self.slug, language.code
-        )
         if copy_fields:
-            new_page = self.copy(
-                update_attrs={
-                    'slug': new_slug,
-                    'language': language,
-                    'live': False,
-                    'canonical_page': self,
-                }
-            )
-            if parent != new_parent:
-                new_page = new_page.move(new_parent)
+            import ipdb; ipdb.set_trace()
+            new_page = self.copy(update_attrs=update_attrs, to=parent)
         else:
-            new_page = model_class(
-                slug=new_slug,
-                title=self.title,
-                language=language,
-                live=False,
-                canonical_page=self)
-
-            if new_parent:
-                new_page = new_parent.add_child(instance=new_page)
-            else:
-                new_page = self.add_sibling(instance=new_page)
-        if new_page.is_first_of_language(language):
-            create_group_page_permission(new_page, language)
+            model_class = self.content_type.model_class()
+            new_page = model_class(title=self.title, **update_attrs)
+            parent.add_child(instance=new_page)
 
         return new_page
 
-    def move_translation(self, language):
-        new_parent = TranslatablePage.objects.get(
-            canonical_page=self.get_parent(), language=language)
-        self.move(new_parent, pos='last-child')
+    def get_translation_parent(self, language):
+        site = self.get_site()
+        translation_parent = (
+            TranslatablePage.objects
+            .filter(
+                canonical_page=self.get_parent(),
+                language=language,
+                url_path__startswith=site.get_site_root_paths()
+            ).first())
+
+        if not translation_parent:
+            translation_parent = self.get_site().root_page
+        return translation_parent
 
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
@@ -208,6 +225,7 @@ class TranslatablePage(Page):
         """
         if not parent:
             parent = self.get_parent()
+
         if parent:
             # TL: is the following line really necessary?
             parent = parent.content_type.get_object_for_this_type(pk=parent.pk)
@@ -216,36 +234,35 @@ class TranslatablePage(Page):
                     self.language = parent.language
         return self.language
 
-    def is_first_of_language(self, language):
-        """Check if page is first of translation
-
-        :param language: Language instance
-        :return: Boolean
-
-        """
-        site = self.get_site()
-        # TL: Change into .exclude
-        translated_pages = TranslatablePage.objects.filter(
-            ~Q(pk=self.pk), language=language)
-        relatives = [p for p in translated_pages if p.get_site() == site]
-        return False if relatives else True
-
 
 @cached_classmethod
 def get_edit_handler(cls):
     tabs = []
     if cls.content_panels:
         tabs.append(
-            ObjectList(cls.content_panels, heading=ugettext_lazy('Content')))
+            ObjectList(
+                cls.content_panels,
+                heading=ugettext_lazy('Content')
+            ))
     if cls.promote_panels:
         tabs.append(
-            ObjectList(cls.promote_panels, heading=ugettext_lazy('Promote')))
+            ObjectList(
+                cls.promote_panels,
+                heading=ugettext_lazy('Promote')
+            ))
     if cls.settings_panels:
         tabs.append(
-            ObjectList(cls.settings_panels, heading=ugettext_lazy('Settings'), classname='settings'))
+            ObjectList(
+                cls.settings_panels,
+                heading=ugettext_lazy('Settings'),
+                classname='settings'
+            ))
     if cls.translation_panels:
         tabs.append(
-            ObjectList(cls.translation_panels, heading=ugettext_lazy('Translations')))
+            ObjectList(
+                cls.translation_panels,
+                heading=ugettext_lazy('Translations')
+            ))
 
     EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)
     return EditHandler.bind_to_model(cls)
