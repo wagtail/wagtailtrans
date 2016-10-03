@@ -19,6 +19,7 @@ class HomePage(TranslatablePage):
         on_delete=models.SET_NULL, related_name='+')
 
     content_panels = TranslatablePage.content_panels + [
+        FieldPanel('subtitle'),
         FieldPanel('body'),
         ImageChooserPanel('image')
     ]
