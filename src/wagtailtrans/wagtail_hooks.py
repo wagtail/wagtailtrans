@@ -63,7 +63,8 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
         if exclude_lang:
             languages = languages.exclude(pk=exclude_lang.pk)
 
-        translations = page.get_translations(only_live=False)
+        translations = page.get_translations(only_live=False,
+                                             include_self=True)
 
         languages = languages.exclude(
             code__in=[x.language.code for x in translations]
