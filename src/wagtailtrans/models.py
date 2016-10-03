@@ -14,8 +14,13 @@ from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
 from wagtailtrans.edit_handlers import ReadOnlyWidget
-from wagtailtrans.permissions import (
-    create_group_page_permission, TranslatableUserPagePermissionsProxy)
+from wagtailtrans.permissions import TranslatableUserPagePermissionsProxy
+
+
+class LanguageManager(models.Manager):
+    def default(self):
+        """Return the first choice of default languages."""
+        return self.filter(live=True, is_default=True).first()
 
 
 class Language(models.Model):
@@ -36,6 +41,8 @@ class Language(models.Model):
         default=True,
         help_text="Is this language available for visitors to view?")
 
+    objects = LanguageManager()
+
     def __str__(self):
         return self.code
 
@@ -44,10 +51,6 @@ class Language(models.Model):
 
     def verbose(self):
         return dict(settings.LANGUAGES).get(self.code)
-
-
-def get_default_language():
-    return Language.objects.filter(live=True, is_default=True).first()
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
@@ -63,8 +66,12 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
                 text_display=TranslatablePage.objects.get(pk=canonical))
 
     def clean_language(self):
-        return self.instance.force_parent_language(
-            self.parent_page) or get_default_language()
+        return (self.instance.force_parent_language(self.parent_page) or
+                Language.objects.default())
+
+
+def _language_default():
+    return Language.objects.default()
 
 
 class TranslatablePage(Page):
@@ -72,7 +79,7 @@ class TranslatablePage(Page):
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
     language = models.ForeignKey(
-        Language, on_delete=models.PROTECT, default=get_default_language)
+        Language, on_delete=models.PROTECT, default=_language_default)
 
     translation_panels = [
         MultiFieldPanel([
@@ -116,8 +123,9 @@ class TranslatablePage(Page):
             self.move_translated_pages(canonical_target=target, pos=pos)
 
     def move_translated_pages(self, canonical_target, pos=None):
-        """Move only the translated pages of this instance (not self)
-        this is only called when WAGTAILTRANS_SYNC_TREE is enabled
+        """Move only the translated pages of this instance (not self).
+
+        This is only called when WAGTAILTRANS_SYNC_TREE is enabled
 
         :param canonical_target: Parent of the canonical page
         :param pos: position
@@ -132,7 +140,7 @@ class TranslatablePage(Page):
             page.move(target=target, pos=pos)
 
     def get_translations(self, only_live=True):
-        """Get translation of this page
+        """Get translation of this page.
 
         :param only_live: Boolean to filter on live pages
         :return: TranslatablePage instance
@@ -282,7 +290,7 @@ def get_user_language(request):
             code=request.LANGUAGE_CODE).first()
         if language:
             return language
-    return get_default_language()
+    return Language.objects.default()
 
 
 class TranslatableSiteRootPage(Page):

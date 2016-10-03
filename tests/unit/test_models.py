@@ -1,23 +1,21 @@
 import pytest
-from django.db import transaction
 from django.test import override_settings
-from wagtail.wagtailcore.models import Page
 
-from wagtailtrans import models
 from tests.factories.language import LanguageFactory
-from tests.factories.pages import TranslatablePageFactory
 from tests.factories.sites import create_site_tree, SiteFactory
+from wagtailtrans import models
 
 
 @pytest.mark.django_db
 class TestLanguage(object):
 
     def test_create(self):
-        en, created = models.Language.objects.get_or_create(code='en', defaults={
-            'is_default': True,
-            'position': 1,
-            'live': True
-        })
+        en, created = models.Language.objects.get_or_create(
+            code='en', defaults={
+                'is_default': True,
+                'position': 1,
+                'live': True
+            })
         assert isinstance(en, models.Language)
 
     def test_create_many(self, languages):
@@ -26,6 +24,9 @@ class TestLanguage(object):
     def test_verbose(self):
         language = LanguageFactory()
         assert language.verbose() == 'British English'
+
+    def test_default(self, languages):
+        assert models.Language.objects.default().code == 'en'
 
 
 @pytest.mark.django_db

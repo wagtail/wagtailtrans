@@ -1,13 +1,10 @@
 from django.conf import settings
-from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Q
 from django.db.models.signals import post_save, pre_delete
-from wagtail.wagtailcore.models import get_page_models, Site
+from wagtail.wagtailcore.models import Site, get_page_models
 
-from wagtailtrans.models import (
-    Language, TranslatablePage, get_default_language)
+from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.permissions import (
-    get_or_create_language_group, create_group_permissions)
+    create_group_permissions, get_or_create_language_group)
 
 
 def synchronize_trees(sender, instance, **kwargs):
@@ -68,7 +65,7 @@ def create_new_language_tree(sender, instance, **kwargs):
         site_pages = site.root_page.get_children().values_list('pk', flat=True)
         canonical_home_page = (
             TranslatablePage.objects
-            .filter(pk__in=site_pages, language=get_default_language())
+            .filter(pk__in=site_pages, language=Language.objects.default())
             .first())
 
         for child_page in canonical_home_page.get_descendants(inclusive=True):

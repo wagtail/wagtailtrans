@@ -34,7 +34,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailcore.Page')),
                 ('canonical_page', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='translations', to='wagtailtrans.TranslatablePage')),
-                ('language', models.ForeignKey(default=wagtailtrans.models.get_default_language, on_delete=django.db.models.deletion.PROTECT, to='wagtailtrans.Language')),
+                ('language', models.ForeignKey(default=wagtailtrans.models._language_default, on_delete=django.db.models.deletion.PROTECT, to='wagtailtrans.Language')),
             ],
             options={
                 'abstract': False,

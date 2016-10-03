@@ -50,3 +50,4 @@ def languages():
                 'position': i,
                 'live': True,
             })
+    return Language.objects.all()
