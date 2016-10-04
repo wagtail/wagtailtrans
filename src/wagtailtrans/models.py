@@ -12,8 +12,7 @@ from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-from wagtail.wagtailcore.models import Page
-
+from wagtail.wagtailcore.models import Page, PageManager
 
 from .exceptions import TranslationMutationError
 from .edit_handlers import ReadOnlyWidget
@@ -60,6 +59,12 @@ class Language(models.Model):
     def verbose(self):
         return dict(settings.LANGUAGES).get(self.code)
 
+    def has_pages_in_site(self, site):
+        return (
+            self.pages.filter(
+                url_path__startswith=site.get_site_root_paths()
+            ).exists())
+
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
     """Form to be used in the wagtail admin."""
@@ -89,7 +94,8 @@ class TranslatablePage(Page):
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
     language = models.ForeignKey(
-        Language, on_delete=models.PROTECT, default=_language_default)
+        Language, related_name='pages', on_delete=models.PROTECT,
+        default=_language_default)
 
     translation_panels = [
         MultiFieldPanel([
@@ -103,22 +109,22 @@ class TranslatablePage(Page):
     def __str__(self):
         return "{} ({})".format(self.title, self.language)
 
-    def is_first_of_language(self, language):
-        """Check if page is first of new language translation.
-
-        :param language: Language instance
-        :return: Boolean
-
-        """
-        site = self.get_site()
-        translated_pages = (
-            TranslatablePage.objects
-            .filter(
-                language=language,
-                url_path__startswith=site.get_site_root_paths()
-            ))
-
-        return not translated_pages.exists()
+    # def is_first_of_language(self, language):
+    #     """Check if page is first of new language translation.
+    #
+    #     :param language: Language instance
+    #     :return: Boolean
+    #
+    #     """
+    #     site = self.get_site()
+    #     translated_pages = (
+    #         TranslatablePage.objects
+    #         .filter(
+    #             language=language,
+    #             url_path__startswith=site.get_site_root_paths()
+    #         ))
+    #
+    #     return not translated_pages.exists()
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
@@ -198,7 +204,7 @@ class TranslatablePage(Page):
 
     def get_translation_parent(self, language):
         site = self.get_site()
-        if self.is_first_of_language(language):
+        if not language.has_pages_in_site(site):
             return site.root_page
 
         translation_parent = (

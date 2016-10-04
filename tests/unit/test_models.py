@@ -54,28 +54,28 @@ class TestTranslatablePage(object):
     def test_create(self):
         assert self.canonical_page.language.code == 'en'
 
-    @override_settings(WAGTAILTRANS_SYNC_TREE=False)
-    def test_is_first_of_language(self):
-        language = models.Language.objects.get(code='en')
-        language_es = LanguageFactory(code='es')
-        site = SiteFactory(
-            hostname='remotehost', port=80, site_name='RemoteTestSite',
-            is_default_site=False, root_page__title='trans-site-root-es')
-        page_tree = create_site_tree(language, site)
-        subpage = page_tree.pop()
-        assert subpage.is_first_of_language(language_es)
-
-    @override_settings(WAGTAILTRANS_SYNC_TREE=False)
-    def test_is_not_first_of_language(self):
-        language = models.Language.objects.get(code='en')
-        language_es = LanguageFactory(code='es')
-        site = SiteFactory(
-            hostname='remotehost', port=80, site_name='RemoteTestSite',
-            is_default_site=False, root_page__title='trans-site-root-es')
-        page_tree = create_site_tree(language, site, subtitle='subtitle')
-        page_tree[1].add_child(
-            title='es-home', language=language_es, subtitle='subtitle')
-        assert page_tree.pop().is_first_of_language(language_es)
+    # @override_settings(WAGTAILTRANS_SYNC_TREE=False)
+    # def test_is_first_of_language(self):
+    #     language = models.Language.objects.get(code='en')
+    #     language_es = LanguageFactory(code='es')
+    #     site = SiteFactory(
+    #         hostname='remotehost', port=80, site_name='RemoteTestSite',
+    #         is_default_site=False, root_page__title='trans-site-root-es')
+    #     page_tree = create_site_tree(language, site)
+    #     subpage = page_tree.pop()
+    #     assert subpage.is_first_of_language(language_es)
+    #
+    # @override_settings(WAGTAILTRANS_SYNC_TREE=False)
+    # def test_is_not_first_of_language(self):
+    #     language = models.Language.objects.get(code='en')
+    #     language_es = LanguageFactory(code='es')
+    #     site = SiteFactory(
+    #         hostname='remotehost', port=80, site_name='RemoteTestSite',
+    #         is_default_site=False, root_page__title='trans-site-root-es')
+    #     page_tree = create_site_tree(language, site, subtitle='subtitle')
+    #     page_tree[1].add_child(
+    #         title='es-home', language=language_es, subtitle='subtitle')
+    #     assert page_tree.pop().is_first_of_language(language_es)
 
     def test_create_translation(self, languages):
         """Test `create_translation` without copying fields."""
