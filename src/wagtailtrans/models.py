@@ -55,7 +55,7 @@ class Language(models.Model):
     def has_pages_in_site(self, site):
         return (
             self.pages.filter(
-                url_path__startswith=site.get_site_root_paths()[0][1]
+                path__startswith=site.root_page.path
             ).exists())
 
 
@@ -188,7 +188,7 @@ class TranslatablePage(Page):
             .filter(
                 canonical_page=self.get_parent(),
                 language=language,
-                url_path__startswith=site.get_site_root_paths()
+                path__startswith=site.root_page.path
             ).first())
         return translation_parent
 
