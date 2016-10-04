@@ -3,7 +3,7 @@ from django.http import Http404
 from django.test import override_settings
 
 from tests.factories import language, sites, pages
-from wagtailtrans.models import Language
+from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.views import translation
 
 
@@ -31,8 +31,9 @@ class TestAddTranslationView(object):
         assert response.status_code == 200
 
         # The new language has been added,
-        # but no parent pages are available yet
-        assert parent_page_qs.count() == 0
+        # so only the root page should be availabe as parent
+        assert parent_page_qs.count() == 1
+        assert parent_page_qs.model is not TranslatablePage
 
         french_root = pages.TranslatablePageFactory.build(
             language=self.new_lang, title="French root")
@@ -45,6 +46,7 @@ class TestAddTranslationView(object):
             'parent_page'].queryset
         # We have a french page to add our new translated page to
         assert parent_page_qs.count() == 1
+        assert parent_page_qs.model is TranslatablePage
         assert parent_page_qs[0].language == self.new_lang
         assert parent_page_qs[0] == french_root
 
