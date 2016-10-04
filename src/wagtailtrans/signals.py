@@ -4,18 +4,8 @@ from django.db.models.signals import post_save, pre_delete
 from wagtail.wagtailcore.models import Site, get_page_models
 
 from wagtailtrans.models import Language, TranslatablePage
-from wagtailtrans.permissions import (
-    create_group_permissions, get_or_create_language_group)
-
-
-
-
-
-
-
-
-
-
+from wagtailtrans.permissions import (create_group_permissions,
+                                      get_or_create_language_group)
 
 
 def synchronize_trees(sender, instance, **kwargs):
