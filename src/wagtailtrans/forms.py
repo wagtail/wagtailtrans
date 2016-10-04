@@ -62,7 +62,6 @@ class TranslationForm(forms.Form):
 
         required_fields = [f for f in specific_fields
                            if not f.blank and not f.name.endswith('ptr')]
-        print required_fields
         if required_fields:
             return True
         return False
