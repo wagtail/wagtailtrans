@@ -3,6 +3,7 @@ from __future__ import absolute_import, unicode_literals
 from operator import itemgetter
 
 from django import forms
+from django.conf import settings
 from django.utils.translation import ugettext as _
 from wagtail.wagtailcore.models import Page
 
@@ -10,6 +11,7 @@ from wagtailtrans.models import Language, TranslatablePage
 
 
 class LanguageForm(forms.ModelForm):
+
     class Meta:
         model = Language
         fields = (
@@ -25,6 +27,19 @@ class LanguageForm(forms.ModelForm):
         # Sort language choices according their display name
         sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
         self.fields['code'].choices = sorted_choices
+
+        # Disable `is_default` field when a default language is already set.
+        if Language.objects.default() and settings.WAGTAILTRANS_SYNC_TREE:
+            self.fields['is_default'].widget.attrs['disabled'] = 'disabled'
+            self.fields['is_default'].help_text = _("""
+                There can only be one default language, this
+                can't be changed when in SYNC mode.""")
+
+    def clean_is_default(self):
+        """Force the `is_default` to stay the same, when in sync mode."""
+        if self.instance and settings.WAGTAILTRANS_SYNC_TREE:
+            return self.instance.is_default
+        return self.cleaned_data['is_default']
 
 
 class TranslationForm(forms.Form):

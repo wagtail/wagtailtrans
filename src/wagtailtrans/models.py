@@ -1,6 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models, transaction
 from django.db.models import Q
 from django.http import Http404
@@ -43,14 +44,14 @@ class Language(models.Model):
 
     objects = LanguageManager()
 
-    def __str__(self):
-        return self.code
-
     class Meta:
         ordering = ['position']
 
+    def __str__(self):
+        return self.verbose()
+
     def verbose(self):
-        return dict(settings.LANGUAGES).get(self.code)
+        return self.get_code_display()
 
     def has_pages_in_site(self, site):
         return (
