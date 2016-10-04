@@ -120,54 +120,6 @@ class TestTranslatablePage(object):
         subpage.force_parent_language()
         assert subpage.language == nl
 
-    def test_move_translation(self, languages):
-        """Test `move_translation()`."""
-        en = languages.get(code='en')
-        nl = languages.get(code='nl')
-
-        subpage = self.site_tree[2]
-        nl_root = HomePageFactory.build(language=nl)
-        self.site_tree[0].add_child(instance=nl_root)
-
-        # Some sanity checks
-        assert len(self.canonical_page.get_children()) == 1
-        assert len(nl_root.get_children()) == 0
-
-        # nl_root and canonical_page are not linked yet,
-        # so it will raise an error
-        with pytest.raises(TranslationMutationError):
-            subpage.move_translation(nl)
-
-        nl_root.canonical_page = self.canonical_page
-        nl_root.save()
-
-        # It should succeed now
-        subpage.move_translation(nl)
-        subpage_pk = subpage.pk  # store for later checking
-
-        self.canonical_page.refresh_from_db()
-        nl_root.refresh_from_db()
-
-        assert len(self.canonical_page.get_children()) == 0
-        assert len(nl_root.get_children()) == 1
-        subpage = nl_root.get_children()[0].specific
-        assert subpage.pk == subpage_pk
-        assert subpage.language == nl
-
-        # Other way around again.
-        # We'll test this because canonical_page is the canonical page of
-        # nl_root but not the other way around. It should be able to move
-        # it correctly even in this case
-        subpage.move_translation(en)
-        self.canonical_page.refresh_from_db()
-        nl_root.refresh_from_db()
-
-        assert len(self.canonical_page.get_children()) == 1
-        assert len(nl_root.get_children()) == 0
-        subpage = self.canonical_page.get_children()[0].specific
-        assert subpage.pk == subpage_pk
-        assert subpage.language == en
-
     def test_get_translations(self, languages):
         """Test `get_translations()`."""
         nl = languages.get(code='nl')

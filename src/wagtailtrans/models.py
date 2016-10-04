@@ -14,17 +14,10 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page, PageManager
 
+from .managers import LanguageManager
 from .exceptions import TranslationMutationError
 from .edit_handlers import ReadOnlyWidget
 from .permissions import TranslatableUserPagePermissionsProxy
-
-
-class LanguageManager(models.Manager):
-    """Custom manager for the `Language` model."""
-
-    def default(self):
-        """Return the first choice of default languages."""
-        return self.filter(live=True, is_default=True).first()
 
 
 @python_2_unicode_compatible
@@ -108,23 +101,6 @@ class TranslatablePage(Page):
 
     def __str__(self):
         return "{} ({})".format(self.title, self.language)
-
-    # def is_first_of_language(self, language):
-    #     """Check if page is first of new language translation.
-    #
-    #     :param language: Language instance
-    #     :return: Boolean
-    #
-    #     """
-    #     site = self.get_site()
-    #     translated_pages = (
-    #         TranslatablePage.objects
-    #         .filter(
-    #             language=language,
-    #             url_path__startswith=site.get_site_root_paths()
-    #         ))
-    #
-    #     return not translated_pages.exists()
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
@@ -247,45 +223,6 @@ class TranslatablePage(Page):
             parent.add_child(instance=new_page)
 
         return new_page
-
-    def move_translation(self, language):
-        """Place the page in the correct language tree.
-
-        TODO: rename this method to change_language.
-        However, it is being used by `signals` and there it is explicitally
-        used to move the page (which is already set to the correct language) to
-        the right place in the tree. We'll have to decide what
-        the best design is
-
-        :param language: the `Language` of the tree to move to
-        """
-        parent = self.get_parent()
-        if not parent:
-            raise TranslationMutationError("No parent found, don't know where "
-                                           "to place the modified page.")
-        parent = parent.specific
-
-        canonical_parent = parent.canonical_page
-        if not canonical_parent:
-            # If None it usually means the page it self is a canonical page
-            # (so part of a default language).
-            # No need to check for the language being default or not, we
-            # cannot do much with that information anyway
-            canonical_parent = parent
-
-        try:
-            new_parent = TranslatablePage.objects.get(
-                Q(canonical_page=canonical_parent) | Q(pk=canonical_parent.pk),
-                language=language
-            )
-        except TranslatablePage.DoesNotExist:
-            raise TranslationMutationError(
-                "No new parent found, don't know where "
-                "to place the modified page.")
-
-        self.language = language
-        self.save()
-        self.move(new_parent, pos='last-child')
 
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
