@@ -1,7 +1,7 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.db import models
+from django.db import models, transaction
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
@@ -216,7 +216,11 @@ class TranslatablePage(Page):
         }
 
         if copy_fields:
-            new_page = self.copy(update_attrs=update_attrs, to=parent)
+            kwargs = {'update_attrs': update_attrs}
+            if parent != self.get_parent():
+                kwargs['to'] = parent
+
+            new_page = self.copy(**kwargs)
         else:
             model_class = self.content_type.model_class()
             new_page = model_class(title=self.title, **update_attrs)
