@@ -201,7 +201,6 @@ class TranslatablePage(Page):
         }
 
         if copy_fields:
-            import ipdb; ipdb.set_trace()
             new_page = self.copy(update_attrs=update_attrs, to=parent)
         else:
             model_class = self.content_type.model_class()
@@ -212,6 +211,9 @@ class TranslatablePage(Page):
 
     def get_translation_parent(self, language):
         site = self.get_site()
+        if self.is_first_of_language(language):
+            return site.root_page
+
         translation_parent = (
             TranslatablePage.objects
             .filter(
@@ -219,9 +221,6 @@ class TranslatablePage(Page):
                 language=language,
                 url_path__startswith=site.get_site_root_paths()
             ).first())
-
-        if not translation_parent:
-            translation_parent = self.get_site().root_page
         return translation_parent
 
     def force_parent_language(self, parent=None):
@@ -234,12 +233,10 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_parent()
 
-        if parent:
-            # TL: is the following line really necessary?
-            parent = parent.content_type.get_object_for_this_type(pk=parent.pk)
-            if hasattr(parent, 'language'):
-                if self.language != parent.language:
-                    self.language = parent.language
+        parent = parent.specific
+        if hasattr(parent, 'language'):
+            if self.language != parent.language:
+                self.language = parent.language
         return self.language
 
 

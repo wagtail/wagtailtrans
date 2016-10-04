@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import post_save, pre_delete
 from wagtail.wagtailcore.models import Site, get_page_models
 
@@ -7,26 +8,50 @@ from wagtailtrans.permissions import (
     create_group_permissions, get_or_create_language_group)
 
 
+
+
+
+
+
+
+
+
+
+
 def synchronize_trees(sender, instance, **kwargs):
     """synchronize the translation trees when
-    a TranslatablePage is created or moved.
+    a TranslatablePage is created.
 
     :param sender: Sender model
     :param instance: TranslatablePage instance
     :param kwargs: kwargs e.g. created
-
     """
     if (
         not kwargs.get('created') or
         not settings.WAGTAILTRANS_SYNC_TREE or
         not getattr(instance, 'language', False) or
-        not instance.language.is_default or
-        not instance.get_site()
+        not instance.language.is_default
     ):
         return
 
-    for language in Language.objects.filter(is_default=False):
-        instance.create_translation(language, copy_fields=True)
+    try:
+        site = instance.get_site()
+    except ObjectDoesNotExist:
+        return
+
+    # relatives = (
+    #     TranslatablePage.objects
+    #     .filter(
+    #         language=Language.objects.default(),
+    #         url_path__startswith=site.get_site_root_paths()
+    #     )
+    #     .exclude(pk=instance.pk))
+
+    for lang in Language.objects.filter(is_default=False):
+        new_page = instance.create_translation(language=lang, copy_fields=True)
+        # new_page.language = lang
+        # if relatives:
+        #     new_page.move_translation(lang)
 
 
 def synchronize_deletions(sender, instance, **kwargs):
@@ -36,13 +61,63 @@ def synchronize_deletions(sender, instance, **kwargs):
     :param sender: Sender model
     :param instance: TranslatablePage Instance
     :param kwargs: kwargs
-
     """
-    page = TranslatablePage.objects.filter(pk=instance.pk).first()
-    if settings.WAGTAILTRANS_SYNC_TREE and page:
-        TranslatablePage.objects.filter(canonical_page=page).delete()
+    if settings.WAGTAILTRANS_SYNC_TREE and not instance.canonical_page:
+        instance.get_translations(only_live=False).delete()
 
 
+# def create_new_language_tree(sender, instance, **kwargs):
+#     """Signal will catch creation of a new language
+#     If sync trees is enabled it will create a whole new tree with
+#     correlating language.
+#
+#     :param sender: Sender model
+#     :param instance: Language instance
+#     :param kwargs: kwargs e.g. created
+#     """
+#     if kwargs.get('created'):
+#         # create group amd fix permissions
+#         group = get_or_create_language_group(instance)
+#         create_group_permissions(group, instance)
+#
+#     if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
+#         return
+#
+#     for site in Site.objects.all():
+#         root = TranslatablePage.objects.filter(
+#             pk__in=site.root_page.get_children().values_list('pk', flat=True),
+#             language=Language.objects.default()).first()
+#         if root:
+#             root.create_translation(
+#                 language=instance, copy_fields=True)
+#             for child_page in root.get_descendants():
+#                 new_page = child_page.specific.create_translation(
+#                     language=instance, copy_fields=True)
+#                 new_page.language = instance
+#                 new_page.move_translation(instance)
+#
+# def synchronize_trees(sender, instance, **kwargs):
+#     """synchronize the translation trees when
+#     a TranslatablePage is created or moved.
+#
+#     :param sender: Sender model
+#     :param instance: TranslatablePage instance
+#     :param kwargs: kwargs e.g. created
+#
+#     """
+#     if (
+#         not kwargs.get('created') or
+#         not settings.WAGTAILTRANS_SYNC_TREE or
+#         not getattr(instance, 'language', False) or
+#         not instance.language.is_default or
+#         not instance.get_site()
+#     ):
+#         return
+#
+#     for language in Language.objects.filter(is_default=False):
+#         instance.create_translation(language, copy_fields=True)
+#
+#
 def create_new_language_tree(sender, instance, **kwargs):
     """Signal will catch creation of a new language
     If sync trees is enabled it will create a whole new tree with
