@@ -20,7 +20,7 @@
         {% get_canonical_pages_for_delete page as translations %}
         {% if translations %}
         <div>
-            <p>{% trans 'Deleting this page will also delete the following translated page(s) and theit subpages'%}</p>
+            <p>{% trans 'Deleting this page will also delete the following translated page(s) and their subpages'%}</p>
             <ul>
                 {% for trans in translations %}
                 <li><a href="{% url 'wagtailadmin_pages:edit' trans.id %}">{{ trans.title }} ({{ trans.language.code }})</a></li>
