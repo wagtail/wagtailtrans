@@ -24,23 +24,12 @@ def synchronize_trees(sender, instance, **kwargs):
         return
 
     try:
-        site = instance.get_site()
+        instance.get_site()
     except ObjectDoesNotExist:
         return
 
-    # relatives = (
-    #     TranslatablePage.objects
-    #     .filter(
-    #         language=Language.objects.default(),
-    #         url_path__startswith=site.get_site_root_paths()
-    #     )
-    #     .exclude(pk=instance.pk))
-
     for lang in Language.objects.filter(is_default=False):
-        new_page = instance.create_translation(language=lang, copy_fields=True)
-        # new_page.language = lang
-        # if relatives:
-        #     new_page.move_translation(lang)
+        instance.create_translation(language=lang, copy_fields=True)
 
 
 def synchronize_deletions(sender, instance, **kwargs):
@@ -160,6 +149,8 @@ def register_signal_handlers():
     if settings.WAGTAILTRANS_SYNC_TREE:
         post_save.connect(create_new_language_tree, sender=Language)
 
+        # TODO: Not so safe; get_page_models() can return Pages types
+        # which are not of type `TranslatablePage`
         for model in get_page_models():
             post_save.connect(synchronize_trees, sender=model)
             pre_delete.connect(synchronize_deletions, sender=model)
