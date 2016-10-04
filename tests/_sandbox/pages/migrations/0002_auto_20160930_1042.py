@@ -36,6 +36,7 @@ def create_page_structure(apps, schema_editor):
 
     HomePage.objects.create(
         title='homepage',
+        subtitle='a sample homepage',
         slug=lang.code,
         language=lang,
         content_type=ContentType.objects.get_for_model(HomePage),

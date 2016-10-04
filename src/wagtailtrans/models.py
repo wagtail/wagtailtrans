@@ -6,6 +6,7 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.translation import activate, ugettext_lazy
+from django.utils.encoding import python_2_unicode_compatible
 
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
@@ -13,17 +14,24 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
-from wagtailtrans.edit_handlers import ReadOnlyWidget
-from wagtailtrans.permissions import TranslatableUserPagePermissionsProxy
+
+from .exceptions import TranslationMutationError
+from .edit_handlers import ReadOnlyWidget
+from .permissions import TranslatableUserPagePermissionsProxy
 
 
 class LanguageManager(models.Manager):
+    """Custom manager for the `Language` model."""
+
     def default(self):
         """Return the first choice of default languages."""
         return self.filter(live=True, is_default=True).first()
 
 
+@python_2_unicode_compatible
 class Language(models.Model):
+    """User defined language."""
+
     code = models.CharField(
         max_length=12, choices=settings.LANGUAGES, unique=True,
         help_text="One of the languages defined in LANGUAGES")
@@ -54,6 +62,7 @@ class Language(models.Model):
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
+    """Form to be used in the wagtail admin."""
 
     def __init__(self, *args, **kwargs):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
@@ -74,6 +83,7 @@ def _language_default():
     return Language.objects.default()
 
 
+@python_2_unicode_compatible
 class TranslatablePage(Page):
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
@@ -89,6 +99,9 @@ class TranslatablePage(Page):
     ]
 
     base_form_class = AdminTranslatablePageForm
+
+    def __str__(self):
+        return "{} ({})".format(self.title, self.language)
 
     def is_first_of_language(self, language):
         """Check if page is first of new language translation.
@@ -111,15 +124,17 @@ class TranslatablePage(Page):
         activate(self.language.code)
         return super(TranslatablePage, self).serve(request, *args, **kwargs)
 
-    def save(self, *args, **kwargs):
-        super(TranslatablePage, self).save(*args, **kwargs)
-        if hasattr(self, 'force_parent_language'):
-            self.force_parent_language()
+    def move(self, target, pos=None, suppress_sync=False):
+        """Move the page to another target.
 
-    def move(self, target, pos=None):
+        :param target: the new target to move the page to
+        :param pos: position of the page in the new target
+        :param suppress_sync: suppress syncing the translated pages
+        """
         super(TranslatablePage, self).move(target, pos)
 
-        if settings.WAGTAILTRANS_SYNC_TREE and self.language.is_default:
+        if not suppress_sync and settings.WAGTAILTRANS_SYNC_TREE and \
+           self.language.is_default:
             self.move_translated_pages(canonical_target=target, pos=pos)
 
     def move_translated_pages(self, canonical_target, pos=None):
@@ -132,38 +147,42 @@ class TranslatablePage(Page):
 
         """
         translations = self.get_translations(only_live=False)
-        # TL: replace by ``for page in translations.exclude(pk=self.pk):``?
-        for page in translations.filter(~Q(pk=self.pk)):
+        if canonical_target.canonical_page:
+            canonical_target = canonical_target.canonical_page
+
+        for page in translations:
             # get target because at this point we assume the tree is in sync.
             target = TranslatablePage.objects.filter(
-                language=page.language, canonical_page=canonical_target).get()
-            page.move(target=target, pos=pos)
+                language=page.language).filter(
+                Q(canonical_page=canonical_target) | Q(pk=canonical_target.pk)
+            ).get()
+            page.move(target=target, pos=pos, suppress_sync=True)
 
-    def get_translations(self, only_live=True):
+    def get_translations(self, only_live=True, include_self=False):
         """Get translation of this page.
 
         :param only_live: Boolean to filter on live pages
+        :param include_self: Should this page be part of the result set
         :return: TranslatablePage instance
-
         """
-        if self.canonical_page:
-            pages = TranslatablePage.objects.filter(
-                Q(canonical_page=self) |
-                Q(canonical_page=self.canonical_page) |
-                Q(pk=self.canonical_page.pk)
-            )
-        else:
-            pages = TranslatablePage.objects.filter(
-                Q(canonical_page=self) |
-                Q(pk=self.pk)
-            )
+        canonical_page = self.canonical_page
+        if not canonical_page:
+            canonical_page = self
+
+        translations = TranslatablePage.objects.filter(
+            Q(canonical_page=canonical_page) |
+            Q(pk=canonical_page.pk)
+        )
 
         if only_live:
-            pages = pages.filter(live=True)
-        pages = pages.filter(
+            translations = translations.filter(live=True)
+        if not include_self:
+            translations = translations.exclude(pk=self.pk)
+        translations = translations.filter(
             language__live=True
         ).order_by('language__position')
-        return pages
+
+        return translations
 
     def has_translation(self, language):
         """Check if page isn't already translated in given language.
@@ -176,6 +195,20 @@ class TranslatablePage(Page):
             TranslatablePage.objects
             .filter(canonical_page=self, language=language)
             .exists())
+
+    def get_translation_parent(self, language):
+        site = self.get_site()
+        if self.is_first_of_language(language):
+            return site.root_page
+
+        translation_parent = (
+            TranslatablePage.objects
+                .filter(
+                canonical_page=self.get_parent(),
+                language=language,
+                url_path__startswith=site.get_site_root_paths()
+            ).first())
+        return translation_parent
 
     def create_translation(self, language, copy_fields=False, parent=None):
         """Create a translation for this page. If tree syncing is enabled the
@@ -209,22 +242,54 @@ class TranslatablePage(Page):
 
         return new_page
 
-    def get_translation_parent(self, language):
-        site = self.get_site()
-        if self.is_first_of_language(language):
-            return site.root_page
+    def move_translation(self, language):
+        """Place the page in the correct language tree.
 
-        translation_parent = (
-            TranslatablePage.objects
-            .filter(
-                canonical_page=self.get_parent(),
-                language=language,
-                url_path__startswith=site.get_site_root_paths()
-            ).first())
-        return translation_parent
+        TODO: rename this method to change_language.
+        However, it is being used by `signals` and there it is explicitally
+        used to move the page (which is already set to the correct language) to
+        the right place in the tree. We'll have to decide what
+        the best design is
+
+        :param language: the `Language` of the tree to move to
+        """
+        parent = self.get_parent()
+        if not parent:
+            raise TranslationMutationError("No parent found, don't know where "
+                                           "to place the modified page.")
+        parent = parent.specific
+
+        canonical_parent = parent.canonical_page
+        if not canonical_parent:
+            # If None it usually means the page it self is a canonical page
+            # (so part of a default language).
+            # No need to check for the language being default or not, we
+            # cannot do much with that information anyway
+            canonical_parent = parent
+
+        try:
+            new_parent = TranslatablePage.objects.get(
+                Q(canonical_page=canonical_parent) | Q(pk=canonical_parent.pk),
+                language=language
+            )
+        except TranslatablePage.DoesNotExist:
+            raise TranslationMutationError(
+                "No new parent found, don't know where "
+                "to place the modified page.")
+
+        self.language = language
+        self.save()
+        self.move(new_parent, pos='last-child')
 
     def force_parent_language(self, parent=None):
         """Set Page instance language to the parent language.
+
+        TODO: This used to be called from the `save()` method, but
+        afterwards wasn't saved. Saving it would lead to recursion
+        errors especially in combination with the defined signal handlers.
+        We'll have to see if we can perform `force_parent_language` upon
+        save (either by override `save()` or by using
+        `pre_save` or `post_save` signals)
 
         :param parent: Parent page of self
         :return: Language instance

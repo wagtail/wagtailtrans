@@ -9,12 +9,17 @@ from wagtailtrans.models import TranslatablePage
 
 
 class HomePage(TranslatablePage):
+    """An implementation of TranslatablePage."""
+
+    subtitle = models.CharField(
+        max_length=255, help_text="A required field, for test purposes")
     body = RichTextField(blank=True, default='')
     image = models.ForeignKey(
         'wagtailimages.Image', null=True, blank=True,
         on_delete=models.SET_NULL, related_name='+')
 
     content_panels = TranslatablePage.content_panels + [
+        FieldPanel('subtitle'),
         FieldPanel('body'),
         ImageChooserPanel('image')
     ]
