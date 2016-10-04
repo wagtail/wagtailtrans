@@ -1,5 +1,5 @@
 [run]
 omit =
-    wagtail/wagtailtrans/tests/*.py
-    wagtail/**/migrations/*.py
-    wagtail/wagtailtrans/wagtail_hooks.py
+    src/wagtailtrans/tests/*.py
+    src/**/migrations/*.py
+    src/wagtailtrans/wagtail_hooks.py
