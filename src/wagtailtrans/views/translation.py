@@ -43,9 +43,10 @@ class Add(FormView):
         parent = form.cleaned_data['parent_page']
         copy_from_canonical = form.cleaned_data['copy_from_canonical']
 
-        new_page = self.page.create_translation(self.language,
-                                                copy_from_canonical)
-        new_page.move(parent, pos='last-child')
+        new_page = self.page.create_translation(
+            self.language, copy_fields=copy_from_canonical, parent=parent)
+
+        # new_page.move(parent, pos='last-child')
         return redirect(
             'wagtailadmin_pages:edit', new_page.id)
 

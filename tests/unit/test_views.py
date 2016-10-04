@@ -34,7 +34,7 @@ class TestAddTranslationView(object):
         # but no parent pages are available yet
         assert parent_page_qs.count() == 0
 
-        french_root = pages.TranslatedPageFactory.build(
+        french_root = pages.TranslatablePageFactory.build(
             language=self.new_lang, title="French root")
         self.pages[0].add_child(instance=french_root)
 
@@ -49,13 +49,17 @@ class TestAddTranslationView(object):
         assert parent_page_qs[0] == french_root
 
     def test_post_existing(self, rf):
-        """It should fail when adding an existing page / language combination.""" # NOQA
+        """It should fail when adding an existing page / language combination.
+
+        """
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
             request = rf.post('/', {'parent_page': self.last_page.pk})
+            response = self.view(
+                request, page_pk=self.last_page.pk,
+                language_code=self.default_language.code)
 
-            response = self.view(request, page_pk=self.last_page.pk,
-                                 language_code=self.default_language.code)
-            assert response.status_code == 302
+            assert response.status_code == 200
+            assert not response.context_data['form'].is_valid()
 
     def test_post_404(self, rf):
         """It should raise a 404 when a wrong page_pk is given."""

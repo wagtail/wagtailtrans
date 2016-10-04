@@ -13,9 +13,6 @@ class WagtailTransConfig(AppConfig):
     verbose_name = _('Wagtail Translations')
 
     def ready(self):
-        from wagtailtrans.signals import register_signal_handlers
-        register_signal_handlers()
-
         from django.conf import settings
 
         # check if WAGTAILTRANS_SYNC_TREE is set, if not use default (True)
@@ -24,3 +21,7 @@ class WagtailTransConfig(AppConfig):
             logger.warning(
                 "Setting WAGTAILTRANS_SYNC_TREE undefined. Please specify "
                 "WAGTAILTRANS_SYNC_TREE in your projects settings file.")
+
+
+        from wagtailtrans.signals import register_signal_handlers
+        register_signal_handlers()

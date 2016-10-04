@@ -1,6 +1,8 @@
 import factory
-from wagtail.wagtailimages.tests.utils import (get_image_model,
-                                               get_test_image_file)
+
+from wagtail.wagtailcore.models import Page
+from wagtail.wagtailimages.tests.utils import (
+    get_image_model, get_test_image_file)
 
 from tests._sandbox.pages.models import HomePage
 from tests.factories import language
@@ -8,15 +10,23 @@ from wagtailtrans import models
 
 
 class TranslatableSiteRootFactory(factory.DjangoModelFactory):
-    title = 'Translatable Root'
-    depth = 1
-    path = '0001'
+    title = 'translatable-site-root'
+    depth = 2
 
     class Meta:
         model = models.TranslatableSiteRootPage
 
+    @classmethod
+    def _create(cls, *args, **kwargs):
+        try:
+            root = Page.objects.get(depth=0)
+        except Page.DoesNotExist:
+            root = Page.add_root(title='root')
 
-class TranslatedPageFactory(factory.DjangoModelFactory):
+        return root.add_child(title=kwargs['title'])
+
+
+class TranslatablePageFactory(factory.DjangoModelFactory):
     language = factory.SubFactory(language.LanguageFactory)
 
     class Meta:
@@ -24,7 +34,7 @@ class TranslatedPageFactory(factory.DjangoModelFactory):
 
     @classmethod
     def _build(cls, *args, **kwargs):
-        obj = super(TranslatedPageFactory, cls)._build(*args, **kwargs)
+        obj = super(TranslatablePageFactory, cls)._build(*args, **kwargs)
         if not obj.title:
             obj.title = "Page-{}".format(obj.language.code)
         return obj
@@ -38,7 +48,8 @@ class ImageFactory(factory.DjangoModelFactory):
         model = get_image_model()
 
 
-class HomePageFactory(TranslatedPageFactory):
+class HomePageFactory(TranslatablePageFactory):
+
     class Meta:
         model = HomePage
 
