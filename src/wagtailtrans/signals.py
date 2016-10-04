@@ -28,7 +28,6 @@ def synchronize_trees(sender, instance, **kwargs):
     """
     if (
         not kwargs.get('created') or
-        not settings.WAGTAILTRANS_SYNC_TREE or
         not getattr(instance, 'language', False) or
         not instance.language.is_default
     ):
@@ -61,8 +60,10 @@ def synchronize_deletions(sender, instance, **kwargs):
     :param sender: Sender model
     :param instance: TranslatablePage Instance
     :param kwargs: kwargs
+
     """
-    if settings.WAGTAILTRANS_SYNC_TREE and not instance.canonical_page:
+    language = getattr(instance, 'language', False)
+    if language and not instance.canonical_page:
         instance.get_translations(only_live=False).delete()
 
 
@@ -128,12 +129,7 @@ def create_new_language_tree(sender, instance, **kwargs):
     :param kwargs: kwargs e.g. created
 
     """
-    if kwargs.get('created'):
-        # create group and page permissions
-        group = get_or_create_language_group(instance)
-        create_group_permissions(group, instance)
-
-    if not kwargs.get('created') or not settings.WAGTAILTRANS_SYNC_TREE:
+    if not kwargs.get('created'):
         return
 
     for site in Site.objects.all():
@@ -147,6 +143,21 @@ def create_new_language_tree(sender, instance, **kwargs):
             child_page.specific.create_translation(instance, copy_fields=True)
 
 
+def create_language_permissions_and_group(sender, instance, **kwargs):
+    """Create a new `Translator` role with it's required permissions.
+
+    :param sender: Sender model
+    :param instance: Language instance
+    :param kwargs: kwargs e.g. created
+
+    """
+    if not kwargs.get('created'):
+        return
+
+    group = get_or_create_language_group(instance)
+    create_group_permissions(group, instance)
+
+
 def register_signal_handlers():
     """Registers signal handlers.
 
@@ -154,8 +165,11 @@ def register_signal_handlers():
     get_page_model.
 
     """
-    post_save.connect(create_new_language_tree, sender=Language)
+    post_save.connect(create_language_permissions_and_group, sender=Language)
 
-    for model in get_page_models():
-        post_save.connect(synchronize_trees, sender=model)
-        pre_delete.connect(synchronize_deletions, sender=model)
+    if settings.WAGTAILTRANS_SYNC_TREE:
+        post_save.connect(create_new_language_tree, sender=Language)
+
+        for model in get_page_models():
+            post_save.connect(synchronize_trees, sender=model)
+            pre_delete.connect(synchronize_deletions, sender=model)

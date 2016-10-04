@@ -203,7 +203,7 @@ class TranslatablePage(Page):
 
         translation_parent = (
             TranslatablePage.objects
-                .filter(
+            .filter(
                 canonical_page=self.get_parent(),
                 language=language,
                 url_path__startswith=site.get_site_root_paths()

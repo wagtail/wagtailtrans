@@ -49,6 +49,7 @@ class ImageFactory(factory.DjangoModelFactory):
 
 
 class HomePageFactory(TranslatablePageFactory):
+
     class Meta:
         model = HomePage
 
