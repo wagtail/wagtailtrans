@@ -129,7 +129,7 @@ class TranslatablePage(Page):
 
         """
         translations = self.get_translations(only_live=False)
-        if canonical_target.canonical_page:
+        if hasattr(canonical_target, 'canonical_page'):
             canonical_target = canonical_target.canonical_page
 
         for page in translations:
