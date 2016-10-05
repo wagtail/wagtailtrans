@@ -90,8 +90,9 @@ class TestTranslatablePage(object):
         nl_page = self.canonical_page.create_translation(
             language=nl, copy_fields=True)
 
-        assert nl_page.title == self.canonical_page.title
-        assert nl_page.slug == "{}-{}".format(self.canonical_page.slug, 'nl')
+        assert nl_page.title == '{} ({})'.format(
+            self.canonical_page.title, nl_page.language.code)
+        assert nl_page.slug == '{}-{}'.format(self.canonical_page.slug, 'nl')
         assert nl_page.canonical_page == self.canonical_page
         assert nl_page.get_parent() == self.canonical_page.get_parent()
 

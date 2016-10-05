@@ -230,7 +230,7 @@ class TranslatablePage(Page):
             new_page = self.copy(**kwargs)
         else:
             model_class = self.content_type.model_class()
-            new_page = model_class(title=self.title, **update_attrs)
+            new_page = model_class(**update_attrs)
             parent.add_child(instance=new_page)
 
         return new_page
