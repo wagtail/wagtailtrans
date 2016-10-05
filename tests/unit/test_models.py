@@ -101,6 +101,12 @@ class TestTranslatablePage(object):
         assert nl_page.body == self.canonical_page.body
         assert nl_page.image == self.canonical_page.image
 
+    def test_has_translation(self, languages):
+        language_nl = languages.get(code='nl')
+        assert not self.canonical_page.has_translation(language_nl)
+        self.canonical_page.create_translation(language_nl, copy_fields=True)
+        assert self.canonical_page.has_translation(language_nl)
+
     def test_force_parent_language(self, languages):
         """Test `force_parent_language()`."""
         en = languages.get(code='en')

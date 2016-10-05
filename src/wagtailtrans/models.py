@@ -175,10 +175,7 @@ class TranslatablePage(Page):
         :return: Boolean
 
         """
-        return (
-            TranslatablePage.objects
-            .filter(canonical_page=self, language=language)
-            .exists())
+        return language.pages.filter(canonical_page=self).exists()
 
     def get_translation_parent(self, language):
         site = self.get_site()
