@@ -1,5 +1,4 @@
 import factory
-
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.tests.utils import (
     get_image_model, get_test_image_file)

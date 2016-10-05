@@ -5,17 +5,16 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.translation import activate, ugettext_lazy
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.utils.translation import activate, ugettext_lazy
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
-from .managers import LanguageManager
 from .edit_handlers import ReadOnlyWidget
+from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
 
 

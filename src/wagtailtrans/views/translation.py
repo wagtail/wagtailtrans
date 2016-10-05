@@ -2,9 +2,8 @@ from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import get_object_or_404, redirect
 from django.views.generic.edit import FormView
-from wagtail.wagtailadmin.edit_handlers import (FieldPanel, ObjectList,
-                                                PageChooserPanel,
-                                                TabbedInterface)
+from wagtail.wagtailadmin.edit_handlers import (
+    FieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
 
 from wagtailtrans.forms import TranslationForm
 from wagtailtrans.models import Language, TranslatablePage

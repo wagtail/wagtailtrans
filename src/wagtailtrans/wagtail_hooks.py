@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.core import urlresolvers
-
 from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
+
 from wagtailtrans.models import Language
 from wagtailtrans.urls import languages, translations
 

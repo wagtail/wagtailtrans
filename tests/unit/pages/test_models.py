@@ -1,6 +1,5 @@
 import pytest
 from django.http import HttpRequest
-
 from wagtail.wagtailcore.models import Site
 
 
