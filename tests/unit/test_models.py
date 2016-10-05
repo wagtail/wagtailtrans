@@ -27,7 +27,7 @@ class TestLanguage(object):
 
     def test_str(self):
         language = LanguageFactory()
-        assert six.text_type(language) == 'en-gb'
+        assert six.text_type(language) == 'British English'
 
     def test_verbose(self):
         language = LanguageFactory()
