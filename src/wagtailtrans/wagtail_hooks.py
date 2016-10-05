@@ -1,10 +1,10 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.core import urlresolvers
-
 from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
+
 from wagtailtrans.models import Language
 from wagtailtrans.urls import languages, translations
 
@@ -32,8 +32,8 @@ def register_language_menu_item():
 
 
 if not settings.WAGTAILTRANS_SYNC_TREE:
-    """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled
-    """
+    """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled"""
+
     @hooks.register('register_page_listing_buttons')
     def page_translations_menu(page, page_perms, is_parent=False):
         if not hasattr(page, 'language'):
@@ -58,19 +58,19 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
         if hasattr(page, 'language') and page.language:
             exclude_lang = page.language
 
-        languages = Language.objects.filter(
-            live=True)
+        live_languages = Language.objects.filter(live=True)
         if exclude_lang:
-            languages = languages.exclude(pk=exclude_lang.pk)
+            live_languages = live_languages.exclude(pk=exclude_lang.pk)
 
-        translations = page.get_translations(only_live=False,
-                                             include_self=True)
+        page_translations = (
+            page.get_translations(only_live=False, include_self=True))
 
-        languages = languages.exclude(
-            code__in=[x.language.code for x in translations]
-        )
-        for language in languages:
+        live_languages = live_languages.exclude(
+            code__in=page_translations.values_list('language__code', flat=True))
+
+        for language in live_languages:
             lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
+
             yield widgets.Button(
                 '%s' % lang[1],
                 urlresolvers.reverse(

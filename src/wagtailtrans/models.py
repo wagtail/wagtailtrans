@@ -1,23 +1,20 @@
 from __future__ import unicode_literals
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
-from django.db import models, transaction
+from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.translation import activate, ugettext_lazy
 from django.utils.encoding import python_2_unicode_compatible
-
+from django.utils.translation import activate, ugettext_lazy
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-from wagtail.wagtailcore.models import Page, PageManager
+from wagtail.wagtailcore.models import Page
 
-from .managers import LanguageManager
-from .exceptions import TranslationMutationError
 from .edit_handlers import ReadOnlyWidget
+from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
 
 
@@ -66,12 +63,16 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
         canonical = self.initial.get('canonical_page', False)
-        if settings.WAGTAILTRANS_SYNC_TREE and canonical:
-            self.fields.get('language').widget = ReadOnlyWidget(
-                text_display=Language.objects.get(pk=self.initial['language']))
 
-            self.fields.get('canonical_page').widget = ReadOnlyWidget(
-                text_display=TranslatablePage.objects.get(pk=canonical))
+        canonical_page_text = ugettext_lazy("None")
+        if canonical:
+            canonical_page_text = TranslatablePage.objects.get(pk=canonical)
+
+        self.fields.get('language').widget = ReadOnlyWidget(
+            text_display=Language.objects.get(pk=self.initial['language']))
+
+        self.fields.get('canonical_page').widget = ReadOnlyWidget(
+            text_display=canonical_page_text)
 
     def clean_language(self):
         return (self.instance.force_parent_language(self.parent_page) or
@@ -174,10 +175,7 @@ class TranslatablePage(Page):
         :return: Boolean
 
         """
-        return (
-            TranslatablePage.objects
-            .filter(canonical_page=self, language=language)
-            .exists())
+        return language.pages.filter(canonical_page=self).exists()
 
     def get_translation_parent(self, language):
         site = self.get_site()
@@ -209,7 +207,11 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_translation_parent(language)
 
+        # Note: For now we change the title as well, when wagtail 1.8 is
+        #       released we can add the language in the admin titles
+        #       via `get_admin_display_title`
         update_attrs = {
+            'title': '%s (%s)' % (self.title, language.code),
             'slug': '%s-%s' % (self.slug, language.code),
             'language': language,
             'live': False,
@@ -224,7 +226,7 @@ class TranslatablePage(Page):
             new_page = self.copy(**kwargs)
         else:
             model_class = self.content_type.model_class()
-            new_page = model_class(title=self.title, **update_attrs)
+            new_page = model_class(**update_attrs)
             parent.add_child(instance=new_page)
 
         return new_page

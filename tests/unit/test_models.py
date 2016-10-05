@@ -27,7 +27,7 @@ class TestLanguage(object):
 
     def test_str(self):
         language = LanguageFactory()
-        assert six.text_type(language) == 'en-gb'
+        assert six.text_type(language) == 'British English'
 
     def test_verbose(self):
         language = LanguageFactory()
@@ -90,8 +90,9 @@ class TestTranslatablePage(object):
         nl_page = self.canonical_page.create_translation(
             language=nl, copy_fields=True)
 
-        assert nl_page.title == self.canonical_page.title
-        assert nl_page.slug == "{}-{}".format(self.canonical_page.slug, 'nl')
+        assert nl_page.title == '{} ({})'.format(
+            self.canonical_page.title, nl_page.language.code)
+        assert nl_page.slug == '{}-{}'.format(self.canonical_page.slug, 'nl')
         assert nl_page.canonical_page == self.canonical_page
         assert nl_page.get_parent() == self.canonical_page.get_parent()
 
@@ -99,6 +100,12 @@ class TestTranslatablePage(object):
         assert nl_page.subtitle == self.canonical_page.subtitle
         assert nl_page.body == self.canonical_page.body
         assert nl_page.image == self.canonical_page.image
+
+    def test_has_translation(self, languages):
+        language_nl = languages.get(code='nl')
+        assert not self.canonical_page.has_translation(language_nl)
+        self.canonical_page.create_translation(language_nl, copy_fields=True)
+        assert self.canonical_page.has_translation(language_nl)
 
     def test_force_parent_language(self, languages):
         """Test `force_parent_language()`."""

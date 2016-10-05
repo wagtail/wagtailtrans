@@ -2,7 +2,7 @@ import pytest
 from django.http import Http404
 from django.test import override_settings
 
-from tests.factories import language, sites, pages
+from tests.factories import language, pages, sites
 from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.views import translation
 
