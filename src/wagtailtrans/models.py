@@ -6,7 +6,8 @@ from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.encoding import python_2_unicode_compatible
-from django.utils.translation import activate, ugettext_lazy
+from django.utils.functional import cached_property
+from django.utils.translation import activate, ugettext_lazy as _
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
@@ -62,21 +63,24 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
     def __init__(self, *args, **kwargs):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
-        canonical = self.initial.get('canonical_page', False)
 
-        canonical_page_text = ugettext_lazy("None")
-        if canonical:
-            canonical_page_text = TranslatablePage.objects.get(pk=canonical)
-
-        self.fields.get('language').widget = ReadOnlyWidget(
-            text_display=Language.objects.get(pk=self.initial['language']))
-
-        self.fields.get('canonical_page').widget = ReadOnlyWidget(
+        canonical_page_text = _("None")
+        if self.instance.canonical_page:
+            canonical_page_text = self.instance.canonical_page.title
+        self.fields['canonical_page'].widget = ReadOnlyWidget(
             text_display=canonical_page_text)
 
+        language_display = Language.objects.get(pk=self.initial['language'])
+        if self.instance.is_canonical:
+            language_display = "{} - {}".format(language_display, "canonical")
+
+        self.fields['language'].widget = ReadOnlyWidget(
+            text_display=language_display)
+
     def clean_language(self):
-        return (self.instance.force_parent_language(self.parent_page) or
-                Language.objects.default())
+        return (
+            self.instance.force_parent_language(self.parent_page) or
+            Language.objects.default())
 
 
 def _language_default():
@@ -114,11 +118,14 @@ class TranslatablePage(Page):
         :param target: the new target to move the page to
         :param pos: position of the page in the new target
         :param suppress_sync: suppress syncing the translated pages
+
         """
         super(TranslatablePage, self).move(target, pos)
-
-        if not suppress_sync and settings.WAGTAILTRANS_SYNC_TREE and \
-           self.language.is_default:
+        if (
+            not suppress_sync and
+            settings.WAGTAILTRANS_SYNC_TREE and
+            self.language.is_default
+        ):
             self.move_translated_pages(canonical_target=target, pos=pos)
 
     def move_translated_pages(self, canonical_target, pos=None):
@@ -137,9 +144,10 @@ class TranslatablePage(Page):
         for page in translations:
             # get target because at this point we assume the tree is in sync.
             target = TranslatablePage.objects.filter(
-                language=page.language).filter(
+                Q(language=page.language),
                 Q(canonical_page=canonical_target) | Q(pk=canonical_target.pk)
             ).get()
+
             page.move(target=target, pos=pos, suppress_sync=True)
 
     def get_translations(self, only_live=True, include_self=False):
@@ -148,25 +156,22 @@ class TranslatablePage(Page):
         :param only_live: Boolean to filter on live pages
         :param include_self: Should this page be part of the result set
         :return: TranslatablePage instance
-        """
-        canonical_page = self.canonical_page
-        if not canonical_page:
-            canonical_page = self
 
+        """
+        canonical_page = self.canonical_page or self
         translations = TranslatablePage.objects.filter(
+            Q(language__live=True),
             Q(canonical_page=canonical_page) |
             Q(pk=canonical_page.pk)
         )
 
         if only_live:
             translations = translations.filter(live=True)
+
         if not include_self:
             translations = translations.exclude(pk=self.pk)
-        translations = translations.filter(
-            language__live=True
-        ).order_by('language__position')
 
-        return translations
+        return translations.order_by('language__position')
 
     def has_translation(self, language):
         """Check if page isn't already translated in given language.
@@ -254,37 +259,30 @@ class TranslatablePage(Page):
                 self.language = parent.language
         return self.language
 
+    @cached_property
+    def has_translations(self):
+        return TranslatablePage.objects.filter(canonical_page=self).exists()
+
+    @cached_property
+    def is_canonical(self):
+        return not self.canonical_page and self.has_translations
+
 
 @cached_classmethod
 def get_edit_handler(cls):
     tabs = []
     if cls.content_panels:
-        tabs.append(
-            ObjectList(
-                cls.content_panels,
-                heading=ugettext_lazy('Content')
-            ))
+        tabs.append(ObjectList(cls.content_panels, heading=_("Content")))
     if cls.promote_panels:
-        tabs.append(
-            ObjectList(
-                cls.promote_panels,
-                heading=ugettext_lazy('Promote')
-            ))
+        tabs.append(ObjectList(cls.promote_panels, heading=_("Promote")))
     if cls.settings_panels:
-        tabs.append(
-            ObjectList(
-                cls.settings_panels,
-                heading=ugettext_lazy('Settings'),
-                classname='settings'
-            ))
+        tabs.append(ObjectList(
+            cls.settings_panels, heading=_("Settings"), classname='settings'))
     if cls.translation_panels:
-        tabs.append(
-            ObjectList(
-                cls.translation_panels,
-                heading=ugettext_lazy('Translations')
-            ))
+        tabs.append(ObjectList(
+            cls.translation_panels, heading=_("Translations")))
 
-    EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)
+    EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)  # noqa
     return EditHandler.bind_to_model(cls)
 
 TranslatablePage.get_edit_handler = get_edit_handler
