@@ -78,7 +78,6 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
         self.fields['language'].widget = ReadOnlyWidget(
             text_display=language_display if language_display else '')
 
-
     def clean_language(self):
         return (
             self.instance.force_parent_language(self.parent_page) or

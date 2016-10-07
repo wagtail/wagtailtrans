@@ -21,6 +21,5 @@ class WagtailTransConfig(AppConfig):
                 "Setting WAGTAILTRANS_SYNC_TREE undefined. Please specify "
                 "WAGTAILTRANS_SYNC_TREE in your projects settings file.")
 
-
         from wagtailtrans.signals import register_signal_handlers
         register_signal_handlers()

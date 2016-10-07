@@ -1,10 +1,8 @@
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from wagtail.wagtailcore.models import (
     Collection, GroupCollectionPermission, GroupPagePermission,
     PagePermissionTester, UserPagePermissionsProxy)
-from wagtail.wagtailcore.permission_policies import BasePermissionPolicy
 
 
 def create_group_permissions(group, language):

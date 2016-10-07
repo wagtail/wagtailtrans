@@ -65,8 +65,9 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
         page_translations = (
             page.get_translations(only_live=False, include_self=True))
 
-        live_languages = live_languages.exclude(
-            code__in=page_translations.values_list('language__code', flat=True))
+        exclude_pages = page_translations.values_list(
+            'language__code', flat=True)
+        live_languages = live_languages.exclude(code__in=exclude_pages)
 
         for language in live_languages:
             lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
