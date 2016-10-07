@@ -13,7 +13,7 @@ Wagtail multilanguage module
 Features
 ========
 
-* Support multiple language for your wagtail site
+* Support multiple languages for your Wagtail site
 
 
 Getting started
