@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group, Permission
 from wagtail.wagtailcore.models import (
     Collection, GroupCollectionPermission, GroupPagePermission,
     PagePermissionTester, UserPagePermissionsProxy)
+from wagtail.wagtailcore.permission_policies import BasePermissionPolicy
 
 
 def create_group_permissions(group, language):
@@ -83,9 +85,13 @@ class TranslatablePagePermissionTester(PagePermissionTester):
         if the page is a translated page (it has a canonical page)
 
         :return: Boolean
+
         """
         has_canonical = getattr(self.page.specific, 'canonical_page', False)
-        if has_canonical and settings.WAGTAILTRANS_SYNC_TREE:
+        if (
+            has_canonical and settings.WAGTAILTRANS_SYNC_TREE and
+            not self.user.is_superuser
+        ):
             return False
         return super(TranslatablePagePermissionTester, self).can_delete()
 
@@ -99,5 +105,6 @@ class TranslatableUserPagePermissionsProxy(UserPagePermissionsProxy):
 
         :param page: Page object
         :return: TranslatablePagePermissionsTester instance
+
         """
         return TranslatablePagePermissionTester(self, page)
