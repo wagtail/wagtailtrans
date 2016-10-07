@@ -52,7 +52,7 @@ coverage:
 	$(BROWSER) htmlcov/index.html
 
 lint:
-	@flake8 wagtail
+	@flake8 src --exclude migrations
 
 isort:
 	isort `find . -name '*.py' -not -path '*/migrations/*'`
