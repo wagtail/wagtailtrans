@@ -17,13 +17,7 @@ Getting started
 
 2. Add ``wagtailtrans`` to your INSTALLED_APPS
 
-3. Create a class of type ``AbstractTranslatableSiteRootPage``:
-
-.. code-block:: python
-    class TranslatableSiteRootPage(AbstractTranslatableSiteRootPage):
-        subpage_types = ['TranslatedPage']
-
-4. Perform a migration
+3. Perform a migration
 
 .. code-block:: console
     ``python manage.py migrate wagtailtrans``

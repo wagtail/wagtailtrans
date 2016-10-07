@@ -216,7 +216,7 @@ class TranslatablePage(Page):
         #       released we can add the language in the admin titles
         #       via `get_admin_display_title`
         update_attrs = {
-            'title': '%s (%s)' % (self.title, language.code),
+            'title': self.title,
             'slug': '%s-%s' % (self.slug, language.code),
             'language': language,
             'live': False,
@@ -275,12 +275,12 @@ def get_edit_handler(cls):
         tabs.append(ObjectList(cls.content_panels, heading=_("Content")))
     if cls.promote_panels:
         tabs.append(ObjectList(cls.promote_panels, heading=_("Promote")))
-    if cls.settings_panels:
-        tabs.append(ObjectList(
-            cls.settings_panels, heading=_("Settings"), classname='settings'))
     if cls.translation_panels:
         tabs.append(ObjectList(
             cls.translation_panels, heading=_("Translations")))
+    if cls.settings_panels:
+        tabs.append(ObjectList(
+            cls.settings_panels, heading=_("Settings"), classname='settings'))
 
     EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)  # noqa
     return EditHandler.bind_to_model(cls)

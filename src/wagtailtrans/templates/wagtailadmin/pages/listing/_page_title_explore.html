@@ -4,9 +4,9 @@
 
 <h2>
     {% if page_perms.can_edit %}
-        <a href="{% url 'wagtailadmin_pages:edit' page.id %}" title="{% trans 'Edit this page' %}">{{ page.title }}{% if page.language %} ({{ page.language }}){% endif %}</a>
+        <a href="{% url 'wagtailadmin_pages:edit' page.id %}" title="{% trans 'Edit this page' %}">{{ page.title }}{% if page.language %} <em>({{ page.language }})</em>{% endif %}</a>
     {% else %}
-        {{ page.title }}{% if page.language %} ({{ page.language }}){% endif %}
+        {{ page.title }}{% if page.language %} <em>({{ page.language }})</em>{% endif %}
     {% endif %}
 
     {% include "wagtailadmin/pages/listing/_privacy_indicator.html" with page=page %}

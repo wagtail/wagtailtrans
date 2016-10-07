@@ -1,6 +1,8 @@
 TAG = $(BUILD_NUMBER)
 PROJECT = wagtailtrans-sandbox
 
+.PHONY: dist
+
 default: develop
 
 define BROWSER_PYSCRIPT
@@ -55,6 +57,12 @@ lint:
 isort:
 	isort `find . -name '*.py' -not -path '*/migrations/*'`
 
+dist: clean ## builds source and wheel package
+	@python setup.py sdist bdist_wheel
+	ls -l dist
+
+release: dist ## package and upload a release
+	twine upload -r lukkien dist/*
 
 # Docker commands
 package:

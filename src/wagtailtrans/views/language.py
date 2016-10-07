@@ -9,6 +9,7 @@ from wagtailtrans.models import Language
 
 language_permission_policy = ModelPermissionPolicy(Language)
 
+
 class Index(generic.IndexView):
     model = Language
     permission_policy = language_permission_policy
