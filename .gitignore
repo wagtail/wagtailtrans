@@ -8,8 +8,12 @@
 
 .cache/
 .idea/
-dist/
-/tests/_sandbox/assets
-/htmlcov/
+.tox/
 
+build/
+dist/
+tests/_sandbox/assets
+htmlcov/
+
+coverage.xml
 db.sqlite3
