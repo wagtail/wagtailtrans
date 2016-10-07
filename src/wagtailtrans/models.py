@@ -70,12 +70,14 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
         self.fields['canonical_page'].widget = ReadOnlyWidget(
             text_display=canonical_page_text)
 
-        language_display = Language.objects.get(pk=self.initial['language'])
-        if self.instance.is_canonical:
+        language_display = Language.objects.filter(
+            pk=self.initial['language']).first()
+        if self.instance.is_canonical and language_display:
             language_display = "{} - {}".format(language_display, "canonical")
 
         self.fields['language'].widget = ReadOnlyWidget(
-            text_display=language_display)
+            text_display=language_display if language_display else '')
+
 
     def clean_language(self):
         return (
