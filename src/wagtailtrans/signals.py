@@ -66,8 +66,11 @@ def create_new_language_tree(sender, instance, **kwargs):
             TranslatablePage.objects
             .filter(pk__in=site_pages, language=Language.objects.default())
             .first())
-
-        for child_page in canonical_home_page.get_descendants(inclusive=True):
+        if not canonical_home_page:
+            # no pages created yet.
+            return
+        descendants = canonical_home_page.get_descendants(inclusive=True)
+        for child_page in descendants:
             child_page.specific.create_translation(instance, copy_fields=True)
 
 
