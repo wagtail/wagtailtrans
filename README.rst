@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/LUKKIEN/wagtailtrans.svg?branch=master)](https://travis-ci.org/LUKKIEN/wagtailtrans)
+[![Coverage Status](https://coveralls.io/repos/github/LUKKIEN/wagtailtrans/badge.svg?branch=master)](https://coveralls.io/github/LUKKIEN/wagtailtrans?branch=master)
+
 Wagtail multilanguage module
 ============================
 
