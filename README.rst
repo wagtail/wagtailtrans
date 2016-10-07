@@ -4,6 +4,9 @@
 .. image:: https://coveralls.io/repos/github/LUKKIEN/wagtailtrans/badge.svg?branch=master
     :target: https://coveralls.io/github/LUKKIEN/wagtailtrans?branch=master
 
+.. image:: https://badge.fury.io/py/wagtailtrans.svg
+    :target: https://badge.fury.io/py/wagtailtrans
+
 Wagtail multilanguage module
 ============================
 
