@@ -54,9 +54,9 @@ lint:
 isort:
 	isort `find . -name '*.py' -not -path '*/migrations/*'`
 
-dist: clean ## builds source and wheel package
+dist: clean
 	@python setup.py sdist bdist_wheel
 	ls -l dist
 
-release: dist ## package and upload a release
+release: dist
 	twine upload -r lukkien dist/*
