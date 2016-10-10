@@ -37,7 +37,11 @@ class LanguageForm(forms.ModelForm):
 
     def clean_is_default(self):
         """Force the `is_default` to stay the same, when in sync mode."""
-        if self.instance and settings.WAGTAILTRANS_SYNC_TREE:
+        if (
+            self.instance and
+            settings.WAGTAILTRANS_SYNC_TREE and
+            Language.objects.default()
+        ):
             return self.instance.is_default
         return self.cleaned_data['is_default']
 
