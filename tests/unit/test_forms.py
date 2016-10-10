@@ -2,9 +2,7 @@ import pytest
 
 from django.test import override_settings
 
-from tests.factories import language, pages, sites
-from wagtailtrans.models import Language, TranslatablePage
-from wagtailtrans.views import translation
+from wagtailtrans.models import Language
 from wagtailtrans.forms import LanguageForm
 
 @pytest.mark.django_db
