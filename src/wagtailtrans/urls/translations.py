@@ -4,7 +4,7 @@ from django.conf.urls import url
 
 from wagtailtrans.views import translation
 
-app_name='wagtailtrans'
+app_name = 'wagtailtrans'
 
 urlpatterns = [
     url(r'^(?P<page_pk>\w+)/add/(?P<language_code>\w+)/$',
