@@ -37,7 +37,6 @@ develop: clean requirements
 
 requirements:
 	@pip install --upgrade -e .
-	@pip install --upgrade -e .[test]
 
 qt:
 	@py.test -q --reuse-db tests/ --tb=short

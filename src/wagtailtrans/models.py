@@ -210,12 +210,13 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_translation_parent(language)
 
-        # Note: For now we change the title as well, when wagtail 1.8 is
-        #       released we can add the language in the admin titles
-        #       via `get_admin_display_title`
+        slug = '%s-%s' % (self.slug, language.code)
+        if self.slug == self.language.code:
+            slug = language.code
+
         update_attrs = {
             'title': self.title,
-            'slug': '%s-%s' % (self.slug, language.code),
+            'slug': slug,
             'language': language,
             'live': False,
             'canonical_page': self,
