@@ -101,8 +101,9 @@ def register_signal_handlers():
     if settings.WAGTAILTRANS_SYNC_TREE:
         post_save.connect(create_new_language_tree, sender=Language)
 
-        # TODO: Not so safe; get_page_models() can return Pages types
-        # which are not of type `TranslatablePage`
         for model in get_page_models():
-            post_save.connect(synchronize_trees, sender=model)
-            pre_delete.connect(synchronize_deletions, sender=model)
+            if hasattr(model, 'create_translation'):
+                post_save.connect(synchronize_trees, sender=model)
+
+            if hasattr(model, 'get_translations'):
+                pre_delete.connect(synchronize_deletions, sender=model)
