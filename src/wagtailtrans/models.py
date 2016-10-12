@@ -167,7 +167,7 @@ class TranslatablePage(Page):
         )
 
         if only_live:
-            translations = translations.filter(live=True)
+            translations = translations.live()
 
         if not include_self:
             translations = translations.exclude(pk=self.pk)
@@ -297,8 +297,11 @@ def get_user_language(request):
     :return: Language instance
     """
     if hasattr(request, 'LANGUAGE_CODE'):
-        language = Language.objects.filter(
-            code=request.LANGUAGE_CODE).first()
+        language = (
+            Language.objects
+            .live()
+            .filter(code=request.LANGUAGE_CODE)
+            .first())
         if language:
             return language
     return Language.objects.default()
