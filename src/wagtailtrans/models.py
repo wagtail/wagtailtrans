@@ -46,9 +46,6 @@ class Language(models.Model):
         ordering = ['position']
 
     def __str__(self):
-        return self.verbose()
-
-    def verbose(self):
         return self.get_code_display()
 
     def has_pages_in_site(self, site):

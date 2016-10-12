@@ -29,10 +29,6 @@ class TestLanguage(object):
         language = LanguageFactory()
         assert six.text_type(language) == 'British English'
 
-    def test_verbose(self):
-        language = LanguageFactory()
-        assert language.verbose() == 'British English'
-
     def test_default(self, languages):
         assert models.Language.objects.default().code == 'en'
 
