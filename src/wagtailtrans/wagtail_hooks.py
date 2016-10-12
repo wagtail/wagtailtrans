@@ -12,12 +12,10 @@ from wagtailtrans.urls import languages, translations
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^language/', include(
-            languages, app_name='wagtailtrans',
-            namespace='wagtailtrans_languages')),
-        url(r'^translate/', include(
-            translations, app_name='wagtailtrans',
-            namespace='wagtailtrans_translations')),
+        url(r'^language/',
+            include(languages, namespace='wagtailtrans_languages')),
+        url(r'^translate/',
+            include(translations, namespace='wagtailtrans_translations')),
     ]
 
 

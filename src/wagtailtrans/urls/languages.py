@@ -4,6 +4,8 @@ from django.conf.urls import url
 
 from wagtailtrans.views import language
 
+app_name='wagtailtrans'
+
 urlpatterns = [
     url(r'^$', language.Index.as_view(), name='index'),
     url(r'^add/$', language.Create.as_view(), name='add'),
