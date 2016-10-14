@@ -7,6 +7,6 @@ from wagtailtrans.views import translation
 app_name = 'wagtailtrans'
 
 urlpatterns = [
-    url(r'^(?P<page_pk>\w+)/add/(?P<language_code>\w+)/$',
+    url(r'^(?P<page_pk>\d+)/add/(?P<language_code>[^/]+)/$',
         translation.Add.as_view(), name='add'),
 ]
