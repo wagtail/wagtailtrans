@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.conf.urls import include, url
-from django.core import urlresolvers
+from django.core.urlresolvers import reverse
 from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
@@ -23,7 +23,7 @@ def register_admin_urls():
 def register_language_menu_item():
     return MenuItem(
         'Languages',
-        urlresolvers.reverse('wagtailtrans_languages:index'),
+        reverse('wagtailtrans_languages:index'),
         classnames='icon icon-snippet',
         order=1000,
     )
@@ -56,25 +56,24 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
         if hasattr(page, 'language') and page.language:
             exclude_lang = page.language
 
-        live_languages = Language.objects.filter(live=True)
-        if exclude_lang:
-            live_languages = live_languages.exclude(pk=exclude_lang.pk)
+        other_languages = set(
+            Language.objects
+            .live()
+            .exclude(pk=exclude_lang.pk)
+            .order_by('position'))
 
-        page_translations = (
-            page.get_translations(only_live=False, include_self=True))
+        translations = (
+            page.get_translations(only_live=False).select_related('language'))
+        taken_languages = set(translations.values_list('language', flat=True))
 
-        exclude_pages = page_translations.values_list(
-            'language__code', flat=True)
-        live_languages = live_languages.exclude(code__in=exclude_pages)
-
-        for language in live_languages:
-            lang = [x for x in settings.LANGUAGES if x[0] == language.code][0]
-
+        translation_targets = other_languages - taken_languages
+        for language in translation_targets:
             yield widgets.Button(
-                '%s' % lang[1],
-                urlresolvers.reverse(
-                    'wagtailtrans_translations:add', kwargs={
-                        'page_pk': page.pk, 'language_code': language.code}),
+                language.get_code_display(),
+                reverse('wagtailtrans_translations:add', kwargs={
+                    'page_pk': page.pk,
+                    'language_code': language.code,
+                }),
                 priority=prio)
 
             prio += 1

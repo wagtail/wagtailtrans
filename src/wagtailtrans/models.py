@@ -148,26 +148,24 @@ class TranslatablePage(Page):
 
             page.move(target=target, pos=pos, suppress_sync=True)
 
-    def get_translations(self, only_live=True, include_self=False):
-        """Get translation of this page.
+    def get_translations(self, only_live=True):
+        """Get all translations of this page.
 
-        :param only_live: Boolean to filter on live pages
-        :param include_self: Should this page be part of the result set
+        This page itself is not included in the result, all pages
+        are sorted by the language position.
+
+        :param only_live: Boolean to filter on live pages & languages.
         :return: TranslatablePage instance
 
         """
         canonical_page = self.canonical_page or self
         translations = TranslatablePage.objects.filter(
-            Q(language__live=True),
             Q(canonical_page=canonical_page) |
             Q(pk=canonical_page.pk)
-        )
+        ).exclude(pk=self.pk)
 
         if only_live:
-            translations = translations.live()
-
-        if not include_self:
-            translations = translations.exclude(pk=self.pk)
+            translations = translations.live().filter(language__live=True)
 
         return translations.order_by('language__position')
 
@@ -260,7 +258,7 @@ class TranslatablePage(Page):
 
     @cached_property
     def has_translations(self):
-        return TranslatablePage.objects.filter(canonical_page=self).exists()
+        return self.translations.exists()
 
     @cached_property
     def is_canonical(self):

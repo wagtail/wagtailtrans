@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.1.0b4
+-------
+
+ Backwards incompatible changes:
+
+  - Remove `include_self` attribute for `TranslatablePage.get_translations`
+
+
 0.0.1 (xxxx-xx-xx)
 ------------------
 

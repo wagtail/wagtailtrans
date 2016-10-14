@@ -43,7 +43,7 @@ def synchronize_deletions(sender, instance, **kwargs):
 
     """
     language = getattr(instance, 'language', False)
-    if language and not instance.canonical_page:
+    if language and not instance.is_canonical:
         instance.get_translations(only_live=False).delete()
 
 
