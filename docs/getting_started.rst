@@ -17,7 +17,7 @@ Add to installed apps::
 
     INSTALLED_APPS = [
     ...
-    'wagtail.wagtailtrans',
+    'wagtailtrans',
     ..
     ]
 
