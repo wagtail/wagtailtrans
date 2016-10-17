@@ -4,9 +4,9 @@
 
 Getting started with wagtailtrans
 *********************************
-To start using wagtailtrans in your project take the following steps.
+To start using wagtailtrans in your project take the following steps:
 
-installation
+Installation
 ------------
 using pip::
 
@@ -38,7 +38,7 @@ We can create a translation site root page by creating the `TranslatableSiteRoot
 under the root page.
 
 We will also make a Home page which will be translatable.
-This is done by extending your page from TranslatablePage instrad of wagtailscore's Page ::
+This is done by extending your page from TranslatablePage instead of Wagtail's Core Page ::
 
     from wagtail.wagtailtrans.models import TranslatablePage
 
@@ -80,7 +80,7 @@ We now have the basics for a Translated Site.
 
 Synchronized trees
 ------------------
-To start using syncronized trees, please see: :ref:`synchronized_trees`.
+To start using synchronized trees, please see: :ref:`synchronized_trees`.
 
 Freeflow trees
 --------------
