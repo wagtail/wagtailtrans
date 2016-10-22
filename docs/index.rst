@@ -18,7 +18,8 @@ Pages can still be copied with content into the preferred language but this is n
 automatic nor mandatory.
 moderators can decide how the page structure works for every language.
 
-Contents:
+Table of contents
+=================
 
 .. toctree::
    :maxdepth: 2
@@ -27,11 +28,3 @@ Contents:
    contributing
    freeform_trees
    synchronized_trees
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
-
