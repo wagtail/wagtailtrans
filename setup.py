@@ -31,5 +31,11 @@ setup(
     ],
     install_requires=[
         'wagtail>=1.6',
-    ]
+    ],
+    extras_require={
+        'docs': [
+            'Sphinx==1.4.8',
+            'sphinx-rtd-theme==0.1.9',
+        ],
+    }
 )
