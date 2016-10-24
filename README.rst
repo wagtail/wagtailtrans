@@ -7,6 +7,11 @@
 .. image:: https://badge.fury.io/py/wagtailtrans.svg
     :target: https://badge.fury.io/py/wagtailtrans
 
+.. image:: https://readthedocs.org/projects/wagtailtrans/badge/?version=latest
+    :target: http://wagtailtrans.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
+
+
 Wagtail multilanguage module
 ============================
 
