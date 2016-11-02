@@ -20,6 +20,10 @@ Features
 
 * Support multiple languages for your Wagtail site
 
+Documentation
+=============
+
+http://wagtailtrans.readthedocs.io/
 
 Getting started
 ===============
