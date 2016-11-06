@@ -63,7 +63,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
         canonical_page_text = _("None")
         if self.instance.canonical_page:
-            canonical_page_text = self.instance.canonical_page.title
+            canonical_page_text = self.instance.canonical_page
         self.fields['canonical_page'].widget = ReadOnlyWidget(
             text_display=canonical_page_text)
 
@@ -94,11 +94,14 @@ class TranslatablePage(Page):
         Language, related_name='pages', on_delete=models.PROTECT,
         default=_language_default)
 
-    translation_panels = [
-        MultiFieldPanel([
-            FieldPanel('language'),
-            PageChooserPanel('canonical_page'),
-        ])
+    settings_panels = Page.settings_panels + [
+        MultiFieldPanel(
+            heading=_("Translations"),
+            children=[
+                FieldPanel('language'),
+                PageChooserPanel('canonical_page'),
+            ]
+        )
     ]
 
     base_form_class = AdminTranslatablePageForm
@@ -265,26 +268,6 @@ class TranslatablePage(Page):
     @cached_property
     def is_canonical(self):
         return not self.canonical_page and self.has_translations
-
-
-@cached_classmethod
-def get_edit_handler(cls):
-    tabs = []
-    if cls.content_panels:
-        tabs.append(ObjectList(cls.content_panels, heading=_("Content")))
-    if cls.promote_panels:
-        tabs.append(ObjectList(cls.promote_panels, heading=_("Promote")))
-    if cls.translation_panels:
-        tabs.append(ObjectList(
-            cls.translation_panels, heading=_("Translations")))
-    if cls.settings_panels:
-        tabs.append(ObjectList(
-            cls.settings_panels, heading=_("Settings"), classname='settings'))
-
-    EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)  # noqa
-    return EditHandler.bind_to_model(cls)
-
-TranslatablePage.get_edit_handler = get_edit_handler
 
 
 def get_user_language(request):
