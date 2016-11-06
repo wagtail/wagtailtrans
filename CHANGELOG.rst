@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.0rc1 (05-11-2016)
+---------------------
+
+ - Add `WAGTAILTRANS_TEMPLATE_DIR` to allow overriding templates.
+
+
 0.1.0b4
 -------
 
