@@ -103,6 +103,8 @@ class TranslatablePage(Page):
 
     base_form_class = AdminTranslatablePageForm
 
+    is_creatable = False
+
     def __str__(self):
         return "{} ({})".format(self.title, self.language)
 
