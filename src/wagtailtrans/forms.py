@@ -11,6 +11,14 @@ from wagtailtrans.models import Language, TranslatablePage
 
 
 class LanguageForm(forms.ModelForm):
+    """Custom language form.
+
+    Using a custom form which sets the choices for the `code`
+    field prevents us to have new migrations when settings change.
+    """
+    code = forms.ChoiceField(
+        label=_("Language"), choices=settings.LANGUAGES,
+        help_text=_("One of the languages defined in LANGUAGES"))
 
     class Meta:
         model = Language
