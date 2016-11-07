@@ -86,6 +86,8 @@ def _language_default():
 
 @python_2_unicode_compatible
 class TranslatablePage(Page):
+    translatable_page_ptr = models.OneToOneField(
+        Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)

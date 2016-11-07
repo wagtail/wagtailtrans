@@ -15,18 +15,15 @@
 Wagtail multilanguage module
 ============================
 
-Features
-========
-
-* Support multiple languages for your Wagtail site
+Support multiple languages for your Wagtail site
 
 Documentation
-=============
+-------------
 
 http://wagtailtrans.readthedocs.io/
 
 Getting started
-===============
+---------------
 
 1. To install wagtailtrans, run this command in your terminal:
 
@@ -35,7 +32,20 @@ Getting started
 
 2. Add ``wagtailtrans`` to your INSTALLED_APPS
 
-3. Perform a migration
+3. Add `WAGTAILTRANS_TEMPLATE_DIR` (from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR) to your template dirs setting
+
+.. code-block:: python
+    from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
+
+    TEMPLATES = [{
+        # ....
+        'DIRS': [
+            WAGTAILTRANS_TEMPLATE_DIRS,
+        ]
+        # ....
+    }]
+
+4. Perform a migration
 
 .. code-block:: console
     ``python manage.py migrate wagtailtrans``
@@ -43,7 +53,7 @@ Getting started
 You're set!
 
 Settings
-========
+--------
 
 The settings ``WAGTAILTRANS_SYNC_TREE`` can be used to configure the module to keep your language trees synchronized or not.
 This is set to ``True`` by default.
