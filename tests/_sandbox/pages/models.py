@@ -19,8 +19,7 @@ class HomePage(TranslatablePage, Page):
         'wagtailimages.Image', null=True, blank=True,
         on_delete=models.SET_NULL, related_name='+')
 
-    content_panels = [
-        FieldPanel('title', classname='full title'),
+    content_panels = Page.content_panels + [
         FieldPanel('subtitle'),
         FieldPanel('body'),
         ImageChooserPanel('image')
