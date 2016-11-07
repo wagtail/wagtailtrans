@@ -18,7 +18,7 @@
                         {% for language in languages %}
                             <tr>
                                 <td class="title">
-                                    <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language.get_code_display }}</a>
+                                    <a href="{% url 'wagtailtrans_languages:edit' language.id %}">{{ language }}</a>
                                 </td>
                                 <td class="title">{{ language.code }}</td>
                                 <td>{{ language.position }}</td>
