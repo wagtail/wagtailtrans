@@ -1,9 +1,10 @@
 from setuptools import find_packages, setup
 
+version = __import__('wagtailtrans').get_version()
 
 setup(
     name='wagtailtrans',
-    version='0.1.0rc1',
+    version=version,
     description='A Wagtail add-on for supporting multilingual sites',
     author='Lukkien BV',
     author_email='support@lukkien.com',
