@@ -8,9 +8,8 @@ from django.shortcuts import redirect
 from django.utils.encoding import python_2_unicode_compatible
 from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
-from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
+    FieldPanel, MultiFieldPanel, PageChooserPanel)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
