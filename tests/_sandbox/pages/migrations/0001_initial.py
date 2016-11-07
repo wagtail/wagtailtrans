@@ -13,8 +13,8 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('wagtailtrans', '0001_initial'),
-        ('wagtailcore', '0030_index_on_pagerevision_created_at'),
-        ('wagtailimages', '0015_fill_filter_spec_field'),
+        ('wagtailcore', '0028_merge'),
+        ('wagtailimages', '0013_make_rendition_upload_callable'),
     ]
 
     operations = [
