@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-version = __import__('wagtailtrans').get_version()
+version = __import__('wagtailtrans').__version__
 
 setup(
     name='wagtailtrans',
