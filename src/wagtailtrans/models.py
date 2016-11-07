@@ -21,20 +21,20 @@ from .permissions import TranslatableUserPagePermissionsProxy
 @python_2_unicode_compatible
 class Language(models.Model):
     """User defined language."""
+    code = models.CharField(max_length=12, unique=True)
 
-    code = models.CharField(
-        max_length=12, choices=settings.LANGUAGES, unique=True,
-        help_text="One of the languages defined in LANGUAGES")
     is_default = models.BooleanField(
         default=False, help_text="""
         Visitors with no language preference will see the site in
         this language
         """)
+
     position = models.IntegerField(
         default=0, help_text="""
         Language choices and translations will be displayed in this
         order
         """)
+
     live = models.BooleanField(
         default=True,
         help_text="Is this language available for visitors to view?")
@@ -45,7 +45,7 @@ class Language(models.Model):
         ordering = ['position']
 
     def __str__(self):
-        return self.get_code_display()
+        return dict(settings.LANGUAGES).get(self.code)
 
     def has_pages_in_site(self, site):
         return (
