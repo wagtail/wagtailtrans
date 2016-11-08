@@ -1,14 +1,14 @@
 from os import path
 
+default_app_config = 'wagtailtrans.config.WagtailTransConfig'
 
 VERSION = (0, 1, 0, 'final')
-
-default_app_config = 'wagtailtrans.config.WagtailTransConfig'
 
 WAGTAILTRANS_TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 
 
 def get_version():
+    """Return normalised version string."""
     version = '%s.%s' % (VERSION[0], VERSION[1])
     # Append 3rd digit if > 0
     if VERSION[2]:
