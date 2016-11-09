@@ -5,7 +5,7 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.encoding import python_2_unicode_compatible
+from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
 from wagtail.utils.decorators import cached_classmethod
@@ -46,7 +46,7 @@ class Language(models.Model):
         ordering = ['position']
 
     def __str__(self):
-        return dict(settings.LANGUAGES).get(self.code)
+        return force_text(dict(settings.LANGUAGES).get(self.code))
 
     def has_pages_in_site(self, site):
         return (
