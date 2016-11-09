@@ -12,3 +12,6 @@ Contributors
 
  - Janneke Janssen
  - Tom Dyson
+ - Rob Moorman
+ - Diederik van der Boor
+
