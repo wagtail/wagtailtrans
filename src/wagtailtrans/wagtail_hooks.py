@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.conf.urls import include, url
 from django.core.urlresolvers import reverse
+from django.utils.encoding import force_text
 from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
@@ -69,7 +70,7 @@ if not settings.WAGTAILTRANS_SYNC_TREE:
         translation_targets = other_languages - taken_languages
         for language in translation_targets:
             yield widgets.Button(
-                language.get_code_display(),
+                force_text(language),
                 reverse('wagtailtrans_translations:add', kwargs={
                     'page_pk': page.pk,
                     'language_code': language.code,
