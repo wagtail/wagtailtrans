@@ -82,7 +82,9 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
 
 def _language_default():
-    return Language.objects.default()
+    # Let the default return a PK, so migrations can also work with this value.
+    # The FakeORM model in the migrations differ from this Django model.
+    return Language.objects.default().pk
 
 
 @python_2_unicode_compatible
