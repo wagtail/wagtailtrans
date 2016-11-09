@@ -40,7 +40,7 @@ Getting started
     TEMPLATES = [{
         # ....
         'DIRS': [
-            WAGTAILTRANS_TEMPLATE_DIRS,
+            WAGTAILTRANS_TEMPLATE_DIR,
         ]
         # ....
     }]
