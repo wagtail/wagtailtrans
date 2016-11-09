@@ -40,7 +40,7 @@ under the root page.
 We will also make a Home page which will be translatable.
 This is done by extending your page from TranslatablePage instead of Wagtail's Core Page ::
 
-    from wagtail.wagtailtrans.models import TranslatablePage
+    from wagtailtrans.models import TranslatablePage
 
     class HomePage(TranslatablePage):
         body = RichTextField(
