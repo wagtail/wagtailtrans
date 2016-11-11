@@ -160,10 +160,10 @@ class TranslatablePage(Page):
         :return: TranslatablePage instance
 
         """
-        canonical_page = self.canonical_page or self
+        canonical_page_id = self.canonical_page_id or self.pk
         translations = TranslatablePage.objects.filter(
-            Q(canonical_page=canonical_page) |
-            Q(pk=canonical_page.pk)
+            Q(canonical_page=canonical_page_id) |
+            Q(pk=canonical_page_id)
         ).exclude(pk=self.pk)
 
         if only_live:
@@ -264,7 +264,7 @@ class TranslatablePage(Page):
 
     @cached_property
     def is_canonical(self):
-        return not self.canonical_page and self.has_translations
+        return not self.canonical_page_id and self.has_translations
 
 
 @cached_classmethod
