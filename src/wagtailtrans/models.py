@@ -210,9 +210,10 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_translation_parent(language)
 
-        slug = '%s-%s' % (self.slug, language.code)
         if self.slug == self.language.code:
             slug = language.code
+        else:
+            slug = '%s-%s' % (self.slug, language.code)
 
         update_attrs = {
             'title': self.title,
