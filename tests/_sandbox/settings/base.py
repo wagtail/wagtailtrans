@@ -156,4 +156,4 @@ BASE_URL = 'http://example.com'
 
 # wagtailtrans setting
 WAGTAILTRANS_SYNC_TREE = True
-WAGTAILTRANS_LANGUAGES_PER_SITE = True
+WAGTAILTRANS_LANGUAGES_PER_SITE = False
