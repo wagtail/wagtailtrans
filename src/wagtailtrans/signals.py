@@ -17,19 +17,27 @@ def synchronize_trees(sender, instance, **kwargs):
     :param kwargs: kwargs e.g. created
 
     """
-    if (
-        not kwargs.get('created') or
-        not getattr(instance, 'language', False) or
-        not instance.language.is_default
-    ):
-        return
-
     try:
-        instance.get_site()
+        site = instance.get_site()
     except ObjectDoesNotExist:
         return
 
-    for lang in Language.objects.filter(is_default=False):
+    if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+        site_default = site.sitelanguages.default_language
+        is_default_language = instance.language == site_default
+        other_languages = site.sitelanguages.other_languages.all()
+    else:
+        is_default_language = instance.language.is_default
+        other_languages = Language.objects.filter(is_default=False)
+
+    if (
+        not kwargs.get('created') or
+        not getattr(instance, 'language', False) or
+        not is_default_language
+    ):
+        return
+
+    for lang in other_languages:
         instance.create_translation(language=lang, copy_fields=True)
 
 
@@ -62,9 +70,12 @@ def create_new_language_tree(sender, instance, **kwargs):
 
     for site in Site.objects.all():
         site_pages = site.root_page.get_children().values_list('pk', flat=True)
+        default_language = site.sitelanguages.default_language \
+            if settings.WAGTAILTRANS_LANGUAGES_PER_SITE \
+            else Language.objects.default()
         canonical_home_page = (
             TranslatablePage.objects
-            .filter(pk__in=site_pages, language=Language.objects.default())
+            .filter(pk__in=site_pages, language=default_language)
             .first())
         if not canonical_home_page:
             # no pages created yet.

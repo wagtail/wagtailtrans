@@ -8,6 +8,9 @@ from django.shortcuts import redirect
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
+from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.registry import register_setting
+from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
@@ -81,7 +84,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
 
 def _language_default():
-    return Language.objects.default()
+    return Language.objects.default().pk
 
 
 @python_2_unicode_compatible
@@ -325,3 +328,23 @@ def page_permissions_for_user(self, user):
 
 
 Page.permissions_for_user = page_permissions_for_user
+
+
+@register_setting
+class SiteLanguages(BaseSetting):
+    """Site specific settings are stored in the database"""
+    default_language = models.ForeignKey(Language, related_name="site_default_language", null=True)
+    other_languages = models.ManyToManyField(Language)
+    panels = [
+        MultiFieldPanel(
+            heading=_("Languages"),
+            children=[
+                FieldPanel('default_language'),
+                FieldPanel('other_languages'),
+            ]
+        ),
+    ]
+
+    class Meta:
+        verbose_name = _("Site languages")
+        verbose_name_plural = _("Site languages")

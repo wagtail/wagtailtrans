@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'wagtail.contrib.settings',
+
     'wagtail.wagtailforms',
     'wagtail.wagtailredirects',
     'wagtail.wagtailembeds',
@@ -71,6 +73,7 @@ MIDDLEWARE = [
 
     'wagtail.wagtailcore.middleware.SiteMiddleware',
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
+    'wagtailtrans.middleware.SiteLanguagesMiddleware'
 ]
 
 ROOT_URLCONF = 'tests._sandbox.urls'
@@ -153,3 +156,4 @@ BASE_URL = 'http://example.com'
 
 # wagtailtrans setting
 WAGTAILTRANS_SYNC_TREE = True
+WAGTAILTRANS_LANGUAGES_PER_SITE = True
