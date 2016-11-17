@@ -259,6 +259,9 @@ class TranslatablePage(Page):
         if hasattr(parent, 'language'):
             if self.language != parent.language:
                 self.language = parent.language
+        elif settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+            site = parent.get_site()
+            self.language = site.sitelanguages.default_language
         return self.language
 
     @cached_property
