@@ -1,9 +1,16 @@
+import os
+import sys
+
 from setuptools import find_packages, setup
 
+PROJECT_DIR = os.path.dirname(__file__)
+
+sys.path.append(os.path.join(PROJECT_DIR, 'src'))
+from wagtailtrans import get_version # noqa isort:skip
 
 setup(
     name='wagtailtrans',
-    version='0.1.0rc1',
+    version=get_version().replace(' ', '-'),
     description='A Wagtail add-on for supporting multilingual sites',
     author='Lukkien BV',
     author_email='support@lukkien.com',
