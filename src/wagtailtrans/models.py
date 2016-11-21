@@ -8,9 +8,8 @@ from django.shortcuts import redirect
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
-from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
+    FieldPanel, MultiFieldPanel, PageChooserPanel)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
 from wagtail.wagtailcore.models import Page
 
@@ -94,11 +93,14 @@ class TranslatablePage(Page):
         Language, related_name='pages', on_delete=models.PROTECT,
         default=_language_default)
 
-    translation_panels = [
-        MultiFieldPanel([
-            FieldPanel('language'),
-            PageChooserPanel('canonical_page'),
-        ])
+    settings_panels = Page.settings_panels + [
+        MultiFieldPanel(
+            heading=_("Translations"),
+            children=[
+                FieldPanel('language'),
+                PageChooserPanel('canonical_page'),
+            ]
+        )
     ]
 
     base_form_class = AdminTranslatablePageForm
@@ -265,26 +267,6 @@ class TranslatablePage(Page):
         return not self.canonical_page and self.has_translations
 
 
-@cached_classmethod
-def get_edit_handler(cls):
-    tabs = []
-    if cls.content_panels:
-        tabs.append(ObjectList(cls.content_panels, heading=_("Content")))
-    if cls.promote_panels:
-        tabs.append(ObjectList(cls.promote_panels, heading=_("Promote")))
-    if cls.translation_panels:
-        tabs.append(ObjectList(
-            cls.translation_panels, heading=_("Translations")))
-    if cls.settings_panels:
-        tabs.append(ObjectList(
-            cls.settings_panels, heading=_("Settings"), classname='settings'))
-
-    EditHandler = TabbedInterface(tabs, base_form_class=cls.base_form_class)  # noqa
-    return EditHandler.bind_to_model(cls)
-
-TranslatablePage.get_edit_handler = get_edit_handler
-
-
 def get_user_language(request):
     """Get the Language corresponding to a request.
     return default language if Language does not exist in site
@@ -340,5 +322,6 @@ def page_permissions_for_user(self, user):
     """
     user_perms = TranslatableUserPagePermissionsProxy(user)
     return user_perms.for_page(self)
+
 
 Page.permissions_for_user = page_permissions_for_user
