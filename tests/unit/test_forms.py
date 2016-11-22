@@ -1,17 +1,15 @@
 import pytest
 
-from wagtailtrans.models import Language
+from django.forms.widgets import Select
+from django.test import override_settings
+from tests.factories import sites
+from wagtail.contrib.settings.views import get_setting_edit_handler
+from wagtailtrans.edit_handlers import ReadOnlyWidget
+from wagtailtrans.models import (
+    Language, SiteLanguages, register_site_languages)
+from wagtailtrans.thread import set_site_languages
 from wagtailtrans.forms import LanguageForm
 
-from django.test import override_settings
-
-from tests.factories import language, sites
-from wagtailtrans.models import Language, SiteLanguages, TranslatablePage, register_site_languages
-from wagtailtrans.signals import register_signal_handlers
-from wagtailtrans.thread import set_site_languages
-from wagtail.contrib.settings.views import get_setting_edit_handler
-from django.forms.widgets import Select
-from wagtailtrans.edit_handlers import ReadOnlyWidget
 
 @pytest.mark.django_db
 class TestLanguageForms(object):
