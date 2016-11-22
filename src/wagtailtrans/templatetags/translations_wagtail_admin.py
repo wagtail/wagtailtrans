@@ -21,3 +21,8 @@ def get_canonical_pages_for_delete(page):
     ):
         return TranslatablePage.objects.filter(canonical_page=page)
     return False
+
+
+@register.simple_tag
+def languages_per_site_enabled():
+    return getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False)
