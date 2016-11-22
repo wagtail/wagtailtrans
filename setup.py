@@ -36,7 +36,4 @@ setup(
         'Framework :: Django :: 1.10',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ],
-    install_requires=[
-        'wagtail>=1.6',
-    ]
 )

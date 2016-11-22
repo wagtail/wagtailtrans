@@ -62,7 +62,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
         canonical_page_text = _("None")
         if self.instance.canonical_page:
-            canonical_page_text = self.instance.canonical_page.title
+            canonical_page_text = self.instance.canonical_page
         self.fields['canonical_page'].widget = ReadOnlyWidget(
             text_display=canonical_page_text)
 
@@ -86,6 +86,8 @@ def _language_default():
 
 @python_2_unicode_compatible
 class TranslatablePage(Page):
+    translatable_page_ptr = models.OneToOneField(
+        Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
@@ -104,6 +106,8 @@ class TranslatablePage(Page):
     ]
 
     base_form_class = AdminTranslatablePageForm
+
+    is_creatable = False
 
     def __str__(self):
         return "{} ({})".format(self.title, self.language)
