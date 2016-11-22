@@ -81,7 +81,13 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
 
 def _language_default():
-    return Language.objects.default()
+    # Let the default return a PK, so migrations can also work with this value.
+    # The FakeORM model in the migrations differ from this Django model.
+    default_language = Language.objects.default()
+    if default_language is None:
+        return None
+    else:
+        return default_language.pk
 
 
 @python_2_unicode_compatible
@@ -160,10 +166,10 @@ class TranslatablePage(Page):
         :return: TranslatablePage instance
 
         """
-        canonical_page = self.canonical_page or self
+        canonical_page_id = self.canonical_page_id or self.pk
         translations = TranslatablePage.objects.filter(
-            Q(canonical_page=canonical_page) |
-            Q(pk=canonical_page.pk)
+            Q(canonical_page=canonical_page_id) |
+            Q(pk=canonical_page_id)
         ).exclude(pk=self.pk)
 
         if only_live:
@@ -210,9 +216,10 @@ class TranslatablePage(Page):
         if not parent:
             parent = self.get_translation_parent(language)
 
-        slug = '%s-%s' % (self.slug, language.code)
         if self.slug == self.language.code:
             slug = language.code
+        else:
+            slug = '%s-%s' % (self.slug, language.code)
 
         update_attrs = {
             'title': self.title,
@@ -264,7 +271,7 @@ class TranslatablePage(Page):
 
     @cached_property
     def is_canonical(self):
-        return not self.canonical_page and self.has_translations
+        return not self.canonical_page_id and self.has_translations
 
 
 def get_user_language(request):

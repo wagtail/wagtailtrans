@@ -26,7 +26,7 @@ class Add(FormView):
     ])
 
     def dispatch(self, request, page_pk, language_code, *args, **kwargs):
-        self.page = get_object_or_404(TranslatablePage, pk=page_pk)
+        self.page = get_object_or_404(TranslatablePage, pk=page_pk).specific
         self.language = get_object_or_404(Language, code=language_code)
         return super(Add, self).dispatch(request, *args, **kwargs)
 
