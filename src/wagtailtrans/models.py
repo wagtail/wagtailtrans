@@ -12,8 +12,14 @@ from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
+<<<<<<< HEAD
     FieldPanel, MultiFieldPanel, PageChooserPanel)
 from wagtail.wagtailadmin.forms import WagtailAdminPageForm
+=======
+    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
+from wagtail.wagtailadmin.forms import (
+    WagtailAdminModelForm, WagtailAdminPageForm)
+>>>>>>> use read only widget for default site language if pages already exist
 from wagtail.wagtailcore.models import Page
 
 from .edit_handlers import ReadOnlyWidget
@@ -333,6 +339,18 @@ def page_permissions_for_user(self, user):
 Page.permissions_for_user = page_permissions_for_user
 
 
+class SiteLanguagesForm(WagtailAdminModelForm):
+    """Form to be used in the wagtail admin."""
+
+    def __init__(self, *args, **kwargs):
+        super(SiteLanguagesForm, self).__init__(*args, **kwargs)
+        instance = self.instance
+        if (instance.site and instance.site.root_page and
+                instance.site.root_page.get_children_count() > 0):
+            self.fields['default_language'].widget = ReadOnlyWidget(
+                text_display=instance.default_language)
+
+
 def register_site_languages():
     def decorate(func):
         if getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False):
@@ -357,6 +375,8 @@ class SiteLanguages(BaseSetting):
             ]
         ),
     ]
+
+    base_form_class = SiteLanguagesForm
 
     class Meta:
         verbose_name = _("Site languages")
