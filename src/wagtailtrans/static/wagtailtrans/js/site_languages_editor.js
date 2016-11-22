@@ -1,11 +1,12 @@
 $(function(){
-	$('#id_other_languages option[value="' + $('#id_default_language').val() + '"]')
-			.attr('selected', false)
-			.attr('disabled', true);
+	var cb = $(':checkbox[name="other_languages"][value=' + $('#id_default_language').val() + ']');
+	cb.attr('checked', false).attr('disabled', true);
+	$('label[for="' + cb.attr('id') +'"]').css({'opacity': 0.6});
 	$('#id_default_language').change(function(evt){
-		$('#id_other_languages option').attr('disabled', false);
-		$('#id_other_languages option[value="' + evt.target.value + '"]')
-			.attr('selected', false)
-			.attr('disabled', true);
+		$(':checkbox[name="other_languages"]').attr('disabled', false);
+		$('label').css({'opacity': 1})
+		cb = $(':checkbox[name="other_languages"][value=' + evt.target.value + ']');
+		cb.attr('checked', false).attr('disabled', true);
+		$('label[for="' + cb.attr('id') +'"]').css({'opacity': 0.6});
 	});
 });

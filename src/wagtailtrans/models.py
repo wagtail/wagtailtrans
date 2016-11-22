@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django import forms
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -349,6 +350,9 @@ class SiteLanguagesForm(WagtailAdminModelForm):
                 instance.site.root_page.get_children_count() > 0):
             self.fields['default_language'].widget = ReadOnlyWidget(
                 text_display=instance.default_language)
+            qs = self.fields['other_languages'].queryset
+            self.fields['other_languages'].queryset = qs.exclude(
+                pk=instance.default_language.pk)
 
 
 def register_site_languages():
@@ -371,7 +375,7 @@ class SiteLanguages(BaseSetting):
             heading=_("Languages"),
             children=[
                 FieldPanel('default_language'),
-                FieldPanel('other_languages'),
+                FieldPanel('other_languages', widget=forms.CheckboxSelectMultiple),
             ]
         ),
     ]
