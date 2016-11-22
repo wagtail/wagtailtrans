@@ -333,11 +333,21 @@ def page_permissions_for_user(self, user):
 Page.permissions_for_user = page_permissions_for_user
 
 
-@register_setting
+def register_site_languages():
+    def decorate(func):
+        if getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False):
+            return register_setting(func)
+        return func
+    return decorate
+
+
+@register_site_languages()
 class SiteLanguages(BaseSetting):
     """Site specific settings are stored in the database"""
-    default_language = models.ForeignKey(Language, related_name="site_default_language", null=True)
+    default_language = models.ForeignKey(
+        Language, related_name="site_default_language", null=True)
     other_languages = models.ManyToManyField(Language)
+
     panels = [
         MultiFieldPanel(
             heading=_("Languages"),
