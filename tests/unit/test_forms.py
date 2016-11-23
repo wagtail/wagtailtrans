@@ -36,8 +36,9 @@ class TestLanguageForms(object):
             'live': True
         }
         form = LanguageForm(data)
+        assert 'is_default' not in form.fields
         assert form.is_valid()
-        assert not form.cleaned_data['is_default']
+        assert 'is_default' not in form.cleaned_data
         instance = form.save()
         assert not instance.is_default
 

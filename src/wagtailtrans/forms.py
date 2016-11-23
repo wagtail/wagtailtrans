@@ -35,15 +35,13 @@ class LanguageForm(forms.ModelForm):
         # Sort language choices according their display name
         sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
         self.fields['code'].choices = sorted_choices
+
+        # Remove is_default when a default is set.
         default_language = Language.objects.default()
-        if default_language and settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+        if default_language and (
+                settings.WAGTAILTRANS_LANGUAGES_PER_SITE or
+                settings.WAGTAILTRANS_SYNC_TREE):
             del self.fields['is_default']
-        elif default_language and settings.WAGTAILTRANS_SYNC_TREE:
-            # Disable `is_default` field when a default language is already set
-            self.fields['is_default'].widget.attrs['disabled'] = 'disabled'
-            self.fields['is_default'].help_text = _("""
-                There can only be one default language, this
-                can't be changed when in SYNC mode.""")
 
     def clean_is_default(self):
         """Force the `is_default` to stay the same, when in sync mode."""
