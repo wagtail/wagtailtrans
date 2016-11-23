@@ -56,6 +56,11 @@ def synchronize_deletions(sender, instance, **kwargs):
 
 
 def create_new_language_tree_for_site(site, language):
+    """Create a new language tree for a specific site.
+
+    :param site: The site for which a new tree wil be created
+    :param language: The language in which the tree wil be created
+    """
     site_pages = site.root_page.get_children().values_list('pk', flat=True)
     default_language = (
         site.sitelanguages.default_language
@@ -92,12 +97,12 @@ def create_new_language_tree(sender, instance, **kwargs):
 
 
 def update_language_trees_for_site(sender, instance, action, pk_set, **kwargs):
-    """Signal will catch creation of a new language
-    If sync trees is enabled it will create a whole new tree with
-    correlating language.
+    """Create a new language tree for a site if a new language is added to it..
 
     :param sender: Sender model
     :param instance: Language instance
+    :param action: The type of change to the m2m field
+    :param pk_set: Pks of the changed relations
     :param kwargs: kwargs e.g. created
 
     """
