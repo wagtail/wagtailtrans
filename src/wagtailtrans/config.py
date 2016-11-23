@@ -21,5 +21,8 @@ class WagtailTransConfig(AppConfig):
                 "Setting WAGTAILTRANS_SYNC_TREE undefined. Please specify "
                 "WAGTAILTRANS_SYNC_TREE in your projects settings file.")
 
+        if not hasattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE'):
+            setattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False)
+
         from wagtailtrans.signals import register_signal_handlers
         register_signal_handlers()

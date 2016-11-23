@@ -1,9 +1,9 @@
 from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_save, pre_delete
 from wagtail.wagtailcore.models import Site, get_page_models
 
-from wagtailtrans.models import Language, TranslatablePage
+from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.permissions import (
     create_group_permissions, get_or_create_language_group)
 
@@ -17,19 +17,27 @@ def synchronize_trees(sender, instance, **kwargs):
     :param kwargs: kwargs e.g. created
 
     """
-    if (
-        not kwargs.get('created') or
-        not getattr(instance, 'language', False) or
-        not instance.language.is_default
-    ):
-        return
-
     try:
-        instance.get_site()
+        site = instance.get_site()
     except ObjectDoesNotExist:
         return
 
-    for lang in Language.objects.filter(is_default=False):
+    if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+        site_default = site.sitelanguages.default_language
+        is_default_language = instance.language == site_default
+        other_languages = site.sitelanguages.other_languages.all()
+    else:
+        is_default_language = instance.language.is_default
+        other_languages = Language.objects.filter(is_default=False)
+
+    if (
+        not kwargs.get('created') or
+        not getattr(instance, 'language', False) or
+        not is_default_language
+    ):
+        return
+
+    for lang in other_languages:
         instance.create_translation(language=lang, copy_fields=True)
 
 
@@ -47,6 +55,30 @@ def synchronize_deletions(sender, instance, **kwargs):
         instance.get_translations(only_live=False).delete()
 
 
+def create_new_language_tree_for_site(site, language):
+    """Create a new language tree for a specific site.
+
+    :param site: The site for which a new tree wil be created
+    :param language: The language in which the tree wil be created
+    """
+    site_pages = site.root_page.get_children().values_list('pk', flat=True)
+    default_language = (
+        site.sitelanguages.default_language
+        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE
+        else Language.objects.default())
+    canonical_home_page = (
+        TranslatablePage.objects
+        .filter(pk__in=site_pages, language=default_language)
+        .first())
+    if not canonical_home_page:
+        # no pages created yet.
+        return
+    descendants = canonical_home_page.get_descendants(inclusive=True)
+    for child_page in descendants:
+        if not child_page.specific.has_translation(language):
+            child_page.specific.create_translation(language, copy_fields=True)
+
+
 def create_new_language_tree(sender, instance, **kwargs):
     """Signal will catch creation of a new language
     If sync trees is enabled it will create a whole new tree with
@@ -61,17 +93,22 @@ def create_new_language_tree(sender, instance, **kwargs):
         return
 
     for site in Site.objects.all():
-        site_pages = site.root_page.get_children().values_list('pk', flat=True)
-        canonical_home_page = (
-            TranslatablePage.objects
-            .filter(pk__in=site_pages, language=Language.objects.default())
-            .first())
-        if not canonical_home_page:
-            # no pages created yet.
-            return
-        descendants = canonical_home_page.get_descendants(inclusive=True)
-        for child_page in descendants:
-            child_page.specific.create_translation(instance, copy_fields=True)
+        create_new_language_tree_for_site(site, instance)
+
+
+def update_language_trees_for_site(sender, instance, action, pk_set, **kwargs):
+    """Create a new language tree for a site if a new language is added to it..
+
+    :param sender: Sender model
+    :param instance: Language instance
+    :param action: The type of change to the m2m field
+    :param pk_set: Pks of the changed relations
+    :param kwargs: kwargs e.g. created
+
+    """
+    if action == 'post_add':
+        for language in Language.objects.filter(pk__in=pk_set):
+            create_new_language_tree_for_site(instance.site, language)
 
 
 def create_language_permissions_and_group(sender, instance, **kwargs):
@@ -97,9 +134,14 @@ def register_signal_handlers():
 
     """
     post_save.connect(create_language_permissions_and_group, sender=Language)
-
     if settings.WAGTAILTRANS_SYNC_TREE:
-        post_save.connect(create_new_language_tree, sender=Language)
+        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+            m2m_changed.connect(
+                update_language_trees_for_site,
+                sender=SiteLanguages.other_languages.through
+            )
+        else:
+            post_save.connect(create_new_language_tree, sender=Language)
 
         for model in get_page_models():
             if hasattr(model, 'create_translation'):

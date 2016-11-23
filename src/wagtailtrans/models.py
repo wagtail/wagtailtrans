@@ -1,5 +1,6 @@
 from __future__ import unicode_literals
 
+from django import forms
 from django.conf import settings
 from django.db import models
 from django.db.models import Q
@@ -8,9 +9,12 @@ from django.shortcuts import redirect
 from django.utils.encoding import python_2_unicode_compatible, force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
+from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.registry import register_setting
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, MultiFieldPanel, PageChooserPanel)
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
+from wagtail.wagtailadmin.forms import (
+    WagtailAdminModelForm, WagtailAdminPageForm)
 from wagtail.wagtailcore.models import Page
 
 from .edit_handlers import ReadOnlyWidget
@@ -81,7 +85,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
 
 def _language_default():
-    return Language.objects.default()
+    return Language.objects.default().pk
 
 
 @python_2_unicode_compatible
@@ -256,6 +260,9 @@ class TranslatablePage(Page):
         if hasattr(parent, 'language'):
             if self.language != parent.language:
                 self.language = parent.language
+        elif settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+            site = parent.get_site()
+            self.language = site.sitelanguages.default_language
         return self.language
 
     @cached_property
@@ -325,3 +332,51 @@ def page_permissions_for_user(self, user):
 
 
 Page.permissions_for_user = page_permissions_for_user
+
+
+class SiteLanguagesForm(WagtailAdminModelForm):
+    """Form to be used in the wagtail admin."""
+
+    def __init__(self, *args, **kwargs):
+        super(SiteLanguagesForm, self).__init__(*args, **kwargs)
+        instance = self.instance
+        if (instance.site and instance.site.root_page and
+                instance.site.root_page.get_children_count() > 0):
+            self.fields['default_language'].widget = ReadOnlyWidget(
+                text_display=instance.default_language)
+            qs = self.fields['other_languages'].queryset
+            self.fields['other_languages'].queryset = qs.exclude(
+                pk=instance.default_language.pk)
+
+
+def register_site_languages():
+    def decorate(func):
+        if getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False):
+            return register_setting(func)
+        return func
+    return decorate
+
+
+@register_site_languages()
+class SiteLanguages(BaseSetting):
+    """Site specific settings are stored in the database"""
+    default_language = models.ForeignKey(
+        Language, related_name="site_default_language", null=True)
+    other_languages = models.ManyToManyField(Language)
+
+    panels = [
+        MultiFieldPanel(
+            heading=_("Languages"),
+            children=[
+                FieldPanel('default_language'),
+                FieldPanel(
+                    'other_languages', widget=forms.CheckboxSelectMultiple),
+            ]
+        ),
+    ]
+
+    base_form_class = SiteLanguagesForm
+
+    class Meta:
+        verbose_name = _("Site languages")
+        verbose_name_plural = _("Site languages")

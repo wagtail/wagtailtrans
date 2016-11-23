@@ -1,7 +1,9 @@
 from django.conf import settings
 from django.conf.urls import include, url
+from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
 from django.utils.encoding import force_text
+from django.utils.html import format_html
 from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
@@ -28,6 +30,15 @@ def register_language_menu_item():
         classnames='icon icon-snippet',
         order=1000,
     )
+
+
+if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+    @hooks.register('insert_global_admin_js')
+    def global_admin_js():
+        return format_html(
+            '<script type="text/javascript" src="{path}"></script>'.format(
+                path=static('wagtailtrans/js/site_languages_editor.js'))
+        )
 
 
 if not settings.WAGTAILTRANS_SYNC_TREE:

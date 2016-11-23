@@ -1,7 +1,7 @@
 {% extends "wagtailadmin/generic/index.html" %}
-{% load i18n %}
-
+{% load i18n translations_wagtail_admin %}
 {% block listing %}
+    {% languages_per_site_enabled as languages_per_site %}
     <div class="nice-padding">
         {% if languages %}
             <div id="sites-list">
@@ -11,7 +11,7 @@
                             <th>{% trans "Name" %}</th>
                             <th>{% trans "Code" %}</th>
                             <th>{% trans "Position" %}</th>
-                            <th>{% trans "Default" %}</th>
+                            {% if not languages_per_site %}<th>{% trans "Default" %}</th>{% endif %}
                         </tr>
                     </thead>
                     <tbody>
@@ -22,11 +22,13 @@
                                 </td>
                                 <td class="title">{{ language.code }}</td>
                                 <td>{{ language.position }}</td>
-                                <td class="title">
-                                {% if language.is_default %}
-                                    {% trans 'Yes' %}
+                                {% if not languages_per_site %}
+                                    <td class="title">
+                                    {% if language.is_default %}
+                                        {% trans 'Yes' %}
+                                    {% endif %}
+                                    </td>
                                 {% endif %}
-                                </td>
                             </tr>
                         {% endfor %}
                     </tbody>
