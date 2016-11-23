@@ -57,9 +57,10 @@ def synchronize_deletions(sender, instance, **kwargs):
 
 def create_new_language_tree_for_site(site, language):
     site_pages = site.root_page.get_children().values_list('pk', flat=True)
-    default_language = site.sitelanguages.default_language \
-        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE \
-        else Language.objects.default()
+    default_language = (
+        site.sitelanguages.default_language
+        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE
+        else Language.objects.default())
     canonical_home_page = (
         TranslatablePage.objects
         .filter(pk__in=site_pages, language=default_language)

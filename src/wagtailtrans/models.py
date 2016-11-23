@@ -11,16 +11,10 @@ from django.utils.functional import cached_property
 from django.utils.translation import activate, ugettext_lazy as _
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
-from wagtail.utils.decorators import cached_classmethod
 from wagtail.wagtailadmin.edit_handlers import (
-<<<<<<< HEAD
     FieldPanel, MultiFieldPanel, PageChooserPanel)
-from wagtail.wagtailadmin.forms import WagtailAdminPageForm
-=======
-    FieldPanel, MultiFieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
 from wagtail.wagtailadmin.forms import (
     WagtailAdminModelForm, WagtailAdminPageForm)
->>>>>>> use read only widget for default site language if pages already exist
 from wagtail.wagtailcore.models import Page
 
 from .edit_handlers import ReadOnlyWidget
@@ -375,7 +369,8 @@ class SiteLanguages(BaseSetting):
             heading=_("Languages"),
             children=[
                 FieldPanel('default_language'),
-                FieldPanel('other_languages', widget=forms.CheckboxSelectMultiple),
+                FieldPanel(
+                    'other_languages', widget=forms.CheckboxSelectMultiple),
             ]
         ),
     ]

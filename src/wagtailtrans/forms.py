@@ -39,7 +39,7 @@ class LanguageForm(forms.ModelForm):
         if default_language and settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
             del self.fields['is_default']
         elif default_language and settings.WAGTAILTRANS_SYNC_TREE:
-            # Disable `is_default` field when a default language is already set.
+            # Disable `is_default` field when a default language is already set
             self.fields['is_default'].widget.attrs['disabled'] = 'disabled'
             self.fields['is_default'].help_text = _("""
                 There can only be one default language, this

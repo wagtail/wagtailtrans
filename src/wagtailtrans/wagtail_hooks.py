@@ -31,6 +31,7 @@ def register_language_menu_item():
         order=1000,
     )
 
+
 if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
     @hooks.register('insert_global_admin_js')
     def global_admin_js():
