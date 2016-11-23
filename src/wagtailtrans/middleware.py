@@ -1,9 +1,13 @@
 import logging
 
-from django.utils.deprecation import MiddlewareMixin
-
+import django
 from .models import SiteLanguages
 from .thread import set_site_languages
+
+if django.VERSION >= (1, 10):
+    from django.utils.deprecation import MiddlewareMixin
+else:
+    MiddlewareMixin = object
 
 logger = logging.getLogger(__name__)
 
