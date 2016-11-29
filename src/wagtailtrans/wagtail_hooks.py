@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse

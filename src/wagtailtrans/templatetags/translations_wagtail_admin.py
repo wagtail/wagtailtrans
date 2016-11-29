@@ -1,5 +1,4 @@
 from django import template
-from django.conf import settings
 
 from wagtailtrans.models import TranslatablePage
 from wagtailtrans.utils.conf import get_wagtailtrans_setting
