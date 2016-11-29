@@ -1,6 +1,7 @@
 import logging
 
 import django
+
 from .models import SiteLanguages
 from .thread import set_site_languages
 
