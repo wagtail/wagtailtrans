@@ -48,7 +48,7 @@ class LanguageForm(forms.ModelForm):
         """Force the `is_default` to stay the same, when in sync mode."""
         if (
             self.instance and
-            settings.WAGTAILTRANS_SYNC_TREE and
+            get_wagtailtrans_setting('SYNC_TREE') and
             Language.objects.default()
         ):
             return self.instance.is_default

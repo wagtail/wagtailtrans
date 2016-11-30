@@ -20,6 +20,7 @@ from wagtail.wagtailcore.models import Page
 from .edit_handlers import ReadOnlyWidget
 from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
+from .utils.conf import get_wagtailtrans_setting
 
 
 @python_2_unicode_compatible
@@ -127,7 +128,7 @@ class TranslatablePage(Page):
         super(TranslatablePage, self).move(target, pos)
         if (
             not suppress_sync and
-            settings.WAGTAILTRANS_SYNC_TREE and
+            get_wagtailtrans_setting('SYNC_TREE') and
             self.language.is_default
         ):
             self.move_translated_pages(canonical_target=target, pos=pos)
@@ -260,7 +261,7 @@ class TranslatablePage(Page):
         if hasattr(parent, 'language'):
             if self.language != parent.language:
                 self.language = parent.language
-        elif settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+        elif get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             site = parent.get_site()
             self.language = site.sitelanguages.default_language
         return self.language
@@ -351,7 +352,7 @@ class SiteLanguagesForm(WagtailAdminModelForm):
 
 def register_site_languages():
     def decorate(func):
-        if getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False):
+        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             return register_setting(func)
         return func
     return decorate
