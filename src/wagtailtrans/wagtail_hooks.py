@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.conf.urls import include, url
 from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
@@ -10,6 +9,7 @@ from wagtail.wagtailcore import hooks
 
 from wagtailtrans.models import Language
 from wagtailtrans.urls import languages, translations
+from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 @hooks.register('register_admin_urls')
@@ -32,7 +32,7 @@ def register_language_menu_item():
     )
 
 
-if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
     @hooks.register('insert_global_admin_js')
     def global_admin_js():
         return format_html(
@@ -41,7 +41,7 @@ if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
         )
 
 
-if not settings.WAGTAILTRANS_SYNC_TREE:
+if not get_wagtailtrans_setting('SYNC_TREE'):
     """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled"""
 
     @hooks.register('register_page_listing_buttons')
