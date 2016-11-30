@@ -363,7 +363,7 @@ class SiteLanguages(BaseSetting):
     """Site specific settings are stored in the database"""
     default_language = models.ForeignKey(
         Language, related_name="site_default_language", null=True)
-    other_languages = models.ManyToManyField(Language)
+    other_languages = models.ManyToManyField(Language, blank=True)
 
     panels = [
         MultiFieldPanel(
