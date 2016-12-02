@@ -102,23 +102,6 @@ class TestTranslatablePage(object):
         self.canonical_page.create_translation(language_nl, copy_fields=True)
         assert self.canonical_page.has_translation(language_nl)
 
-    def test_force_parent_language(self, languages):
-        """Test `force_parent_language()`."""
-        en = languages.get(code='en')
-        nl = languages.get(code='nl')
-        nl_page = self.canonical_page.create_translation(
-            language=nl, copy_fields=True)
-
-        subpage = TranslatablePageFactory.build(
-            language=en, title='subpage in NL tree')
-        assert subpage.language == en
-
-        # After adding the English page to a Dutch tree,
-        # it should have been forced into Dutch (such a wonderful world)
-        nl_page.add_child(instance=subpage)
-        subpage.force_parent_language()
-        assert subpage.language == nl
-
     def test_get_translations(self, languages):
         """Test `get_translations()`."""
         nl = languages.get(code='nl')

@@ -232,30 +232,6 @@ class TranslatablePage(Page):
 
         return new_page
 
-    # def force_parent_language(self, parent=None):
-    #     """Set Page instance language to the parent language.
-    #
-    #     TODO: This used to be called from the `save()` method, but
-    #     afterwards wasn't saved. Saving it would lead to recursion
-    #     errors especially in combination with the defined signal handlers.
-    #     We'll have to see if we can perform `force_parent_language` upon
-    #     save (either by override `save()` or by using
-    #     `pre_save` or `post_save` signals)
-    #
-    #     :param parent: Parent page of self
-    #     :return: Language instance
-    #
-    #     """
-    #     if not parent:
-    #         parent = self.get_parent()
-    #
-    #     parent = parent.specific
-    #     if hasattr(parent, 'language'):
-    #         if self.language != parent.language:
-    #             self.language = parent.language
-    #
-    #     return self.language
-
     @cached_property
     def has_translations(self):
         return self.translations.exists()
