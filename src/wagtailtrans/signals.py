@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
+from wagtail.wagtailadmin.signals import init_new_page
 from wagtail.wagtailcore.models import Site, get_page_models
 
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
@@ -126,6 +127,31 @@ def create_language_permissions_and_group(sender, instance, **kwargs):
     create_group_permissions(group, instance)
 
 
+def force_parent_language(**kwargs):
+    """Force the initial language of the first page, before creating..
+
+    When adding a homepage to a site, the initial language should be set.
+    By default we set the default language from the Languages model, however
+    when the languages are defined per site, it's possible that the default
+    language differs from the database default.
+
+    """
+    page = kwargs.get('page')
+    parent = kwargs.get('parent')
+
+    #: Force the page language according to the parent, when the parent
+    #: has no language set and is a site root page, force the default language
+    #: For now we assume there isn't more than 1 site rooted at the parent.
+    if hasattr(parent, 'language'):
+        page.language = parent.language
+    elif get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+        site = parent.sites_rooted_here.first()
+        if site:
+            lang_settings = SiteLanguages.for_site(site)
+            page.language = (
+                lang_settings.default_language or Language.objects.default())
+
+
 def register_signal_handlers():
     """Registers signal handlers.
 
@@ -138,11 +164,11 @@ def register_signal_handlers():
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             m2m_changed.connect(
                 update_language_trees_for_site,
-                sender=SiteLanguages.other_languages.through
-            )
+                sender=SiteLanguages.other_languages.through)
         else:
             post_save.connect(create_new_language_tree, sender=Language)
 
+        init_new_page.connect(force_parent_language)
         for model in get_page_models():
             if hasattr(model, 'create_translation'):
                 post_save.connect(synchronize_trees, sender=model)

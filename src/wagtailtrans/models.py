@@ -17,7 +17,7 @@ from wagtail.wagtailadmin.forms import (
     WagtailAdminModelForm, WagtailAdminPageForm)
 from wagtail.wagtailcore.models import Page
 
-from .edit_handlers import ReadOnlyWidget
+from .edit_handlers import ReadOnlyWidget, CanonicalPageWidget
 from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
 from .utils.conf import get_wagtailtrans_setting
@@ -65,11 +65,8 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
     def __init__(self, *args, **kwargs):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
 
-        canonical_page_text = _("None")
-        if self.instance.canonical_page:
-            canonical_page_text = self.instance.canonical_page.title
-        self.fields['canonical_page'].widget = ReadOnlyWidget(
-            text_display=canonical_page_text)
+        self.fields['canonical_page'].widget = CanonicalPageWidget(
+            canonical_page=self.instance.canonical_page)
 
         language_display = Language.objects.filter(
             pk=self.initial['language']).first()
@@ -78,11 +75,6 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
 
         self.fields['language'].widget = ReadOnlyWidget(
             text_display=language_display if language_display else '')
-
-    def clean_language(self):
-        return (
-            self.instance.force_parent_language(self.parent_page) or
-            Language.objects.default())
 
 
 def _language_default():
@@ -246,32 +238,6 @@ class TranslatablePage(Page):
             parent.add_child(instance=new_page)
 
         return new_page
-
-    def force_parent_language(self, parent=None):
-        """Set Page instance language to the parent language.
-
-        TODO: This used to be called from the `save()` method, but
-        afterwards wasn't saved. Saving it would lead to recursion
-        errors especially in combination with the defined signal handlers.
-        We'll have to see if we can perform `force_parent_language` upon
-        save (either by override `save()` or by using
-        `pre_save` or `post_save` signals)
-
-        :param parent: Parent page of self
-        :return: Language instance
-
-        """
-        if not parent:
-            parent = self.get_parent()
-
-        parent = parent.specific
-        if hasattr(parent, 'language'):
-            if self.language != parent.language:
-                self.language = parent.language
-        elif get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            site = parent.get_site()
-            self.language = site.sitelanguages.default_language
-        return self.language
 
     @cached_property
     def has_translations(self):
