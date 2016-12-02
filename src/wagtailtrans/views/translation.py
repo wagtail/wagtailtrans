@@ -1,6 +1,7 @@
 from __future__ import absolute_import, unicode_literals
 
 from django.shortcuts import get_object_or_404, redirect
+from django.utils.translation import ugettext_lazy as _
 from django.views.generic.edit import FormView
 from wagtail.wagtailadmin.edit_handlers import (
     FieldPanel, ObjectList, PageChooserPanel, TabbedInterface)
@@ -15,18 +16,19 @@ class Add(FormView):
     form_class = TranslationForm
     template_name = 'wagtailtrans/translation/add.html'
 
-    add_panels = [
-        FieldPanel('copy_from_canonical'),
-        PageChooserPanel('parent_page'),
-    ]
-
     edit_handler = TabbedInterface([
-        ObjectList(add_panels, heading='Translate',
-                   base_form_class=TranslationForm),
+        ObjectList(
+            [
+                FieldPanel('copy_from_canonical'),
+                PageChooserPanel('parent_page'),
+            ],
+            heading=_("Translate"),
+            base_form_class=TranslationForm
+        ),
     ])
 
     def dispatch(self, request, page_pk, language_code, *args, **kwargs):
-        self.page = get_object_or_404(TranslatablePage, pk=page_pk)
+        self.page = get_object_or_404(TranslatablePage, pk=page_pk).specific
         self.language = get_object_or_404(Language, code=language_code)
         return super(Add, self).dispatch(request, *args, **kwargs)
 
@@ -44,10 +46,7 @@ class Add(FormView):
 
         new_page = self.page.create_translation(
             self.language, copy_fields=copy_from_canonical, parent=parent)
-
-        # new_page.move(parent, pos='last-child')
-        return redirect(
-            'wagtailadmin_pages:edit', new_page.id)
+        return redirect('wagtailadmin_pages:edit', new_page.id)
 
     def get_context_data(self, *args, **kwargs):
         context = super(Add, self).get_context_data(*args, **kwargs)

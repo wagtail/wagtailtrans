@@ -58,11 +58,10 @@ class LanguageForm(forms.ModelForm):
 class TranslationForm(forms.Form):
     copy_from_canonical = forms.BooleanField(required=False)
     parent_page = forms.ModelChoiceField(
-        queryset=TranslatablePage.objects.filter(language__is_default=False))
+        queryset=TranslatablePage.objects.none())
 
     def __init__(self, *args, **kwargs):
         self.page = kwargs.pop('page')
-        self.site = self.page.get_site()
         self.language = kwargs.pop('language')
         self.base_fields['parent_page'].queryset = self.get_queryset()
 
@@ -75,13 +74,15 @@ class TranslationForm(forms.Form):
         super(TranslationForm, self).__init__(*args, **kwargs)
 
     def get_queryset(self):
-        qs = TranslatablePage.objects.filter(language=self.language)
-        allowed_pages = [p.pk for p in qs if (
-            self.page.can_move_to(p) and p.get_site() == self.site
-        )]
+        site = self.page.get_site()
+        qs = TranslatablePage.objects.filter(
+            language=self.language).exclude(id=self.page.id)
+        allowed_pages = [
+            p.pk for p in qs if self.page.can_move_to(p) and p.get_site() == site  # noqa
+        ]
         qs = TranslatablePage.objects.filter(pk__in=allowed_pages)
         if not qs:
-            return Page.objects.filter(pk=self.site.root_page.pk)
+            return Page.objects.filter(pk=site.root_page.pk)
         return qs
 
     def _page_has_required(self, page):
