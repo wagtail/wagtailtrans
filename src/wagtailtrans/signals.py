@@ -127,7 +127,7 @@ def create_language_permissions_and_group(sender, instance, **kwargs):
     create_group_permissions(group, instance)
 
 
-def force_initial_parent_language(**kwargs):
+def force_parent_language(**kwargs):
     """Force the initial language of the first page, before creating..
 
     When adding a homepage to a site, the initial language should be set.
@@ -139,13 +139,16 @@ def force_initial_parent_language(**kwargs):
     page = kwargs.get('page')
     parent = kwargs.get('parent')
 
-    #: Only force the site's default language when the parent has no language.
+    #: Force the page language according to the parent, when the parent
+    #: has no language set and is a site root page, force the default language
     #: For now we assume there isn't more than 1 site rooted at the parent.
-    if not hasattr(parent, 'language'):
+    if hasattr(parent, 'language'):
+        page.language = parent.language
+    elif get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
         site = parent.sites_rooted_here.first()
         if site:
-            language_settings = SiteLanguages.for_site(site)
-            page.language = language_settings.default_language
+            lang_settings = SiteLanguages.for_site(site)
+            page.language = lang_settings.default_language or Language.objects.default()
 
 
 def register_signal_handlers():
@@ -158,13 +161,13 @@ def register_signal_handlers():
     post_save.connect(create_language_permissions_and_group, sender=Language)
     if get_wagtailtrans_setting('SYNC_TREE'):
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            init_new_page.connect(force_initial_parent_language)
             m2m_changed.connect(
                 update_language_trees_for_site,
                 sender=SiteLanguages.other_languages.through)
         else:
             post_save.connect(create_new_language_tree, sender=Language)
 
+        init_new_page.connect(force_parent_language)
         for model in get_page_models():
             if hasattr(model, 'create_translation'):
                 post_save.connect(synchronize_trees, sender=model)
