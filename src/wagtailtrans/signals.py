@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
+from wagtail.wagtailadmin.signals import init_new_page
 from wagtail.wagtailcore.models import Site, get_page_models
 
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
@@ -126,6 +127,27 @@ def create_language_permissions_and_group(sender, instance, **kwargs):
     create_group_permissions(group, instance)
 
 
+def force_initial_parent_language(**kwargs):
+    """Force the initial language of the first page, before creating..
+
+    When adding a homepage to a site, the initial language should be set.
+    By default we set the default language from the Languages model, however
+    when the languages are defined per site, it's possible that the default
+    language differs from the database default.
+
+    """
+    page = kwargs.get('page')
+    parent = kwargs.get('parent')
+
+    #: Only force the site's default language when the parent has no language.
+    #: For now we assume there isn't more than 1 site rooted at the parent.
+    if not hasattr(parent, 'language'):
+        site = parent.sites_rooted_here.first()
+        if site:
+            language_settings = SiteLanguages.for_site(site)
+            page.language = language_settings.default_language
+
+
 def register_signal_handlers():
     """Registers signal handlers.
 
@@ -136,10 +158,10 @@ def register_signal_handlers():
     post_save.connect(create_language_permissions_and_group, sender=Language)
     if get_wagtailtrans_setting('SYNC_TREE'):
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+            init_new_page.connect(force_initial_parent_language)
             m2m_changed.connect(
                 update_language_trees_for_site,
-                sender=SiteLanguages.other_languages.through
-            )
+                sender=SiteLanguages.other_languages.through)
         else:
             post_save.connect(create_new_language_tree, sender=Language)
 
