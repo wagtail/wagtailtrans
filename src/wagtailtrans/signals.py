@@ -148,7 +148,8 @@ def force_parent_language(**kwargs):
         site = parent.sites_rooted_here.first()
         if site:
             lang_settings = SiteLanguages.for_site(site)
-            page.language = lang_settings.default_language or Language.objects.default()
+            page.language = (
+                lang_settings.default_language or Language.objects.default())
 
 
 def register_signal_handlers():

@@ -1,3 +1,4 @@
+# flake8: noqa
 from django import forms
 from django.template import Context, Template
 from django.utils.safestring import mark_safe
