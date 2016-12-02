@@ -8,6 +8,7 @@ from django.utils.translation import ugettext as _
 from wagtail.wagtailcore.models import Page
 
 from wagtailtrans.models import Language, TranslatablePage
+from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 class LanguageForm(forms.ModelForm):
@@ -39,15 +40,15 @@ class LanguageForm(forms.ModelForm):
         # Remove is_default when a default is set.
         default_language = Language.objects.default()
         if default_language and (
-                settings.WAGTAILTRANS_LANGUAGES_PER_SITE or
-                settings.WAGTAILTRANS_SYNC_TREE):
+                get_wagtailtrans_setting('LANGUAGES_PER_SITE') or
+                get_wagtailtrans_setting('SYNC_TREE')):
             del self.fields['is_default']
 
     def clean_is_default(self):
         """Force the `is_default` to stay the same, when in sync mode."""
         if (
             self.instance and
-            settings.WAGTAILTRANS_SYNC_TREE and
+            get_wagtailtrans_setting('SYNC_TREE') and
             Language.objects.default()
         ):
             return self.instance.is_default

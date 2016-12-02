@@ -1,8 +1,9 @@
-from django.conf import settings
 from django.contrib.auth.models import Group, Permission
 from wagtail.wagtailcore.models import (
     Collection, GroupCollectionPermission, GroupPagePermission,
     PagePermissionTester, UserPagePermissionsProxy)
+
+from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 def create_group_permissions(group, language):
@@ -87,7 +88,7 @@ class TranslatablePagePermissionTester(PagePermissionTester):
         """
         has_canonical = getattr(self.page.specific, 'canonical_page', False)
         if (
-            has_canonical and settings.WAGTAILTRANS_SYNC_TREE and
+            has_canonical and get_wagtailtrans_setting('SYNC_TREE') and
             not self.user.is_superuser
         ):
             return False

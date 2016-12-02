@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
 from wagtail.wagtailcore.models import Site, get_page_models
@@ -6,6 +5,7 @@ from wagtail.wagtailcore.models import Site, get_page_models
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.permissions import (
     create_group_permissions, get_or_create_language_group)
+from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 def synchronize_trees(sender, instance, **kwargs):
@@ -22,7 +22,7 @@ def synchronize_trees(sender, instance, **kwargs):
     except ObjectDoesNotExist:
         return
 
-    if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+    if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
         site_default = site.sitelanguages.default_language
         is_default_language = instance.language == site_default
         other_languages = site.sitelanguages.other_languages.all()
@@ -64,7 +64,7 @@ def create_new_language_tree_for_site(site, language):
     site_pages = site.root_page.get_children().values_list('pk', flat=True)
     default_language = (
         site.sitelanguages.default_language
-        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE
+        if get_wagtailtrans_setting('LANGUAGES_PER_SITE')
         else Language.objects.default())
     canonical_home_page = (
         TranslatablePage.objects
@@ -134,8 +134,8 @@ def register_signal_handlers():
 
     """
     post_save.connect(create_language_permissions_and_group, sender=Language)
-    if settings.WAGTAILTRANS_SYNC_TREE:
-        if settings.WAGTAILTRANS_LANGUAGES_PER_SITE:
+    if get_wagtailtrans_setting('SYNC_TREE'):
+        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             m2m_changed.connect(
                 update_language_trees_for_site,
                 sender=SiteLanguages.other_languages.through

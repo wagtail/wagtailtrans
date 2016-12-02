@@ -1,7 +1,7 @@
 from django import template
-from django.conf import settings
 
 from wagtailtrans.models import TranslatablePage
+from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 register = template.Library()
 
@@ -15,7 +15,7 @@ def get_canonical_pages_for_delete(page):
     """
     page = page.specific
     if (
-        settings.WAGTAILTRANS_SYNC_TREE and
+        get_wagtailtrans_setting('SYNC_TREE') and
         getattr(page, 'language', False) and
         not page.canonical_page
     ):
@@ -25,4 +25,4 @@ def get_canonical_pages_for_delete(page):
 
 @register.simple_tag
 def languages_per_site_enabled():
-    return getattr(settings, 'WAGTAILTRANS_LANGUAGES_PER_SITE', False)
+    return get_wagtailtrans_setting('LANGUAGES_PER_SITE')
