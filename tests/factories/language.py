@@ -11,3 +11,5 @@ class LanguageFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = models.Language
+        django_get_or_create = ['code']
+

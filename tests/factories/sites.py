@@ -13,6 +13,7 @@ class SiteFactory(factory.DjangoModelFactory):
 
     class Meta:
         model = Site
+        django_get_or_create = ['hostname']
 
 
 def create_site_tree(language, site=None, *items, **homepage_kwargs):
