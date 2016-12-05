@@ -124,10 +124,17 @@ class TranslatablePage(Page):
 
         """
         super(TranslatablePage, self).move(target, pos)
+
+        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+            site = self.get_site()
+            lang_settings = SiteLanguages.for_site(site)
+            is_default = lang_settings.default_language == self.language
+        else:
+            is_default = self.language.is_default
         if (
             not suppress_sync and
             get_wagtailtrans_setting('SYNC_TREE') and
-            self.language.is_default
+            is_default
         ):
             self.move_translated_pages(canonical_target=target, pos=pos)
 
