@@ -322,7 +322,8 @@ class SiteLanguagesForm(WagtailAdminModelForm):
         super(SiteLanguagesForm, self).__init__(*args, **kwargs)
         instance = self.instance
         if (instance.site and instance.site.root_page and
-                instance.site.root_page.get_children_count() > 0):
+                instance.site.root_page.get_children_count() > 0 and
+                instance.default_language):
             self.fields['default_language'].widget = ReadOnlyWidget(
                 text_display=instance.default_language)
             qs = self.fields['other_languages'].queryset
