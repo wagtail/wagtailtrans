@@ -18,37 +18,43 @@
 Wagtail multilanguage module
 ============================
 
-Features
-========
+Support multiple languages for your Wagtail site.
 
-* Support multiple languages for your Wagtail site
+Requirements
+------------
+
+ - Python 2.7+
+ - Django 1.8+
+ - Wagtail 1.6+
+
 
 Documentation
-=============
+-------------
 
-http://wagtailtrans.readthedocs.io/
+Project documentation can be found on [Read the docs](http://wagtailtrans.readthedocs.io/)
+
 
 Getting started
-===============
+---------------
 
-1. To install wagtailtrans, run this command in your terminal:
-
-.. code-block:: console
-    ``pip install wagtailtrans``
-
-2. Add ``wagtailtrans`` to your INSTALLED_APPS
-
-3. Perform a migration
+ 1. To install wagtailtrans, run this command in your terminal:
 
 .. code-block:: console
-    ``python manage.py migrate wagtailtrans``
+    pip install wagtailtrans
+
+ 2. Add ``wagtailtrans`` to your INSTALLED_APPS
+ 3. Perform a migration
+
+.. code-block:: console
+    python manage.py migrate wagtailtrans``
 
 You're set!
 
+
 Settings
-========
+--------
 
-The settings ``WAGTAILTRANS_SYNC_TREE`` can be used to configure the module to keep your language trees synchronized or not.
-This is set to ``True`` by default.
+Wagtailtrans can be configured to suit your needs, following settings are available:
 
-Use ``WAGTAILTRANS_SYNC_TREE = False`` to disable sync and have free flowing trees.
+ - `WAGTAILTRANS_SYNC_TREE` _(default: True)_ configure the module to keep your language trees sychronized.
+ - `WAGTAILTRANS_LANGUAGES_PER_SITE` _(default: False)_ allow different languages per site (multi site setup)
