@@ -1,4 +1,4 @@
-:tocdepth: 2
+:tocdepth: 3
 
 .. _getting_started:
 
