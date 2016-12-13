@@ -12,6 +12,7 @@
 """
 import os
 
+from wagtail import VERSION as wagtail_version
 from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -81,9 +82,7 @@ ROOT_URLCONF = 'tests._sandbox.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [
-            WAGTAILTRANS_TEMPLATE_DIR,
-        ],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -95,6 +94,9 @@ TEMPLATES = [
         },
     },
 ]
+
+if wagtail_version < (1, 8):
+    TEMPLATES[0]['DIRS'].append(WAGTAILTRANS_TEMPLATE_DIR)
 
 WSGI_APPLICATION = 'tests._sandbox.wsgi.application'
 
