@@ -113,7 +113,7 @@ class TranslatablePage(Page):
 
     base_form_class = AdminTranslatablePageForm
 
-    def __str__(self):
+    def get_admin_display_title(self):
         return "{} ({})".format(self.title, self.language)
 
     def serve(self, request, *args, **kwargs):
@@ -136,6 +136,7 @@ class TranslatablePage(Page):
             is_default = lang_settings.default_language == self.language
         else:
             is_default = self.language.is_default
+
         if (
             not suppress_sync and
             get_wagtailtrans_setting('SYNC_TREE') and
