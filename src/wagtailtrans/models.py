@@ -87,14 +87,19 @@ def _language_default():
         return default_language.pk
 
 
-@python_2_unicode_compatible
 class TranslatablePage(Page):
+
+    #: Defined with a uniqe name, to prevent field clashes..
+    translatable_page_ptr = models.OneToOneField(
+        Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
     language = models.ForeignKey(
         Language, related_name='pages', on_delete=models.PROTECT,
         default=_language_default)
+
+    is_creatable = False
 
     settings_panels = Page.settings_panels + [
         MultiFieldPanel(

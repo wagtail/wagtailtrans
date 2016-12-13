@@ -55,6 +55,7 @@ class Migration(migrations.Migration):
 
     dependencies = [
         ('pages', '0001_initial'),
+        ('wagtailtrans', '0005_auto_20161130_1310')
     ]
 
     operations = [
