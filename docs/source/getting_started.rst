@@ -1,87 +1,109 @@
-:tocdepth: 3
-
 .. _getting_started:
 
-Getting started with wagtailtrans
-*********************************
-To start using wagtailtrans in your project take the following steps:
 
+===============
+Getting started
+===============
+
+To start using wagtailtrans in your project, take the following steps:
+
+
+------------
 Installation
 ------------
-using pip::
 
-    pip install wagtailtrans
+1. Install Wagtailtrans via ``pip``
 
+.. code-block:: bash
 
-Add to installed apps::
+    $ pip install wagtailtrans
+
+2. Add ``wagtailtrans`` to your ``INSTALLED_APPS``::
+
+.. code-block:: python
 
     INSTALLED_APPS = [
-    ...
-    'wagtailtrans',
-    ..
+        # ...
+        'wagtailtrans',
+        # ...
     ]
 
-Define in your settings if you use synchronized trees::
+3. Optionally, add ``WAGTAILTRANS_TEMPLATE_DIR`` to your ``TEMPLATES[0]['DIRS']``
 
-    WAGTAILTRANS_SYNC_TREE = True
-
-If you want to use freeform language trees use::
-
-    WAGTAILTRANS_SYNC_TREE = False
+.. note::
+    As of Wagtail 1.8 ``Page.get_admin_display_title`` is added which doesn't require overriding admin templates anymore, so if you're on Wagtail >= 1.8 you can skip this step.
 
 
+.. code-block:: python
+
+    from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
+
+    TEMPLATES = [{
+        # ...
+        'DIRS': [
+            WAGTAILTRANS_TEMPLATE_DIR,
+        ],
+        # ...
+    }]
+
+
+-------------
+Configuration
+-------------
+
+Before we start incorporating wagtailtrans in your project, you'll need to configure wagtailtrans for the behavior that best suits the need of your project. The required settings to consider here are:
+
+ - ``WAGTAILTRANS_SYNC_TREE``
+ - ``WAGTAILTRANS_LANGUAGES_PER_SITE``
+
+Both settings are mandatory but provided with a default value, so if you want *synchronized* trees and no languages per site, you're good to go from here.
+
+.. seealso::
+    Complete reference about available settings: :ref:`settings`
+
+
+-------------
 Incorporating
 -------------
-To start using wagtailtrans we first need to create a translation home page.
-This page will route the requests to the homepage in the right language.
-We can create a translation site root page by creating the `TranslatableSiteRootPage` as the first page
-under the root page.
 
-We will also make a Home page which will be translatable.
-This is done by extending your page from TranslatablePage instead of Wagtail's Core Page ::
+To start using wagtailtrans we first need to create a translation home page. This page will route the requests to the homepage in the right language. We can create a translation site root page by creating the ``wagtailtrans.models.TranslatableSiteRootPage`` as the first page under the root page.
 
+In this example we will also make a ``HomePage`` which will be translatable. This is done by implementing the ``wagtailtrans.models.TranslatablePage`` next to Wagtail's ``Page``
+
+.. code-block:: python
+
+    from wagtail.wagtailcore.models import Page
     from wagtailtrans.models import TranslatablePage
 
-    class HomePage(TranslatablePage):
-        body = RichTextField(
-            blank=True,
-            default="",
-        )
-        image = models.ForeignKey(
-            'wagtailimages.Image',
-            null=True,
-            blank=True,
-            on_delete=models.SET_NULL,
-            related_name='+'
-        )
 
-        content_panels = TranslatablePage.content_panels + [
+    class HomePage(TranslatablePage, Page):
+        body = RichTextField(blank=True, default="")
+        image = models.ForeignKey('wagtailimages.Image', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
+
+        content_panels = Page.content_panels + [
             FieldPanel('body'),
             ImageChooserPanel('image')
         ]
-        # add more content as you please.
 
-        subpage_types = ['HomePage', '......']
+        subpage_types = [
+            # Your subpage types.
+        ]
 
-This creates our first translated page. To start using this we first need to migrate our database::
 
-    python manage.py makemigrations
-    python manage.py migrate
+This will create our first translatable page. To start using it we first need to migrate our database
 
-Now run the server and under Root create a TranslatableSiteRootPage (MySite).
+.. code-block:: bash
 
-Now we need to create a site and set our TranslationHomepage (MySite) as root page.
+    $ python manage.py makemigrations
+    $ python manage.py migrate
 
-..  figure::  _static/Site.png
-    :align:   center
-    Create your site and select TranslationHomepage as root page.
 
-We now have the basics for a Translated Site.
+Now run the server and under the page ``Root`` create a ``TranslatableSiteRootPage`` (MySite).
 
-Synchronized trees
-------------------
-To start using synchronized trees, please see: :ref:`synchronized_trees`.
+Next we need to create a site and point it's ``root_page`` to our ``TranslatableSiteRootPage`` (MySite).
 
-Freeflow trees
---------------
-To start using freeform trees please see: :ref:`freeform_trees`.
+.. figure:: _static/site.png
+   :align: center
+   :alt: Create your site and select ``MySite`` as root page.
+
+We now have the basics for a Translatable Site.

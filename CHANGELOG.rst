@@ -1,27 +1,20 @@
 Changelog
 =========
 
-0.1.0rc1 (05-11-2016)
----------------------
-
- - Add `WAGTAILTRANS_TEMPLATE_DIR` to allow overriding templates.
-
-
-0.1.0b4
--------
-
- Backwards incompatible changes:
-
-  - Remove `include_self` attribute for `TranslatablePage.get_translations`
-
-
-0.0.1 (xxxx-xx-xx)
+0.1.0 (14-12-2016)
 ------------------
 
-* Implement models following RFC9
-* Add Language admin-UI in settings-menu
-* Support storing translated pages
-* Add TAB for translations
-* Add dropdown page menu for adding translations
-* Support copying content of canonical page when creating translation
-* Force language of child-pages to language of parent
+Initial release
+ - Implement models following `Wagtail RFC9 <https://github.com/takeflight/wagtail-rfcs/blob/0008-translations/draft/0009-translations.rst>`_ by Tim Heap
+ - Force language of child pages to language of parent
+ - Support storing of translated pages
+ - Support copying content of canonical pages when creating translations
+
+ - Add translation information to the ``TranslatablePage.settings_panels``
+ - Add dropdown page menu for adding translations
+ - Add Language admin-UI in settings-menu
+ - Add ``WAGTAILTRANS_SYNC_TREE`` setting to control which way trees behave
+ - Add ``WAGTAILTRANS_TEMPLATE_DIR`` to override the admin template dir (pre Wagtail 1.8)
+ - Add ``WAGTAILTRANS_LANGUAGES_PER_SITE`` setting to allow different page languages per site
+ - Add SiteLanguages as SiteSetting in settings-menu (``WAGTAILTRANS_LANGUAGES_PER_SITE``)
+ - Add ``wagtailtrans.models.TranslatablePage.get_admin_display_title`` to display the page language in the admin explorer (Wagtail 1.8+)

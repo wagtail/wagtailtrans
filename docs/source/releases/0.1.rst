@@ -1,0 +1,53 @@
+==============================
+Wagtailtrans 0.1 release notes
+==============================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+Since this is the first final release, all features are new.
+
+
+Features
+~~~~~~~~
+
+ - Implement models following `Wagtail RFC9 <https://github.com/takeflight/wagtail-rfcs/blob/0008-translations/draft/0009-translations.rst>`_ by Tim Heap
+ - Force language of child pages to language of parent
+ - Support storing of translated pages
+ - Support copying content of canonical pages when creating translations
+
+ - Add translation information to the ``TranslatablePage.settings_panels``
+ - Add dropdown page menu for adding translations
+ - Add Language admin-UI in settings-menu
+ - Add ``WAGTAILTRANS_SYNC_TREE`` setting to control which way trees behave
+ - Add ``WAGTAILTRANS_TEMPLATE_DIR`` to override the admin template dir (pre Wagtail 1.8)
+ - Add ``WAGTAILTRANS_LANGUAGES_PER_SITE`` setting to allow different page languages per site
+ - Add SiteLanguages as SiteSetting in settings-menu (``WAGTAILTRANS_LANGUAGES_PER_SITE``)
+ - Add ``wagtailtrans.models.TranslatablePage.get_admin_display_title`` to display the page language in the admin explorer (Wagtail 1.8+)
+
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
+In the progress of creating this release, we found out that some
+
+
+``include_self`` kwarg
+~~~~~~~~~~~~~~~~~~~~~~
+
+Before wagtailtrans ``0.1.0b4`` the method ``TranslatablePage.get_translations`` implemented a ``kwarg`` to include itself in the QuerySet of translated pages. Since this isn't used within the wagtailtrans codebase we removed it because keeping it there made the codebase better maintainable.
+
+
+``wagtailtrans.models.TranslatablePage.translatable_page_ptr`` parent_link
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+As of wagtailtrans 0.1 we've refactored the ``TranslatablePage`` model to have a custom parent_link, this way it's easier to migrate any existing Wagtail site for use with wagtailtrans. This is done by inheriting from ``TranslatablePage`` and ``Page`` for implementations of pages.
+
+As for migrating, this is sadly not possible without some custom migrations, a way to do this is documented here: :ref:`migrating`
