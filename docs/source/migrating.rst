@@ -9,7 +9,7 @@ Migrating of already existing Wagtail content to ``Wagtailtrans`` can be quite d
 Since there is no way to do this automatically, we've put some examples below to point you in the right direction.
 
 .. danger::
-    Below examples contain custom database migrations, make sure you've created a back-up of your database before you start this migration process.
+    Examples below contain custom database migrations, make sure you've created a back-up of your database before you start this migration process.
 
 
 ---------------------
@@ -54,7 +54,7 @@ Non Wagtailtrans site
 5. Update migrations file to add the newly ``translatablepage_ptr_id`` field in the required table.
 
 .. note::
-    We've made some assumptions when creating this migration file, for example a default language ``en``. Please make sure you've checked all the database queries and adjusted them according your own setup before executing.
+    We've made some assumptions when creating this migration file, for example a default language ``en``. Please make sure you've checked all the database queries and adjusted them according to your own setup before executing.
 
 .. code-block:: python
 
@@ -109,7 +109,7 @@ Non Wagtailtrans site
 Pre 0.1 Wagtailtrans site
 -------------------------
 
-Before the 0.1 final release we've made a backwards incompatible change by defining a custom [parent_link](https://docs.djangoproject.com/en/1.8/topics/db/models/#specifying-the-parent-link-field), this is done to allow users to easier migrate their existing Wagtail site to Wagtailtrans.
+Before the 0.1 final release we've made a backwards incompatible change by defining a custom `parent_link <https://docs.djangoproject.com/en/1.8/topics/db/models/#specifying-the-parent-link-field>`_, this is done to ease the process of migrate an existing Wagtail site to Wagtailtrans.
 
 Migrating can be done by following these steps:
 
