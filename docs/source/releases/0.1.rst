@@ -36,17 +36,17 @@ Features
 Backwards incompatible changes
 ------------------------------
 
-In the progress of creating this release, we found out that some
+In the progress of creating this release, we found out that some earlier design choices needed to be reworked in order to have a good maintainable package.
 
 
-``include_self`` kwarg
-~~~~~~~~~~~~~~~~~~~~~~
+``include_self``
+~~~~~~~~~~~~~~~~
 
 Before wagtailtrans ``0.1.0b4`` the method ``TranslatablePage.get_translations`` implemented a ``kwarg`` to include itself in the QuerySet of translated pages. Since this isn't used within the wagtailtrans codebase we removed it because keeping it there made the codebase better maintainable.
 
 
-``wagtailtrans.models.TranslatablePage.translatable_page_ptr`` parent_link
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+``wagtailtrans.models.TranslatablePage.translatable_page_ptr``
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 As of wagtailtrans 0.1 we've refactored the ``TranslatablePage`` model to have a custom parent_link, this way it's easier to migrate any existing Wagtail site for use with wagtailtrans. This is done by inheriting from ``TranslatablePage`` and ``Page`` for implementations of pages.
 
