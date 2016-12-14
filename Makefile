@@ -1,6 +1,6 @@
-.PHONY: dist
+.PHONY: dist docs
 
-default: develop
+default: help
 
 define BROWSER_PYSCRIPT
 import os, webbrowser, sys
@@ -34,6 +34,9 @@ clean:
 
 develop: clean requirements
 	@python manage.py migrate
+
+docs:  ## Create wagtailtrans Sphinx documentation
+	@make -C docs/ html
 
 requirements:
 	@pip install --upgrade -e .

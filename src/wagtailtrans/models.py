@@ -87,14 +87,19 @@ def _language_default():
         return default_language.pk
 
 
-@python_2_unicode_compatible
 class TranslatablePage(Page):
+
+    #: Defined with a uniqe name, to prevent field clashes..
+    translatable_page_ptr = models.OneToOneField(
+        Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True,
         null=True, on_delete=models.SET_NULL)
     language = models.ForeignKey(
         Language, related_name='pages', on_delete=models.PROTECT,
         default=_language_default)
+
+    is_creatable = False
 
     settings_panels = Page.settings_panels + [
         MultiFieldPanel(
@@ -108,7 +113,7 @@ class TranslatablePage(Page):
 
     base_form_class = AdminTranslatablePageForm
 
-    def __str__(self):
+    def get_admin_display_title(self):
         return "{} ({})".format(self.title, self.language)
 
     def serve(self, request, *args, **kwargs):
@@ -131,6 +136,7 @@ class TranslatablePage(Page):
             is_default = lang_settings.default_language == self.language
         else:
             is_default = self.language.is_default
+
         if (
             not suppress_sync and
             get_wagtailtrans_setting('SYNC_TREE') and
