@@ -12,7 +12,12 @@
 """
 import os
 
-from wagtail import VERSION as wagtail_version
+try:
+    from wagtail import VERSION as wagtail_version
+except ImportError:
+    #: As of wagtail 1.7 VERSION is located in Wagtail's __init__
+    wagtail_version = (1, 6)
+
 from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
