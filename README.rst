@@ -37,13 +37,14 @@ Project documentation can be found on `Read the Docs <http://wagtailtrans.readth
 Getting started
 ---------------
 
- 1. To install wagtailtrans, run this command in your terminal:
+1. To install wagtailtrans, run this command in your terminal:
 
 .. code-block:: console
     pip install wagtailtrans
 
- 2. Add ``wagtailtrans`` to your INSTALLED_APPS
- 3. Perform a migration
+2. Add ``wagtailtrans`` to your INSTALLED_APPS
+
+3. Perform a migration
 
 .. code-block:: console
     python manage.py migrate wagtailtrans``
