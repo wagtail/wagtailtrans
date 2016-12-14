@@ -31,7 +31,7 @@ Requirements
 Documentation
 -------------
 
-Project documentation can be found on [Read the docs](http://wagtailtrans.readthedocs.io/)
+Project documentation can be found on `Read the Docs <http://wagtailtrans.readthedocs.io/>`_
 
 
 Getting started
@@ -56,5 +56,5 @@ Settings
 
 Wagtailtrans can be configured to suit your needs, following settings are available:
 
- - `WAGTAILTRANS_SYNC_TREE` _(default: True)_ configure the module to keep your language trees sychronized.
- - `WAGTAILTRANS_LANGUAGES_PER_SITE` _(default: False)_ allow different languages per site (multi site setup)
+ - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
+ - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
