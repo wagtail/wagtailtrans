@@ -39,23 +39,37 @@ Getting started
 
 1. To install wagtailtrans, run this command in your terminal:
 
-.. code-block:: console
-    pip install wagtailtrans
+.. code-block:: bash
 
-2. Add ``wagtailtrans`` to your INSTALLED_APPS
-
-3. Perform a migration
-
-.. code-block:: console
-    python manage.py migrate wagtailtrans``
-
-You're set!
+    $ pip install wagtailtrans
 
 
-Settings
---------
+2. Add ``wagtailtrans`` to your ``INSTALLED_APPS``
 
-Wagtailtrans can be configured to suit your needs, following settings are available:
+3. Update your page models
 
- - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
- - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
+.. code-block:: python
+
+    from wagtail.wagtailcore.models import Page
+    from wagtailtrans.models import TranslatablePage
+
+
+    class YourPage(TranslatablePage, Page):
+        # ...
+
+
+4. Create migration files and perform a migration
+
+.. code-block:: bash
+
+    $ python manage.py makemigrations
+    $ python manage.py migrate
+
+
+.. Settings
+.. --------
+
+.. Wagtailtrans can be configured to suit your needs, following settings are available:
+
+..  - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
+..  - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
