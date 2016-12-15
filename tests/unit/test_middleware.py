@@ -1,42 +1,53 @@
 import pytest
 
-from django.test import Client, override_settings
+from django.http import HttpResponse
+from django.test import override_settings
 
+from wagtailtrans.middleware import TranslationMiddleware
 from wagtailtrans.models import Language
 
-from tests.factories.sites import SiteLanguagesFactory
 from tests.factories.language import LanguageFactory
+from tests.factories.sites import SiteLanguagesFactory, SiteFactory
 
 
 @pytest.mark.django_db
 class TestTranslationMiddleware(object):
 
-    def test_from_path(self):
-        response = Client().get('http://localhost:8000/nl/random/page/')
-        assert response.wsgi_request.LANGUAGE_CODE == 'nl'
-        assert response['Content-Language'] == 'nl'
+    def test_request_from_path(self, rf):
+        request = rf.get('/nl/random/page/')
+        TranslationMiddleware().process_request(request)
 
-    def test_default_language(self):
+        assert request.LANGUAGE_CODE == 'nl'
+
+    def test_request_default_language(self, rf):
         LanguageFactory(code='en', is_default=True, live=True)
         LanguageFactory(code='fr', is_default=False, live=True)
 
-        response = Client().get('http://localhost:8000/home/')
-        assert response.wsgi_request.LANGUAGE_CODE == 'en'
-        assert response['Content-Language'] == 'en'
+        request = rf.get('/home/')
+        TranslationMiddleware().process_request(request)
+        assert request.LANGUAGE_CODE == 'en'
 
-    def test_site_language(self):
-        site_lang = SiteLanguagesFactory(default_language__code='fr')
+    def test_request_site_language(self, rf):
+        SiteLanguagesFactory(default_language__code='fr')
 
+        request = rf.get('/random/page/')
+        request.site = SiteFactory()
         with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
-            response = Client().get('http://localhost:8000/random/page/')
+            TranslationMiddleware().process_request(request)
 
-        assert response.wsgi_request.site == site_lang.site
-        assert response.wsgi_request.LANGUAGE_CODE == 'fr'
-        assert response['Content-Language'] == 'fr'
+        assert request.LANGUAGE_CODE == 'fr'
 
-    def test_settings_fallback(self):
+    def test_settings_fallback(self, rf):
         Language.objects.all().delete()
-        with override_settings(LANGUAGE_CODE='en-us'):
-            response = Client().get('http://localhost:8000/random/page/')
 
-        assert response.wsgi_request.LANGUAGE_CODE == 'en-us'
+        request = rf.get('/random/page/')
+        with override_settings(LANGUAGE_CODE='en-us'):
+            TranslationMiddleware().process_request(request)
+
+        assert request.LANGUAGE_CODE == 'en-us'
+
+    def test_response(self, rf):
+        request = rf.get('/nl/random/page/')
+        TranslationMiddleware().process_request(request)
+        response = TranslationMiddleware().process_response(request, HttpResponse())
+        assert response['Content-Language'] == 'nl'
