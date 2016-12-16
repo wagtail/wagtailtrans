@@ -66,10 +66,11 @@ Getting started
     $ python manage.py migrate
 
 
-.. Settings
-.. --------
 
-.. Wagtailtrans can be configured to suit your needs, following settings are available:
+Settings
+--------
 
-..  - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
-..  - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
+Wagtailtrans can be configured to suit your needs, following settings are available:
+
+ - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
+ - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
