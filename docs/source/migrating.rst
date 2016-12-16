@@ -78,7 +78,7 @@ Non Wagtailtrans site
                 UPDATE pages_homepage SET translatablepage_ptr_id=page_ptr_id;
 
                 -- Insert the required values in ``wagtailtrans`` table
-                INSERT INTO wagtailtrans_language (code, is_default, position, live) SELECT 'en', 't', 0, 't' WHERE NOT EXISTS (SELECT code FROM wagatailtrans_language WHERE code='en');
+                INSERT INTO wagtailtrans_language (code, is_default, position, live) SELECT 'en', 't', 0, 't' WHERE NOT EXISTS (SELECT code FROM wagtailtrans_language WHERE code='en');
                 INSERT INTO wagtailtrans_translatablepage (translatable_page_ptr_id, canonical_page_id, language_id) SELECT translatablepage_ptr_id, NULL, 1 FROM pages_homepage;
 
                 -- Add required indexes and constraints
