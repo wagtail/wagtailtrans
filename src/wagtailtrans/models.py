@@ -16,6 +16,7 @@ from wagtail.wagtailadmin.edit_handlers import (
 from wagtail.wagtailadmin.forms import (
     WagtailAdminModelForm, WagtailAdminPageForm)
 from wagtail.wagtailcore.models import Page
+from wagtail.wagtailsearch.index import FilterField
 
 from .edit_handlers import ReadOnlyWidget, CanonicalPageWidget
 from .managers import LanguageManager
@@ -100,6 +101,10 @@ class TranslatablePage(Page):
         default=_language_default)
 
     is_creatable = False
+
+    search_fields = Page.search_fields + [
+        FilterField('language_id'),
+    ]
 
     settings_panels = Page.settings_panels + [
         MultiFieldPanel(
