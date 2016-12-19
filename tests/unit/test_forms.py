@@ -7,7 +7,7 @@ from wagtail.contrib.settings.views import get_setting_edit_handler
 from wagtailtrans.edit_handlers import ReadOnlyWidget
 from wagtailtrans.models import (
     Language, SiteLanguages, register_site_languages)
-from wagtailtrans.thread import set_site_languages
+
 from wagtailtrans.forms import LanguageForm
 
 
@@ -54,7 +54,7 @@ class TestSiteLanguagesAdminForm(object):
                 WAGTAILTRANS_LANGUAGES_PER_SITE=True):
             register_site_languages()(SiteLanguages)
             self.site = sites.SiteFactory()
-            set_site_languages(SiteLanguages.for_site(self.site))
+            SiteLanguages.for_site(self.site)
             self.default_language = Language.objects.get(code='en')
             self.site.sitelanguages.default_language = self.default_language
 

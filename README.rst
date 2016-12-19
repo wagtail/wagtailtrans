@@ -39,17 +39,32 @@ Getting started
 
 1. To install wagtailtrans, run this command in your terminal:
 
-.. code-block:: console
-    pip install wagtailtrans
+.. code-block:: bash
 
-2. Add ``wagtailtrans`` to your INSTALLED_APPS
+    $ pip install wagtailtrans
 
-3. Perform a migration
 
-.. code-block:: console
-    python manage.py migrate wagtailtrans``
+2. Add ``wagtailtrans`` to your ``INSTALLED_APPS``
 
-You're set!
+3. Update your page models
+
+.. code-block:: python
+
+    from wagtail.wagtailcore.models import Page
+    from wagtailtrans.models import TranslatablePage
+
+
+    class YourPage(TranslatablePage, Page):
+        # ...
+
+
+4. Create migration files and perform a migration
+
+.. code-block:: bash
+
+    $ python manage.py makemigrations
+    $ python manage.py migrate
+
 
 
 Settings
