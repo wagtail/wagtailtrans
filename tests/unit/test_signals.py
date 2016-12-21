@@ -1,10 +1,11 @@
 import pytest
+
 from django.test import override_settings
 
-from tests.factories import language, sites
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
-from wagtailtrans.thread import set_site_languages
+
+from tests.factories import language, sites
 
 
 @pytest.mark.django_db
@@ -45,7 +46,7 @@ class TestSignalsLanguagesPerSite(object):
                 WAGTAILTRANS_LANGUAGES_PER_SITE=True):
             register_signal_handlers()
             self.site = sites.SiteFactory()
-            set_site_languages(SiteLanguages.for_site(self.site))
+            SiteLanguages.for_site(self.site)
             self.default_language = Language.objects.get(code='en')
             self.site.sitelanguages.default_language = self.default_language
             pages = sites.create_site_tree(
