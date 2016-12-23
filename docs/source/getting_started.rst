@@ -28,7 +28,24 @@ Installation
         # ...
     ]
 
-3. Optionally, add ``WAGTAILTRANS_TEMPLATE_DIR`` to your ``TEMPLATES[0]['DIRS']``
+3. Add ``wagtailtrans.middleware.TranslationMiddleware`` to your ``MIDDLEWARE_CLASSES``::
+
+.. code-block:: python
+
+    MIDDLEWARE_CLASSES = [
+        # ...
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'wagtailtrans.middleware.TranslationMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        # ...
+    ]
+
+.. note::
+
+    Keep in mind ``wagtailtrans.middleware.TranslationMiddleware`` is a replacement for ``django.middleware.locale.LocaleMiddleware``.
+
+
+4. Optionally, add ``WAGTAILTRANS_TEMPLATE_DIR`` to your ``TEMPLATES[0]['DIRS']``
 
 .. note::
     As of Wagtail 1.8 ``Page.get_admin_display_title`` is added which doesn't require overriding admin templates anymore, so if you're on Wagtail >= 1.8 you can skip this step.
