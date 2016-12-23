@@ -28,49 +28,22 @@ Requirements
  - Wagtail 1.6+
 
 
-Documentation
--------------
-
-Project documentation can be found on `Read the Docs <http://wagtailtrans.readthedocs.io/>`_
-
-
 Getting started
 ---------------
 
-1. To install wagtailtrans, run this command in your terminal:
-
-.. code-block:: bash
-
-    $ pip install wagtailtrans
+Follow our `Getting Started <http://wagtailtrans.readthedocs.io/en/latest/getting_started.html>`_ guide to start integrating Wagtailtrans.
 
 
-2. Add ``wagtailtrans`` to your ``INSTALLED_APPS``
+Documentation
+-------------
 
-3. Update your page models
-
-.. code-block:: python
-
-    from wagtail.wagtailcore.models import Page
-    from wagtailtrans.models import TranslatablePage
+The complete project documentation can be found on `Read the Docs <http://wagtailtrans.readthedocs.io/>`_
 
 
-    class YourPage(TranslatablePage, Page):
-        # ...
+Who's using it?
+---------------
 
+If you want to see some examples on how Wagtailtrans is running in a production environment you can take a look at the following websites:
 
-4. Create migration files and perform a migration
-
-.. code-block:: bash
-
-    $ python manage.py makemigrations
-    $ python manage.py migrate
-
-
-
-Settings
---------
-
-Wagtailtrans can be configured to suit your needs, following settings are available:
-
- - ``WAGTAILTRANS_SYNC_TREE`` _(default: ``True``)_ configure the module to keep your language trees sychronized.
- - ``WAGTAILTRANS_LANGUAGES_PER_SITE`` _(default: ``False``)_ allow different languages per site (multi site setup)
+* `Hendrix Genetics <https://www.hendrix-genetics.com/>`_
+* `Wiskerke Onions <https://www.wiskerke-onions.nl/>`_
