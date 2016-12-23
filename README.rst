@@ -28,7 +28,22 @@ Requirements
  - Wagtail 1.6+
 
 
+Getting started
+---------------
+
+Follow our `Getting Started <http://wagtailtrans.readthedocs.io/en/latest/getting_started.html>`_ guide to start integrating Wagtailtrans.
+
+
 Documentation
 -------------
 
-Project documentation can be found on `Read the Docs <http://wagtailtrans.readthedocs.io/>`_
+The complete project documentation can be found on `Read the Docs <http://wagtailtrans.readthedocs.io/>`_
+
+
+Who's using it?
+---------------
+
+If you want to see some examples on how Wagtailtrans is running in a production environment you can take a look at the following websites:
+
+* `Hendrix Genetics <https://www.hendrix-genetics.com/>`_
+* `Wiskerke Onions <https://www.wiskerke-onions.nl/>`_
