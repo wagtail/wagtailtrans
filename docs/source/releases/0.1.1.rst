@@ -1,0 +1,22 @@
+================================
+Wagtailtrans 0.1.1 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+This release mainly implements some minor changes.
+
+
+Features
+~~~~~~~~
+
+ - Add ``TranslationMiddleware`` for earlier language activation, with this middleware error pages will be displayed in the requested language.
+ - Add ``language_id`` filter to ``wagtailtrans.models.TranslatablePage`` so search results can be filterd by language
+ - Update documentation & typo fixes.
