@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.1.1 (25-12-2016)
+------------------
+
+ - Add ``TranslationMiddleware`` for earlier language activation (replaces django ``LocaleMiddleware``)
+ - Add ``language_id`` filter to ``wagtailtrans.models.TranslatablePage`` so search results can be filterd by language
+ - Update documentation
+
 0.1.0 (14-12-2016)
 ------------------
 
