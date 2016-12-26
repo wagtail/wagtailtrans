@@ -67,7 +67,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
         super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
 
         self.fields['canonical_page'].widget = CanonicalPageWidget(
-            canonical_page=self.instance.canonical_page)
+            canonical_page=self.instance.specific.canonical_page)
 
         language_display = Language.objects.filter(
             pk=self.initial['language']).first()
