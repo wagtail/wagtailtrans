@@ -66,7 +66,6 @@ class TestTranslationMiddleware(object):
 
         assert request.LANGUAGE_CODE == 'en-US'
 
-
     def test_request_language_from_header_partial_match(self, rf):
         Language.objects.all().delete()
         LanguageFactory(code='nl', is_default=True, live=True)
