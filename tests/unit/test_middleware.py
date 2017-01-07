@@ -80,11 +80,9 @@ class TestTranslationMiddleware(object):
         Language.objects.all().delete()
         LanguageFactory(code='fr', is_default=True, live=True)
         LanguageFactory(code='es', is_default=False, live=True)
+        languages = 'nl,en-GB;q=0.8,en;q=0.6,es-419;q=0.4,es;q=0.2'
 
-        request = rf.get(
-            '/',
-            HTTP_ACCEPT_LANGUAGE='nl,en-GB;q=0.8,en;q=0.6,es-419;q=0.4,es;q=0.2'
-        )
+        request = rf.get('/', HTTP_ACCEPT_LANGUAGE=languages)
         TranslationMiddleware().process_request(request)
 
         assert request.LANGUAGE_CODE == 'es'
@@ -92,5 +90,6 @@ class TestTranslationMiddleware(object):
     def test_response(self, rf):
         request = rf.get('/nl/random/page/')
         TranslationMiddleware().process_request(request)
-        response = TranslationMiddleware().process_response(request, HttpResponse())
+        response = TranslationMiddleware().process_response(
+            request, HttpResponse())
         assert response['Content-Language'] == 'nl'

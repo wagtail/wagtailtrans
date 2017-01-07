@@ -23,14 +23,14 @@ class TranslationMiddleware(MiddlewareMixin):
             requested_languages = requested_languages.split(',')
             languages = Language.objects.filter(live=True)
             codes = tuple([lang.code for lang in languages])
-            for requested_lang in requested_languages:
-                requested_lang = requested_lang.split(';')[0]
+            for language in requested_languages:
+                language = language.split(';')[0]
                 active_language = (
-                    requested_lang if requested_lang in codes else None)
-                if active_language is None and requested_lang.startswith(codes):
+                    language if language in codes else None)
+                if active_language is None and language.startswith(codes):
                     active_language = [
                         code for code in codes
-                        if requested_lang.startswith(code)][0]
+                        if language.startswith(code)][0]
                 if active_language is not None:
                     break
 
