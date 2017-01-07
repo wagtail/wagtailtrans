@@ -14,18 +14,36 @@ else:
 class TranslationMiddleware(MiddlewareMixin):
 
     def process_request(self, request):
+        active_language = None
         language_from_path = translation.get_language_from_path(request.path)
+        requested_languages = request.META.get('HTTP_ACCEPT_LANGUAGE')
         if language_from_path:
             active_language = language_from_path
-        elif get_wagtailtrans_setting('LANGUAGES_PER_SITE') and request.site:
-            site_languages = SiteLanguages.for_site(request.site)
-            active_language = site_languages.default_language.code
-        else:
-            default_language = Language.objects.default()
-            if default_language:
-                active_language = default_language.code
+        elif requested_languages:
+            requested_languages = requested_languages.split(',')
+            languages = Language.objects.filter(live=True)
+            codes = tuple([lang.code for lang in languages])
+            for requested_lang in requested_languages:
+                requested_lang = requested_lang.split(';')[0]
+                active_language = (
+                    requested_lang if requested_lang in codes else None)
+                if active_language is None and requested_lang.startswith(codes):
+                    active_language = [
+                        code for code in codes
+                        if requested_lang.startswith(code)][0]
+                if active_language is not None:
+                    break
+
+        if active_language is None:
+            if get_wagtailtrans_setting('LANGUAGES_PER_SITE') and request.site:
+                site_languages = SiteLanguages.for_site(request.site)
+                active_language = site_languages.default_language.code
             else:
-                active_language = settings.LANGUAGE_CODE
+                default_language = Language.objects.default()
+                if default_language:
+                    active_language = default_language.code
+                else:
+                    active_language = settings.LANGUAGE_CODE
 
         translation.activate(active_language)
         request.LANGUAGE_CODE = active_language
