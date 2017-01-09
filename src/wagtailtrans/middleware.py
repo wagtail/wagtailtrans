@@ -21,8 +21,8 @@ class TranslationMiddleware(MiddlewareMixin):
             active_language = language_from_path
         elif requested_languages:
             requested_languages = requested_languages.split(',')
-            languages = Language.objects.filter(live=True)
-            codes = tuple([lang.code for lang in languages])
+            codes = tuple(
+                Language.objects.live().values_list('code', flat=True))
             for language in requested_languages:
                 language = language.split(';')[0]
                 active_language = (
