@@ -1,3 +1,4 @@
+import django
 from django import template
 
 from wagtailtrans.models import TranslatablePage
@@ -6,7 +7,13 @@ from wagtailtrans.utils.conf import get_wagtailtrans_setting
 register = template.Library()
 
 
-@register.assignment_tag
+if django.VERSION >= (1, 9):
+    assignment_tag = register.simple_tag
+else:
+    assignment_tag = register.assignment_tag
+
+
+@assignment_tag
 def get_canonical_pages_for_delete(page):
     """Get the translations made for this page
 
@@ -23,6 +30,6 @@ def get_canonical_pages_for_delete(page):
     return False
 
 
-@register.assignment_tag
+@assignment_tag
 def languages_per_site_enabled():
     return get_wagtailtrans_setting('LANGUAGES_PER_SITE')
