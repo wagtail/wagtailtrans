@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.2 (XX-XX-XXXX)
+------------------
+ 
+ - Fix: backwards compatibility with Django 1.8 for ``wagtailtrans.templatetags``
+
+
 0.1.1 (25-12-2016)
 ------------------
 
