@@ -34,8 +34,8 @@ class TranslationMiddleware(MiddlewareMixin):
                 if active_language is not None:
                     break
 
-        if active_language is None and (
-            get_wagtailtrans_setting('LANGUAGES_PER_SITE') and request.site):
+        lang_per_site = get_wagtailtrans_setting('LANGUAGES_PER_SITE')
+        if active_language is None and lang_per_site and request.site:
             site_languages = SiteLanguages.for_site(request.site)
             if site_languages.default_language:
                 active_language = site_languages.default_language.code
