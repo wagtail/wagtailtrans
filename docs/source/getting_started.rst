@@ -35,6 +35,7 @@ Installation
     MIDDLEWARE_CLASSES = [
         # ...
         'django.contrib.sessions.middleware.SessionMiddleware',
+        'wagtail.wagtailcore.middleware.SiteMiddleware',
         'wagtailtrans.middleware.TranslationMiddleware',
         'django.middleware.common.CommonMiddleware',
         # ...
@@ -43,6 +44,11 @@ Installation
 .. note::
 
     Keep in mind ``wagtailtrans.middleware.TranslationMiddleware`` is a replacement for ``django.middleware.locale.LocaleMiddleware``.
+
+.. note::
+
+    It relies on ``wagtail.wagtailcore.middleware.SiteMiddleware``, which should come before it.
+    See http://docs.wagtail.io/en/v1.8/getting_started/integrating_into_django.html#settings for more information.
 
 
 4. Optionally, add ``WAGTAILTRANS_TEMPLATE_DIR`` to your ``TEMPLATES[0]['DIRS']``
