@@ -47,4 +47,20 @@ script:
   - tox -e $TOXENV
 services:
   - postgresql
-after_success: coveralls
+after_script:
+  - |
+
+      declare exitCode
+
+
+      # -- [1] -------------------------------------------------------
+
+      curl -sSL https://raw.githubusercontent.com/alrra/travis-after-all/1.4.4/lib/travis-after-all.js | node
+      exitCode=$?
+
+
+      # -- [2] -------------------------------------------------------
+
+      if [ $exitCode -eq 0 ]; then
+        coveralls
+      fi
