@@ -4,7 +4,7 @@ Changelog
 0.1.2 (XX-XX-XXXX)
 ------------------
 
-- Update ``TranslationMiddleware`` to also use the ``Accept-Language`` HTTP header
+ - Update ``TranslationMiddleware`` to also use the ``Accept-Language`` HTTP header
  - Fix: Update middleware to prevent errors on empty database
  - Fix: backwards compatibility with Django 1.8 for ``wagtailtrans.templatetags``
 
