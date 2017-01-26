@@ -87,6 +87,16 @@ class TestTranslationMiddleware(object):
 
         assert request.LANGUAGE_CODE == 'es'
 
+
+    def test_request_no_languages(self, rf):
+        Language.objects.all().delete()
+        request = rf.get('/')
+
+        with override_settings(LANGUAGE_CODE='en'):
+            TranslationMiddleware().process_request(request)
+
+        assert request.LANGUAGE_CODE == 'en'
+
     def test_response(self, rf):
         request = rf.get('/nl/random/page/')
         TranslationMiddleware().process_request(request)
