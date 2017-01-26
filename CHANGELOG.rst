@@ -4,6 +4,7 @@ Changelog
 0.1.2 (XX-XX-XXXX)
 ------------------
  
+ - Fix: Update middleware to prevent errors on empty database
  - Fix: backwards compatibility with Django 1.8 for ``wagtailtrans.templatetags``
 
 
