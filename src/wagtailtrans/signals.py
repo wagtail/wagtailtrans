@@ -160,6 +160,7 @@ def register_signal_handlers():
 
     """
     post_save.connect(create_language_permissions_and_group, sender=Language)
+    init_new_page.connect(force_parent_language)
     if get_wagtailtrans_setting('SYNC_TREE'):
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             m2m_changed.connect(
@@ -168,7 +169,6 @@ def register_signal_handlers():
         else:
             post_save.connect(create_new_language_tree, sender=Language)
 
-        init_new_page.connect(force_parent_language)
         for model in get_page_models():
             if hasattr(model, 'create_translation'):
                 post_save.connect(synchronize_trees, sender=model)
