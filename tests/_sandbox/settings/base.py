@@ -160,4 +160,4 @@ WAGTAIL_SITE_NAME = "sandbox"
 BASE_URL = 'http://example.com'
 
 # wagtailtrans setting
-WAGTAILTRANS_SYNC_TREE = True
+WAGTAILTRANS_SYNC_TREE = False
