@@ -45,4 +45,3 @@ class CanonicalPageWidget(forms.Select):
             'canonical_page': self.canonical_page,
             'original_content': original_content,
         })))
-
