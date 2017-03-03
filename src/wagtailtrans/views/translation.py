@@ -14,7 +14,8 @@ class TranslationView(CreateView):
     form_class = TranslationForm
 
     def page_title(self):
-        return _("Create {} in {}".format(self.instance.title, self.language))
+        return _("Translate {} to {}".format(
+            self.instance.get_admin_display_title(), self.language))
 
     def get_add_url(self):
         return reverse(

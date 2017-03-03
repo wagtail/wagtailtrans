@@ -95,9 +95,9 @@ class TranslationForm(forms.ModelForm):
     def _page_has_required(self, page):
         common_fields = set(TranslatablePage._meta.fields)
         specific_fields = set(page.specific._meta.fields) - common_fields
-        required_felds = [
+        required_fields = [
             f for f in specific_fields
             if not f.blank and not f.name.endswith('ptr')
         ]
 
-        return len(required_felds) > 0
+        return len(required_fields) > 0
