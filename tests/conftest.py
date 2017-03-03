@@ -17,7 +17,7 @@ def pytest_configure(config):
 
     if os.path.exists(media_root):
         shutil.rmtree(media_root)
-    os.mkdir(media_root, 0744)
+    os.mkdir(media_root)
 
     override = override_settings(
         DEBUG=False,
