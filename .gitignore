@@ -9,6 +9,7 @@
 .cache/
 .idea/
 .tox/
+.vscode/
 
 build/
 dist/
