@@ -76,7 +76,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
 
         translations = (
             page.get_translations(only_live=False).select_related('language'))
-        taken_languages = set(translations.values_list('language', flat=True))
+        taken_languages = set(t.language for t in translations)
 
         translation_targets = other_languages - taken_languages
         for language in translation_targets:
