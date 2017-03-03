@@ -83,7 +83,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
             yield widgets.Button(
                 force_text(language),
                 reverse('wagtailtrans_translations:add', kwargs={
-                    'page_pk': page.pk,
+                    'instance_id': page.pk,
                     'language_code': language.code,
                 }),
                 priority=prio)

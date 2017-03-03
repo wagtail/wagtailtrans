@@ -55,42 +55,49 @@ class LanguageForm(forms.ModelForm):
         return self.cleaned_data['is_default']
 
 
-class TranslationForm(forms.Form):
+class TranslationForm(forms.ModelForm):
     copy_from_canonical = forms.BooleanField(required=False)
     parent_page = forms.ModelChoiceField(
         queryset=TranslatablePage.objects.none())
 
-    def __init__(self, *args, **kwargs):
-        self.page = kwargs.pop('page')
-        self.language = kwargs.pop('language')
-        self.base_fields['parent_page'].queryset = self.get_queryset()
+    class Meta:
+        model = TranslatablePage
+        fields = ['copy_from_canonical', 'parent_page']
 
-        if self._page_has_required(self.page):
-            self.base_fields['copy_from_canonical'].initial = True
-            self.base_fields['copy_from_canonical'].disabled = True
-            self.base_fields['copy_from_canonical'].help_text = _(
+    def __init__(self, *args, **kwargs):
+        self.language = kwargs.pop('language')
+        super(TranslationForm, self).__init__(*args, **kwargs)
+        self.fields['parent_page'].queryset = self.get_queryset()
+
+        if self._page_has_required(kwargs.get('instance')):
+            self.fields['copy_from_canonical'].initial = True
+            self.fields['copy_from_canonical'].disabled = True
+            self.fields['copy_from_canonical'].help_text = _(
                 "All fields need to be copied because of some required fields")
 
-        super(TranslationForm, self).__init__(*args, **kwargs)
-
     def get_queryset(self):
-        site = self.page.get_site()
-        qs = TranslatablePage.objects.filter(
-            language=self.language).exclude(id=self.page.id)
+        site = self.instance.get_site()
+        qs = (
+            TranslatablePage.objects
+            .filter(language=self.language)
+            .exclude(id=self.instance.id))
+
         allowed_pages = [
-            p.pk for p in qs if self.page.can_move_to(p) and p.get_site() == site  # noqa
+            p.pk for p in qs.specific()
+            if self.instance.can_move_to(p) and p.get_site() == site
         ]
-        qs = TranslatablePage.objects.filter(pk__in=allowed_pages)
+
+        qs = qs.filter(pk__in=allowed_pages)
         if not qs:
-            return Page.objects.filter(pk=site.root_page.pk)
+            return Page.objects.filter(id=site.root_page_id)
         return qs
 
     def _page_has_required(self, page):
         common_fields = set(TranslatablePage._meta.fields)
         specific_fields = set(page.specific._meta.fields) - common_fields
+        required_felds = [
+            f for f in specific_fields
+            if not f.blank and not f.name.endswith('ptr')
+        ]
 
-        required_fields = [f for f in specific_fields
-                           if not f.blank and not f.name.endswith('ptr')]
-        if required_fields:
-            return True
-        return False
+        return len(required_felds) > 0
