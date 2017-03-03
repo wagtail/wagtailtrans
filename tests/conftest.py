@@ -1,58 +1,31 @@
 from __future__ import absolute_import
 
-import pytest
+import os
+import random
+import shutil
+import tempfile
+
+from django.conf import settings
 from django.test import override_settings
-from wagtail.wagtailcore.models import Page, Site
 
-from tests._sandbox.pages.models import HomePage
-from wagtailtrans.models import Language, TranslatableSiteRootPage
-
-LANG_CODES = ['es', 'fr', 'de', 'nl', 'en']
+pytest_plugins = 'tests.fixtures'
 
 
 def pytest_configure(config):
+    media_root = os.path.join(
+        tempfile.gettempdir(), 'wagtailtrans-media-%d' % random.getrandbits(8))
+
+    if os.path.exists(media_root):
+        shutil.rmtree(media_root)
+    os.mkdir(media_root, 0744)
+
     override = override_settings(
         DEBUG=False,
+        MEDIA_ROOT=media_root
     )
     override.enable()
 
 
-@pytest.fixture(scope='session')
-def django_db_setup(django_db_setup, django_db_blocker):
-    with django_db_blocker.unblock():
-        # Remove some initial data that is brought by the sandbox module
-        Site.objects.all().delete()
-        Page.objects.all().exclude(depth=1).delete()
-
-
-@pytest.fixture
-def sites():
-    for code in LANG_CODES:
-        site_root = (
-            TranslatableSiteRootPage
-            .add_root(title='site root %s.localhost' % code))
-        site_root.save()
-        language = Language.objects.get(code=code)
-        page = HomePage(
-            title='{} title'.format(code),
-            subtitle='{} subtitle'.format(code),
-            language=language,
-            body=u'{} body'.format(code))
-        site_root.add_child(instance=page)
-        Site.objects.create(
-            hostname='{}.localhost'.format(code),
-            port=8000,
-            root_page=site_root)
-    return Site.objects.all()
-
-
-@pytest.fixture
-def languages():
-    for i, code in enumerate(LANG_CODES):
-        Language.objects.get_or_create(
-            code=code, defaults={
-                'is_default': True,
-                'position': i,
-                'live': True,
-            })
-    return Language.objects.all()
+def pytest_unconfigure(config):
+    if os.path.exists(settings.MEDIA_ROOT):
+        shutil.rmtree(settings.MEDIA_ROOT)
