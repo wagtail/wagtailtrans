@@ -76,14 +76,14 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
 
         translations = (
             page.get_translations(only_live=False).select_related('language'))
-        taken_languages = set(translations.values_list('language', flat=True))
+        taken_languages = set(t.language for t in translations)
 
         translation_targets = other_languages - taken_languages
         for language in translation_targets:
             yield widgets.Button(
                 force_text(language),
                 reverse('wagtailtrans_translations:add', kwargs={
-                    'page_pk': page.pk,
+                    'instance_id': page.pk,
                     'language_code': language.code,
                 }),
                 priority=prio)

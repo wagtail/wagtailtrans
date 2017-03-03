@@ -6,9 +6,10 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.encoding import python_2_unicode_compatible, force_text
+from django.utils.encoding import force_text, python_2_unicode_compatible
 from django.utils.functional import cached_property
-from django.utils.translation import activate, ugettext_lazy as _
+from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import activate
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
 from wagtail.wagtailadmin.edit_handlers import (
@@ -18,7 +19,7 @@ from wagtail.wagtailadmin.forms import (
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch.index import FilterField
 
-from .edit_handlers import ReadOnlyWidget, CanonicalPageWidget
+from .edit_handlers import CanonicalPageWidget, ReadOnlyWidget
 from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
 from .utils.conf import get_wagtailtrans_setting

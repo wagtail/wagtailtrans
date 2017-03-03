@@ -24,29 +24,27 @@ class TestAddTranslationView(object):
 
         assert TranslatablePage.objects.filter(language=fr).count() == 0
 
-        view = translation.Add.as_view()
-        response = view(
-            rf.get('/'), page_pk=self.last_page.pk, language_code='fr')
+        request = rf.get('/')
 
-        form = response.context_data['form']
-        parent_page_qs = form.fields['parent_page'].queryset
+        view = translation.TranslationView()
+        view.request = request
+        response = view.dispatch(
+            request, instance_id=self.last_page.pk, language_code='fr')
+        
+        parent_page_qs = view.form['parent_page'].field.queryset
+        
         assert response.status_code == 200
-
-        # The new language has been added,
-        # so only the root page should be availabe as parent
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is not TranslatablePage
         assert parent_page_qs.first() == self.pages[0]
-
+        
         french_root = pages.TranslatablePageFactory.build(language=fr, title="French root")
         self.pages[0].add_child(instance=french_root)
 
-        response = view(
-            rf.get('/'), page_pk=self.last_page.pk, language_code='fr')
-
-        form = response.context_data['form']
-        parent_page_qs = form.fields['parent_page'].queryset
-
+        response = view.dispatch(
+            request, instance_id=self.last_page.pk, language_code='fr')
+        
+        parent_page_qs = view.form['parent_page'].field.queryset
         # We have a french page to add our new translated page to
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is TranslatablePage
@@ -63,16 +61,17 @@ class TestAddTranslationView(object):
         assert self.last_page.language.code == 'en'
 
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
-            view = translation.Add.as_view()
-            response = view(
-                request, page_pk=self.last_page.pk,
+            view = translation.TranslationView()
+            view.request = request
+            response = view.dispatch(
+                request, instance_id=self.last_page.pk,
                 language_code=self.default_language.code)
-
+            
         assert response.status_code == 200
-        assert not response.context_data['form'].is_valid()
+        assert not view.form.is_valid()
 
     def test_post_404(self, rf):
         """It should raise a 404 when a wrong page_pk is given."""
-        view = translation.Add.as_view()
+        view = translation.TranslationView.as_view()
         with pytest.raises(Http404):
-            view(rf.post('/'), page_pk=0, language_code='en')
+            view(rf.post('/'), instance_id=0, language_code='en')
