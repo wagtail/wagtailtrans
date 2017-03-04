@@ -8,58 +8,48 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-04 13:17+0100\n"
+"POT-Creation-Date: 2017-03-04 12:27+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"Last-Translator: Janneke Janssen <engineering-digital@lukkien.com>, 2017\n"
+"Language-Team: Dutch (https://www.transifex.com/lukkien/teams/72476/nl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: config.py:12
 msgid "Wagtail Translations"
-msgstr ""
+msgstr "Wagtail Vertalingen"
 
-#: forms.py:21
 msgid "Language"
-msgstr ""
+msgstr "Taal"
 
-#: forms.py:22
 msgid "One of the languages defined in LANGUAGES"
-msgstr ""
+msgstr "Een van de talen gedefinieerd in LANGUAGES"
 
-#: forms.py:76
 msgid "All fields need to be copied because of some required fields"
 msgstr ""
+"All velden dienen te worden gekopieerd vanwege een aantal verplichte velden"
 
-#: models.py:112
 msgid "Translations"
-msgstr ""
+msgstr "Vertalingen"
 
-#: models.py:363 views/language.py:19
 msgid "Languages"
-msgstr ""
+msgstr "Talen"
 
-#: models.py:375 models.py:376
 msgid "Site languages"
-msgstr ""
+msgstr "Site talen"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:3
 #, python-format
 msgid "Delete %(title)s"
-msgstr ""
+msgstr "Verwijder %(title)s"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:6
 msgid "Delete"
-msgstr ""
+msgstr "Verwijder"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:11
 msgid "Are you sure you want to delete this page?"
-msgstr ""
+msgstr "Weet u zeker dat u deze pagina wilt verwijderen?"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:13
 #, python-format
 msgid ""
 "\n"
@@ -71,129 +61,112 @@ msgid_plural ""
 "subpages.\n"
 "                "
 msgstr[0] ""
+"\n"
+"Dit zal ook een onderliggende pagina verwijderen."
 msgstr[1] ""
+"\n"
+"                    Dit zal ook %(descendant_count)s onderliggende pagina's "
+"verwijderen.\n"
+"                "
 
-#: templates/wagtailadmin/pages/confirm_delete.html:23
 msgid ""
 "Deleting this page will also delete the following translated page(s) and "
 "their subpages"
-msgstr ""
+msgstr "Dit zal ook %(descendant_count)s onderliggende pagina's verwijderen."
 
-#: templates/wagtailadmin/pages/confirm_delete.html:36
 msgid "Yes, delete it"
-msgstr ""
+msgstr "Ja, verwijder"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:37
 msgid "No, don't delete it"
-msgstr ""
+msgstr "Nee, niet verwijderen"
 
-#: templates/wagtailadmin/pages/confirm_delete.html:43
 #, python-format
 msgid ""
 "Alternatively you can <a href=\"%(unpublish_url)s\">unpublish the page</a>. "
 "This removes the page from public view and you can edit or publish it again "
 "later."
 msgstr ""
+"U kunt ook de <a href=\"%(unpublish_url)s\">publicatie van de pagina "
+"ongedaan maken</a>. Hiermee verwijdert u de pagina van publieke "
+"zichtbaarheid. U kunt de pagina dan wijzigen of opnieuw publiceren."
 
-#: templates/wagtailadmin/pages/listing/_page_title_explore.html:7
 msgid "Edit this page"
-msgstr ""
+msgstr "Wijzig deze pagina"
 
-#: templates/wagtailtrans/languages/index.html:11
 msgid "Name"
-msgstr ""
+msgstr "Naam"
 
-#: templates/wagtailtrans/languages/index.html:12
 msgid "Code"
-msgstr ""
+msgstr "Code"
 
-#: templates/wagtailtrans/languages/index.html:13
 msgid "Position"
-msgstr ""
+msgstr "Positie"
 
-#: templates/wagtailtrans/languages/index.html:14
 msgid "Default"
-msgstr ""
+msgstr "Standaard"
 
-#: templates/wagtailtrans/languages/index.html:28
 msgid "Yes"
-msgstr ""
+msgstr "Ja"
 
-#: templates/wagtailtrans/languages/index.html:40
 #, python-format
 msgid ""
 "No languages have been created. Why not <a href=\"%(add_language_url)s\">add "
 "one</a>?"
 msgstr ""
+"Er zijn nog geen talen aangemaakt. Maak een <a href=\"%(add_language_url)s"
+"\">nieuwe taal</a> aan."
 
-#: templates/wagtailtrans/translation/add.html:5
 #, python-format
 msgid "New %(page_type)s"
-msgstr ""
+msgstr "Nieuwe %(page_type)s"
 
-#: templates/wagtailtrans/translation/add.html:15
 msgid "Translate"
-msgstr ""
+msgstr "Vertaal"
 
-#: templates/wagtailtrans/translation/add.html:29
 msgid "Saving..."
-msgstr ""
+msgstr "Opslaan..."
 
-#: templates/wagtailtrans/translation/add.html:29
 msgid "Save draft"
-msgstr ""
+msgstr "Concept opslaan"
 
-#: templates/wagtailtrans/translation/add.html:34
 msgid "Publishing..."
-msgstr ""
+msgstr "Publiceren..."
 
-#: templates/wagtailtrans/translation/add.html:34
 msgid "Publish"
-msgstr ""
+msgstr "Publiceer"
 
-#: templates/wagtailtrans/translation/add.html:37
 msgid "Submit for moderation"
-msgstr ""
+msgstr "Ter goedkeuring aanbieden"
 
-#: templates/wagtailtrans/translation/add.html:60
 msgid "This page has unsaved changes."
-msgstr ""
+msgstr "U heeft niet opgeslagen wijzigingen op de pagina."
 
-#: views/language.py:20
 msgid "Add a language"
-msgstr ""
+msgstr "Voeg een taal toe"
 
-#: views/language.py:27
 msgid "Add language"
-msgstr ""
+msgstr "Voeg taal toe"
 
-#: views/language.py:28
 #, python-brace-format
 msgid "Language '{0}' created."
-msgstr ""
+msgstr "Taal '{0}' toegevoegd."
 
-#: views/language.py:39
 #, python-brace-format
 msgid "Language '{0}' updated."
-msgstr ""
+msgstr "Taal '{0}' gewijzigd."
 
-#: views/language.py:41
 msgid "The language could not be saved due to errors."
-msgstr ""
+msgstr "De taal kon niet opgeslagen worden vanwege fouten."
 
-#: views/language.py:42 views/language.py:56
 msgid "Delete language"
-msgstr ""
+msgstr "Verwijder taal"
 
-#: views/language.py:53
 #, python-brace-format
 msgid "Language '{0}' deleted."
-msgstr ""
+msgstr "Taal '{0}' verwijderd."
 
-#: views/language.py:58
 msgid "Are you sure you want to delete this language?"
-msgstr ""
+msgstr "Weet u zeker dat u deze taal wilt verwijderen?"
 
-#: views/translation.py:17
 msgid "Translate {} to {}"
-msgstr ""
+msgstr "Vertaal {} naar {}"
