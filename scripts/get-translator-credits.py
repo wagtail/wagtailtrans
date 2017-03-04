@@ -6,7 +6,7 @@ from babel import Locale
 
 authors_by_locale = defaultdict(set)
 
-file_listing = subprocess.Popen('find ../wagtail -iname *.po', shell=True, stdout=subprocess.PIPE)
+file_listing = subprocess.Popen('find ../src -iname *.po', shell=True, stdout=subprocess.PIPE)
 
 for file_listing_line in file_listing.stdout:
     filename = file_listing_line.strip()
