@@ -2,10 +2,12 @@ import pytest
 
 from django.test import override_settings
 
+from wagtailtrans import signals
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
 
 from tests.factories import language, sites
+from tests.factories.pages import HomePageFactory
 
 
 @pytest.mark.django_db
@@ -65,3 +67,32 @@ class TestSignalsLanguagesPerSite(object):
             self.site.sitelanguages.save()
             assert TranslatablePage.objects.filter(
                 language=lang, canonical_page=self.last_page).exists()
+
+
+@pytest.mark.django_db
+class TestForceParentLanguage(object):
+
+    def test_parent_language(self):
+        parent_page = HomePageFactory.build()
+        new_page = HomePageFactory.build(language=language.LanguageFactory(code='ar'))
+
+        signals.force_parent_language(page=new_page, parent=parent_page)
+        assert new_page.language == parent_page.language
+
+    @override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True)
+    def test_site_languages(self):
+        site = sites.SiteFactory()
+        SiteLanguages.for_site(site)  # Initialize sitelanguages
+
+        default_language = Language.objects.default()
+        lang = language.LanguageFactory(code='nl', is_default=False)
+        site.sitelanguages.default_language = lang
+        site.sitelanguages.save()
+
+        pages = sites.create_site_tree(language=default_language, site=site)
+        homepage = HomePageFactory.build(language=default_language)
+        pages[0].add_child(instance=homepage)
+
+        signals.force_parent_language(page=homepage, parent=site.root_page)
+
+        assert homepage.language == lang
