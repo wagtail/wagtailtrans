@@ -9,7 +9,7 @@ logger = logging.getLogger()
 class WagtailTransConfig(AppConfig):
     label = 'wagtailtrans'
     name = 'wagtailtrans'
-    verbose_name = _('Wagtail Translations')
+    verbose_name = _("Wagtail Translations")
 
     def ready(self):
         from wagtailtrans.signals import register_signal_handlers

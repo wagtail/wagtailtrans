@@ -292,6 +292,7 @@ class TranslatableSiteRootPage(Page):
     route the requests to the right language.
 
     """
+    parent_page_types = ['wagtailcore.Page']
 
     def serve(self, request, *args, **kwargs):
         """Serve TranslatablePage in the correct language
