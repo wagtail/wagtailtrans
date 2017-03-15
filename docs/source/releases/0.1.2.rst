@@ -1,0 +1,34 @@
+================================
+Wagtailtrans 0.1.2 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+This release mainly fixes some annoying bugs and brings full support for wagtail 1.8 and 1.9.
+
+
+Features
+~~~~~~~~
+
+ - Add new ``wagtailtrans`` logo.
+ - Add admin view for translating with ``WAGTAILTRANS_SYNC_TREE = False``, prevents issues with not having a ``_meta`` on the ``TranslationForm``.
+ - Update ``TranslationMiddleware`` to also use the ``Accept-Language`` HTTP header
+ - Fix: Update middleware to prevent errors on empty database
+ - Fix: backwards compatibility with Django 1.8 for ``wagtailtrans.templatetags``
+
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
+Wagtail 1.6
+~~~~~~~~~~~
+
+This release drops support for Wagtail 1.6, most things should probably still work, but it's not supported for bugfixes anymore.
