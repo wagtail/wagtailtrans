@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.1.3 (XX-XX-XXX)
+-----------------
+
+
+
+
 0.1.2 (15-03-2017)
 ------------------
 This release drops support for wagtail 1.6 and adds support for wagtail 1.8 and 1.9

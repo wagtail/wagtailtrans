@@ -2,7 +2,7 @@ from os import path
 
 default_app_config = 'wagtailtrans.config.WagtailTransConfig'
 
-VERSION = (0, 1, 2, 'final')
+VERSION = (0, 1, 3, 'dev0')
 
 WAGTAILTRANS_TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 
@@ -13,8 +13,7 @@ def get_version():
     # Append 3rd digit if > 0
     if VERSION[2]:
         version = '%s.%s' % (version, VERSION[2])
-    elif VERSION[3] != 'final':
-        version = '%s %s' % (version, VERSION[3])
-        if len(VERSION) == 5:
-            version = '%s %s' % (version, VERSION[4])
+
+    if VERSION[3] != 'final':
+        version = '%s.%s' % (version, VERSION[3])
     return version
