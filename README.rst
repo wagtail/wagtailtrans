@@ -1,3 +1,7 @@
+.. image:: https://raw.githubusercontent.com/LUKKIEN/wagtailtrans/master/docs/source/_static/wagtailtrans-logo.png
+    :alt: Wagtailtrans logo
+
+
 .. image:: https://travis-ci.org/LUKKIEN/wagtailtrans.svg?branch=master
     :target: https://travis-ci.org/LUKKIEN/wagtailtrans
     :alt: Build status
