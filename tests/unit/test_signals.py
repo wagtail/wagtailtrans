@@ -2,11 +2,12 @@ import pytest
 
 from django.test import override_settings
 
-from tests.factories.pages import HomePageFactory
+from wagtailtrans import signals
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
 
 from tests.factories import language, sites
+from tests.factories.pages import HomePageFactory
 
 
 @pytest.mark.django_db
@@ -69,33 +70,29 @@ class TestSignalsLanguagesPerSite(object):
 
 
 @pytest.mark.django_db
-class TestSignalsForceParentLanguage(object):
+class TestForceParentLanguage(object):
 
-    def setup(self):
-        with override_settings(WAGTAILTRANS_SYNC_TREE=False):
-            register_signal_handlers()
-            self.extra_language = language.LanguageFactory(
-                code='nl', is_default=False)
-            self.default_language = Language.objects.get(code='en')
-            pages = sites.create_site_tree(language=self.default_language)
-            self.last_page = pages[-1]
+    def test_parent_language(self):
+        parent_page = HomePageFactory.build()
+        new_page = HomePageFactory.build(language=language.LanguageFactory(code='ar'))
 
-            # get trans root and add new dutch homepage
-            trans_root = self.last_page.get_root_nodes().get(title='root')
-            self.dutch_home = HomePageFactory.build(
-                language=self.extra_language, title='dutch_homepage')
-            trans_root.add_child(instance=self.dutch_home)
+        signals.force_parent_language(page=new_page, parent=parent_page)
+        assert new_page.language == parent_page.language
 
-    def test_set_parent_language(self):
-        # create new page in default language and add it to
-        # the dutch homepage
-        page = HomePageFactory.build(language=self.default_language)
+    @override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True)
+    def test_site_languages(self):
+        site = sites.SiteFactory()
+        SiteLanguages.for_site(site)  # Initialize sitelanguages
 
-        assert page.language == self.default_language
-        assert self.dutch_home.language == self.extra_language
+        default_language = Language.objects.default()
+        lang = language.LanguageFactory(code='nl', is_default=False)
+        site.sitelanguages.default_language = lang
+        site.sitelanguages.save()
 
-        page = self.dutch_home.add_child(instance=page)
-        page.save()
+        pages = sites.create_site_tree(language=default_language, site=site)
+        homepage = HomePageFactory.build(language=default_language)
+        pages[0].add_child(instance=homepage)
 
-        assert page.language == self.extra_language
+        signals.force_parent_language(page=homepage, parent=site.root_page)
 
+        assert homepage.language == lang
