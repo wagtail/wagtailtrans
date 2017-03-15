@@ -1,4 +1,4 @@
-.. image:: wagtailtrans-logo.png
+.. image:: https://raw.githubusercontent.com/LUKKIEN/wagtailtrans/master/docs/source/_static/wagtailtrans-logo.png
     :alt: Wagtailtrans logo
 
 
