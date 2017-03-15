@@ -1,3 +1,8 @@
+.. image:: wagtailtrans-logo.png
+    :alt: Wagtailtrans logo
+
+|br|
+
 .. image:: https://travis-ci.org/LUKKIEN/wagtailtrans.svg?branch=master
     :target: https://travis-ci.org/LUKKIEN/wagtailtrans
     :alt: Build status
