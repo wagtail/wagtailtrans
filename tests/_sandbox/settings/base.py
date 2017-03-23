@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'wagtail.contrib.settings',
+    'wagtail.contrib.wagtailsitemaps',
     'wagtail.wagtailforms',
     'wagtail.wagtailredirects',
     'wagtail.wagtailembeds',
@@ -58,6 +59,7 @@ INSTALLED_APPS = [
     'wagtail.wagtailcore',
 
     'wagtailtrans',
+    'wagtailtrans.sitemaps',
     'modelcluster',
     'taggit',
 
