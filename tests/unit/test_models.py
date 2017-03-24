@@ -112,35 +112,55 @@ class TestTranslatablePage(object):
         fr_root = self.canonical_page.create_translation(
             language=fr, copy_fields=True)
 
+        # Change title
+        fr_root.title = 'FR language'
+        fr_root.save()
+
         # Let's only make nl_root live
+        nl_root.title = 'NL language'
         nl_root.live = True
         nl_root.save()
 
-        en_translations = [
-            p.specific
-            for p in self.canonical_page.get_translations(only_live=False)]
+        en_translations = (
+            self.canonical_page
+            .get_translations(only_live=False)
+            .specific())
         assert nl_root in en_translations
         assert fr_root in en_translations
         assert self.canonical_page not in en_translations
 
-        nl_translations = [
-            p.specific for p in nl_root.get_translations(only_live=False)]
+        nl_translations = nl_root.get_translations(only_live=False).specific()
         assert self.canonical_page in nl_translations
         assert fr_root in nl_translations
         assert nl_root not in nl_translations
 
-        fr_translations = [
-            p.specific for p in fr_root.get_translations(only_live=False)]
+        fr_translations = fr_root.get_translations(only_live=False).specific()
         assert self.canonical_page in fr_translations
         assert nl_root in fr_translations
         assert fr_root not in fr_translations
 
         # Some variations
-        en_translations = [
-            p.specific for p in self.canonical_page.get_translations()]
+        en_translations = self.canonical_page.get_translations().specific()
         assert nl_root in en_translations
         assert fr_root not in en_translations
         assert self.canonical_page not in en_translations
+
+        # Test incldue self
+        translations_and_self = (
+            self.canonical_page
+            .get_translations(include_self=True)
+            .specific())
+        assert self.canonical_page in translations_and_self
+        assert nl_root in translations_and_self
+        assert fr_root not in translations_and_self
+
+        translations_and_self = (
+            self.canonical_page
+            .get_translations(only_live=False, include_self=True)
+            .specific())
+        assert self.canonical_page in translations_and_self
+        assert nl_root in translations_and_self
+        assert fr_root in translations_and_self
 
     def test_move_translated_pages(self, languages):
         """Test `move_translated_pages()`."""
