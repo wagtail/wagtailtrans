@@ -145,7 +145,7 @@ class TestTranslatablePage(object):
         assert fr_root not in en_translations
         assert self.canonical_page not in en_translations
 
-        # Test incldue self
+        # Test include self
         translations_and_self = (
             self.canonical_page
             .get_translations(include_self=True)
