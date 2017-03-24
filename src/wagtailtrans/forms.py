@@ -7,8 +7,8 @@ from django.conf import settings
 from django.utils.translation import ugettext as _
 from wagtail.wagtailcore.models import Page
 
+from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, TranslatablePage
-from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 class LanguageForm(forms.ModelForm):

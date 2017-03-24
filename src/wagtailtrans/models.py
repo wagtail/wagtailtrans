@@ -19,10 +19,10 @@ from wagtail.wagtailadmin.forms import (
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch.index import FilterField
 
+from .conf import get_wagtailtrans_setting
 from .edit_handlers import CanonicalPageWidget, ReadOnlyWidget
 from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
-from .utils.conf import get_wagtailtrans_setting
 
 
 @python_2_unicode_compatible
