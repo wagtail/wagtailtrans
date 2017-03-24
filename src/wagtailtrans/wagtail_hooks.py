@@ -7,9 +7,9 @@ from wagtail.wagtailadmin import widgets
 from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
+from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language
 from wagtailtrans.urls import languages, translations
-from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 
 @hooks.register('register_admin_urls')

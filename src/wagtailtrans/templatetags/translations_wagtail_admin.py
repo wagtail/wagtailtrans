@@ -1,8 +1,8 @@
 import django
 from django import template
 
+from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import TranslatablePage
-from wagtailtrans.utils.conf import get_wagtailtrans_setting
 
 register = template.Library()
 

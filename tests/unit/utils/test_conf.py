@@ -1,6 +1,6 @@
 from django.test import override_settings
 
-from wagtailtrans.utils import conf
+from wagtailtrans import conf
 
 
 def test_get_wagtailtrans_setting_defaults():

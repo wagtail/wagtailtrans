@@ -2,8 +2,8 @@ from django import VERSION as django_version
 from django.conf import settings
 from django.utils import translation
 
+from .conf import get_wagtailtrans_setting
 from .models import Language, SiteLanguages
-from .utils.conf import get_wagtailtrans_setting
 
 if django_version >= (1, 10):
     from django.utils.deprecation import MiddlewareMixin

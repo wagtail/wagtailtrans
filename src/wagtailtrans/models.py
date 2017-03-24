@@ -19,10 +19,10 @@ from wagtail.wagtailadmin.forms import (
 from wagtail.wagtailcore.models import Page
 from wagtail.wagtailsearch.index import FilterField
 
+from .conf import get_wagtailtrans_setting
 from .edit_handlers import CanonicalPageWidget, ReadOnlyWidget
 from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
-from .utils.conf import get_wagtailtrans_setting
 
 
 @python_2_unicode_compatible
@@ -172,7 +172,7 @@ class TranslatablePage(Page):
 
             page.move(target=target, pos=pos, suppress_sync=True)
 
-    def get_translations(self, only_live=True):
+    def get_translations(self, only_live=True, include_self=False):
         """Get all translations of this page.
 
         This page itself is not included in the result, all pages
@@ -186,12 +186,15 @@ class TranslatablePage(Page):
         translations = TranslatablePage.objects.filter(
             Q(canonical_page=canonical_page_id) |
             Q(pk=canonical_page_id)
-        ).exclude(pk=self.pk)
+        )
+
+        if not include_self:
+            translations = translations.exclude(pk=self.pk)
 
         if only_live:
             translations = translations.live().filter(language__live=True)
 
-        return translations.order_by('language__position')
+        return translations
 
     def has_translation(self, language):
         """Check if page isn't already translated in given language.

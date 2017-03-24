@@ -3,7 +3,7 @@ from wagtail.wagtailcore.models import (
     Collection, GroupCollectionPermission, GroupPagePermission,
     PagePermissionTester, UserPagePermissionsProxy)
 
-from wagtailtrans.utils.conf import get_wagtailtrans_setting
+from wagtailtrans.conf import get_wagtailtrans_setting
 
 
 def create_group_permissions(group, language):
