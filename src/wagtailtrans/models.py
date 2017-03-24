@@ -52,9 +52,13 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
 
     def clean_is_default(self):
         is_default = self.cleaned_data['is_default']
-        default_lang = Language.objects.default()
-        if is_default != self.instance.is_default and default_lang is not None:
-            raise forms.ValidationError(_("Default language can't be changed"))
+        if (
+            not self.initial.get('is_default') == is_default and
+            is_default and
+            not get_wagtailtrans_setting('LANGUAGES_PER_SITE')
+        ):
+            from wagtailtrans.utils.language_swich import change_default_language  # noqa
+            change_default_language(self.instance)
         return is_default
 
 
@@ -388,17 +392,15 @@ Page.permissions_for_user = page_permissions_for_user
 class SiteLanguagesForm(WagtailAdminModelForm):
     """Form to be used in the wagtail admin."""
 
-    def __init__(self, *args, **kwargs):
-        super(SiteLanguagesForm, self).__init__(*args, **kwargs)
-        instance = self.instance
-        if (instance.site and instance.site.root_page and
-                instance.site.root_page.get_children_count() > 0 and
-                instance.default_language):
-            self.fields['default_language'].widget = ReadOnlyWidget(
-                text_display=instance.default_language)
-            qs = self.fields['other_languages'].queryset
-            self.fields['other_languages'].queryset = qs.exclude(
-                pk=instance.default_language.pk)
+    def clean(self):
+        data = super(SiteLanguagesForm, self).clean()
+
+        if not data['default_language'].pk == self.initial['default_language']:
+            from wagtailtrans.utils.language_swich import change_default_language  # noqa
+            change_default_language(
+                data['default_language'], self.instance.site)
+
+        return data
 
 
 def register_site_languages():
