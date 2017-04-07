@@ -1,0 +1,54 @@
+.. _templatetags:
+
+============
+Templatetags
+============
+
+For convenience there are 2 templatetags included with wagtailtrans. This so it's easy to have
+different languages link to each other. The template tags can be loaded from ``wagtailtrans_tags``:
+
+.. code-block:: template
+
+    {% load wagtailtrans_tags %}
+
+
+Both template tags are configurable via the same keyword arguments
+
+``homepage_fallback``
+---------------------
+
+:Default: True
+
+If set to ``False`` the fallback to a homepage, in case of unpublished pages won't be included.
+
+
+``include_self``
+
+:Default: True
+
+If set to ``False`` the calling page won't be included in the result.
+
+
+
+-----------------------------
+get_translations (assignment)
+-----------------------------
+
+The assignment tag will return a dictionary with language objects as keys and pages as values.
+This can for example be used to render ``<link rel="alternate">`` tags.
+
+
+.. code-block:: html
+
+    {% get_translations page homepage_fallback=False include_self=False as translations %}
+
+    {% for language, page in translations.items %}
+    <link rel="alternate" href="{{ page.full_url }}" hreflang="{{ language.code }}">
+    {% endfor %}
+
+
+------------------------------------
+render_language_selector (inclusion)
+------------------------------------
+
+This templatetag will render a languge selector template, located at: ``wagtailtrans/templatetags/language_selector.html``
