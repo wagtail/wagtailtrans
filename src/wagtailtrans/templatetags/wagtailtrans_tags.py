@@ -56,7 +56,7 @@ def get_translations(page, homepage_fallback=True, include_self=True):
     Usage:
         {% get_language_urls page as language_urls %}
         {% get_language_urls page homepage_fallback=False as language_urls %}
-        {% get_language_urls page homeapge_fallback=False include_self=False as language_urls %}  # noqa
+        {% get_language_urls page homepage_fallback=False include_self=False as language_urls %}  # noqa
 
     """
     return _get_translations(

@@ -54,5 +54,5 @@ For example this can be used to render ``<link rel="alternate">`` tags.
 render_language_selector (inclusion)
 ------------------------------------
 
-This template tag will render a languge selector, which renders the template located at:
+This template tag will render a language selector, which renders the template located at:
 ``wagtailtrans/templatetags/language_selector.html``
