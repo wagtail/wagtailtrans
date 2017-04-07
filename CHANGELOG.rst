@@ -4,7 +4,7 @@ Changelog
 0.1.3 (XX-XX-XXX)
 -----------------
 
-
+ - Add ``include_self=False`` kwarg to ``TranslatablePage.get_translations()`` to have the page return itself as well
 
 
 0.1.2 (15-03-2017)
