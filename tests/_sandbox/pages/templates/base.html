@@ -1,10 +1,10 @@
+{% spaceless %}
 {% load wagtailuserbar %}
+{% load wagtailtrans_tags %}
 
 <!DOCTYPE html>
-<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
-<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
-<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+{% endspaceless %}
+<html>
     <head>
         <meta charset="utf-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -12,15 +12,26 @@
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+        {% get_translations page homepage_fallback=False include_self=False as translations %}
+        {% for language, page in translations.items %}
+        <link rel="alternate" href="{{ page.full_url }}" hreflang="{{ language.code }}">
+        {% endfor %}
+
         {% block extra_css %}
             {# Override this in templates to add extra stylesheets #}
         {% endblock %}
     </head>
-
     <body class="{% block body_class %}{% endblock %}">
         {% wagtailuserbar %}
 
-        {% block content %}{% endblock %}
+        {{ translation_urls }}
+
+        <div class="language-selector-container">
+            {% render_language_selector page %}
+        </div>
+
+        {% block content %}
+        {% endblock %}
 
         {% block extra_js %}
             {# Override this in templates to add extra javascript #}

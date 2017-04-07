@@ -9,7 +9,7 @@ if django_version >= (1, 9):
     register.assignment_tag = register.simple_tag
 
 
-def _get_language_urls(page, homepage_fallback=True):
+def _get_translations(page, homepage_fallback=True, include_self=True):
     """
     Return URLs for translations of provided pages, if
     a language isn't available as direct translation
@@ -20,56 +20,60 @@ def _get_language_urls(page, homepage_fallback=True):
     """
     site = page.get_site()
     available_languages = get_languages_for_site(site)
+    if not include_self:
+        available_languages = available_languages.exclude(pk=page.language_id)
+
     available_translations = {
         p.language.code: p
-        for p in page.get_translations(only_live=True, include_self=True)
+        for p in page.get_translations(only_live=True, include_self=include_self)
     }
 
     available_homepages = {}
     if homepage_fallback:
         available_homepages = {
-            p.language.code: p for p in site.root_page.get_children()
+            p.language.code: p for p in site.root_page.get_children().specific()
         }
 
     language_urls = {}
     for language in available_languages:
         translation = available_translations.get(language.code)
         if translation:
-            language_urls[language.code] = translation.url
+            language_urls[language] = translation
         elif homepage_fallback:
             homepage = available_homepages.get(language.code)
             if homepage:
-                language_urls[language.code] = homepage.url
+                language_urls[language] = homepage
 
     return language_urls
 
 
 @register.assignment_tag
-def get_translation_urls(page, homepage_fallback=True):
+def get_translations(page, homepage_fallback=True, include_self=True):
     """Return URLs for translations of the provided page.
 
     Usage:
         {% get_language_urls page as language_urls %}
-
-        {% get_language_urls page False as language_urls %}
+        {% get_language_urls page homeapge_fallback=False as language_urls %}
+        {% get_language_urls page homeapge_fallback=False include_self=False as language_urls %}  # noqa
 
     """
-    return _get_language_urls(page, homepage_fallback=homepage_fallback)
+    return _get_translations(
+        page, homepage_fallback=homepage_fallback, include_self=include_self)
 
 
 @register.inclusion_tag('wagtailtrans/templatetags/language_selector.html')
-def render_language_selector(page, homepage_fallback=True):
+def render_language_selector(page, homepage_fallback=True, include_self=False):
     """Render language selector template with the required context.
 
     Usage:
         {% render_language_selector page %}
-
-        {% render_language_selector page False %}
+        {% render_language_selector page homepage_fallback=False %}
+        {% render_language_selector page homepage_fallback=False include_self=True %}
 
     """
-    available_urls = _get_language_urls(
-        page, homepage_fallback=homepage_fallback)
+    available_translations = _get_translations(
+        page, homepage_fallback=homepage_fallback, include_self=include_self)
     return {
         'current_page': page,
-        'language_urls': available_urls,
+        'translations': available_translations,
     }
