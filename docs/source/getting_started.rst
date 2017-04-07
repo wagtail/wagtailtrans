@@ -18,15 +18,22 @@ Installation
 
     $ pip install wagtailtrans
 
-2. Add ``wagtailtrans`` to your ``INSTALLED_APPS``::
+2. Add ``wagtailtrans`` and ``wagtail.contrib.modeladmin`` to your ``INSTALLED_APPS``::
 
 .. code-block:: python
 
     INSTALLED_APPS = [
         # ...
+        'wagtail.contrib.modeladmin',
         'wagtailtrans',
         # ...
     ]
+
+.. note::
+
+    As of Wagtailtrans 1.0.3 the custom Language management views are replaced with with ``wagtail.contrib.modeladmin``
+    This needs to be added to ``INSTALLED_APPS`` as well.
+
 
 3. Add ``wagtailtrans.middleware.TranslationMiddleware`` to your ``MIDDLEWARE_CLASSES``::
 
