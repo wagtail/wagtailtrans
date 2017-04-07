@@ -3,7 +3,7 @@ from .models import SiteLanguages, Language
 
 
 def get_languages_for_site(site):
-    """Utility to retreve available languages for provided site."""
+    """Utility to retrieve available languages for provided site."""
     if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
         site_languages = SiteLanguages.for_site(site)
 

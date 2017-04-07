@@ -64,10 +64,11 @@ def render_language_selector(page, homepage_fallback=True):
     Usage:
         {% render_language_selector page %}
 
-        {% render_language_selector page False%}
+        {% render_language_selector page False %}
 
     """
-    available_urls = _get_language_urls(page, homepage_fallback=homepage_fallback)
+    available_urls = _get_language_urls(
+        page, homepage_fallback=homepage_fallback)
     return {
         'current_page': page,
         'language_urls': available_urls,
