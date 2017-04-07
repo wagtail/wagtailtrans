@@ -6,8 +6,8 @@
     :target: https://travis-ci.org/LUKKIEN/wagtailtrans
     :alt: Build status
 
-.. image:: https://coveralls.io/repos/github/LUKKIEN/wagtailtrans/badge.svg?branch=master
-    :target: https://coveralls.io/github/LUKKIEN/wagtailtrans?branch=master
+.. image:: https://codecov.io/gh/LUKKIEN/wagtailtrans/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/LUKKIEN/wagtailtrans
     :alt: Code coverage
 
 .. image:: https://badge.fury.io/py/wagtailtrans.svg
