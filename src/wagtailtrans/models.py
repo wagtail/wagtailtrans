@@ -1,5 +1,7 @@
 from __future__ import unicode_literals
 
+from operator import itemgetter
+
 from django import forms
 from django.conf import settings
 from django.db import models
@@ -25,6 +27,55 @@ from .managers import LanguageManager
 from .permissions import TranslatableUserPagePermissionsProxy
 
 
+class WagtailAdminLanguageForm(WagtailAdminModelForm):
+    """Custom wagtailadmin form so we can make use of the panels
+    property, used by ``wagtail.contrib.modeladmin``.
+
+    """
+    code = forms.ChoiceField(
+        label=_("Language"), choices=settings.LANGUAGES,
+        help_text=_("One of the languages defined in LANGUAGES"))
+
+    class Meta:
+        fields = [
+            'code',
+            'is_default',
+            'position',
+            'live',
+        ]
+
+    def __init__(self, *args, **kwargs):
+        super(WagtailAdminLanguageForm, self).__init__(*args, **kwargs)
+
+        sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
+        self.fields['code'].choices = sorted_choices
+
+        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+            del self.fields['is_default']
+
+    def clean_is_default(self):
+        is_default = self.cleaned_data['is_default']
+        default_lang = Language.objects.default()
+        if is_default != self.instance.is_default and default_lang is not None:
+            raise forms.ValidationError(_("Default language can't be changed"))
+        return is_default
+
+
+def get_language_panels():
+    children = [
+        FieldPanel('code'),
+        FieldPanel('position'),
+        FieldPanel('live'),
+    ]
+
+    if not get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+        children.insert(1, FieldPanel('is_default'))
+
+    return [
+        MultiFieldPanel(heading=_("Language details"), children=children),
+    ]
+
+
 @python_2_unicode_compatible
 class Language(models.Model):
     """User defined language."""
@@ -47,6 +98,9 @@ class Language(models.Model):
         help_text="Is this language available for visitors to view?")
 
     objects = LanguageManager()
+
+    base_form_class = WagtailAdminLanguageForm
+    panels = get_language_panels()
 
     class Meta:
         ordering = ['position']
