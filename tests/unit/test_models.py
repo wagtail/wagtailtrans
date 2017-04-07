@@ -2,12 +2,45 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.utils import six
+from wagtail.wagtailadmin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
-from tests.factories.pages import HomePageFactory, TranslatablePageFactory
+from tests.factories.pages import TranslatablePageFactory
 from tests.factories.sites import SiteFactory, create_site_tree
 from wagtailtrans import models
-from wagtailtrans.exceptions import TranslationMutationError
+
+
+@pytest.mark.django_db
+class TestWagtailAdminLanguageForm(object):
+
+    def setup(self):
+        self.form_class = get_form_for_model(
+            model=models.Language, form_class=models.WagtailAdminLanguageForm)
+
+    def test_init(self):
+        models.Language.objects.all().delete()
+
+        assert 'is_default' in self.form_class().fields.keys()
+
+        with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
+            assert 'is_default' not in self.form_class().fields.keys()
+
+    def test_clean_is_default(self):
+        language = LanguageFactory(is_default=True)
+        form = self.form_class(instance=language, data={
+            'code': language.code,
+            'position': language.position,
+            'is_default': False,
+        })
+        assert not form.is_valid()
+        assert 'is_default' in form.errors
+
+        form = self.form_class(instance=language, data={
+            'code': language.code,
+            'position': language.position,
+            'is_default': True,
+        })
+        assert form.is_valid(), form.errors
 
 
 @pytest.mark.django_db

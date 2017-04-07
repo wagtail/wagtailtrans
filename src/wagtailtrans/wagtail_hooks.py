@@ -3,33 +3,35 @@ from django.contrib.staticfiles.templatetags.staticfiles import static
 from django.core.urlresolvers import reverse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
+from django.utils.translation import ugettext_lazy as _
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.wagtailadmin import widgets
-from wagtail.wagtailadmin.menu import MenuItem
 from wagtail.wagtailcore import hooks
 
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language
-from wagtailtrans.urls import languages, translations
+from wagtailtrans.urls import translations
+
+
+class LanguageModelAdmin(ModelAdmin):
+    add_to_settings_menu = True
+    model = Language
+    menu_label = _("Languages")
+    menu_icon = 'icon icon-wagtail'
+    menu_order = 1000
+    list_display = ['__str__', 'position', 'live', 'is_default']
+    list_filter = ['live']
+
+
+modeladmin_register(LanguageModelAdmin)
 
 
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^language/',
-            include(languages, namespace='wagtailtrans_languages')),
         url(r'^translate/',
             include(translations, namespace='wagtailtrans_translations')),
     ]
-
-
-@hooks.register('register_settings_menu_item')
-def register_language_menu_item():
-    return MenuItem(
-        'Languages',
-        reverse('wagtailtrans_languages:index'),
-        classnames='icon icon-snippet',
-        order=1000,
-    )
 
 
 if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
