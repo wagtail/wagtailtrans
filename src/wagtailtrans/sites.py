@@ -11,6 +11,6 @@ def get_languages_for_site(site):
             site_languages.default_language
         ] + list(site_languages.other_languages.all())
     else:
-        languages = Language.objects.live().order_by('position')
+        languages = list(Language.objects.live().order_by('position'))
 
     return languages

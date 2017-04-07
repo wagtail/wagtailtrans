@@ -21,30 +21,32 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
     site = page.get_site()
     available_languages = get_languages_for_site(site)
     if not include_self:
-        available_languages = available_languages.exclude(pk=page.language_id)
+        available_languages.remove(page.language)
 
+    page_translations = page.get_translations(
+        only_live=True, include_self=include_self)
     available_translations = {
-        p.language.code: p
-        for p in page.get_translations(only_live=True, include_self=include_self)
+        p.language.code: p for p in page_translations
     }
 
     available_homepages = {}
     if homepage_fallback:
         available_homepages = {
-            p.language.code: p for p in site.root_page.get_children().specific()
+            p.language.code: p
+            for p in site.root_page.get_children().live().specific()
         }
 
-    language_urls = {}
+    translations = {}
     for language in available_languages:
         translation = available_translations.get(language.code)
         if translation:
-            language_urls[language] = translation
+            translations[language] = translation
         elif homepage_fallback:
             homepage = available_homepages.get(language.code)
             if homepage:
-                language_urls[language] = homepage
+                translations[language] = homepage
 
-    return language_urls
+    return translations
 
 
 @register.assignment_tag
@@ -68,7 +70,7 @@ def render_language_selector(page, homepage_fallback=True, include_self=False):
     Usage:
         {% render_language_selector page %}
         {% render_language_selector page homepage_fallback=False %}
-        {% render_language_selector page homepage_fallback=False include_self=True %}
+        {% render_language_selector page homepage_fallback=False include_self=True %}  # noqa
 
     """
     available_translations = _get_translations(
