@@ -1,58 +1,10 @@
 from __future__ import absolute_import, unicode_literals
 
-from operator import itemgetter
-
 from django import forms
-from django.conf import settings
 from django.utils.translation import ugettext as _
 from wagtail.wagtailcore.models import Page
 
-from wagtailtrans.conf import get_wagtailtrans_setting
-from wagtailtrans.models import Language, TranslatablePage
-
-
-class LanguageForm(forms.ModelForm):
-    """Custom language form.
-
-    Using a custom form which sets the choices for the `code`
-    field prevents us to have new migrations when settings change.
-    """
-    code = forms.ChoiceField(
-        label=_("Language"), choices=settings.LANGUAGES,
-        help_text=_("One of the languages defined in LANGUAGES"))
-
-    class Meta:
-        model = Language
-        fields = (
-            'code',
-            'is_default',
-            'position',
-            'live',
-        )
-
-    def __init__(self, *args, **kwargs):
-        super(LanguageForm, self).__init__(*args, **kwargs)
-
-        # Sort language choices according their display name
-        sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
-        self.fields['code'].choices = sorted_choices
-
-        # Remove is_default when a default is set.
-        default_language = Language.objects.default()
-        if default_language and (
-                get_wagtailtrans_setting('LANGUAGES_PER_SITE') or
-                get_wagtailtrans_setting('SYNC_TREE')):
-            del self.fields['is_default']
-
-    def clean_is_default(self):
-        """Force the `is_default` to stay the same, when in sync mode."""
-        if (
-            self.instance and
-            get_wagtailtrans_setting('SYNC_TREE') and
-            Language.objects.default()
-        ):
-            return self.instance.is_default
-        return self.cleaned_data['is_default']
+from wagtailtrans.models import TranslatablePage
 
 
 class TranslationForm(forms.ModelForm):
