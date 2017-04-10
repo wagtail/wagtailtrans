@@ -1,0 +1,10 @@
+<ul class="language-selector">
+    <li class="active-language">
+        <a href="{{ current_page.url }}">{{ current_page.language }}</a>
+    </li>
+    {% for language, page in translations.items %}
+    <li>
+        <a href="{{ page.url }}">{{ language }}</a>
+    </li>
+    {% endfor %}
+</ul>

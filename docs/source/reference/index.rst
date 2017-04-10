@@ -10,3 +10,4 @@ Reference
 
     synchronized_trees
     freeform_trees
+    templatetags
