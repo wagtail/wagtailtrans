@@ -57,7 +57,7 @@ class TestAddTranslationView(object):
 
         assert TranslatablePage.objects.filter(language=de).count() == 0
 
-        request = rf.post('/', {'parent_page': self.pages[0].pk})
+        request = rf.post('/', {'parent_page': self.pages[0].pk, 'copy_from_canonical': True})
 
         view = translation.TranslationView()
         view.request = request
