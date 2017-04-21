@@ -5,6 +5,9 @@ Changelog
 -----------------
 
  - Add ``include_self=False`` kwarg to ``TranslatablePage.get_translations()`` to have the page return itself as well
+ - Add language selector template tags
+ - Update ``Language`` management to make use of ``wagtail.contrib.modeladmin``
+ - Update ``Tox`` and ``Travis`` test matrix to include ``Wagtail 1.10`` support
 
 
 0.1.2 (15-03-2017)
