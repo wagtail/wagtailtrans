@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.1.3 (XX-XX-XXX)
------------------
+0.1.3 (21-04-2017)
+------------------
 
  - Add ``include_self=False`` kwarg to ``TranslatablePage.get_translations()`` to have the page return itself as well
  - Add language selector template tags
