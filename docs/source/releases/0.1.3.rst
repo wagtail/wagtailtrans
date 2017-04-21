@@ -1,0 +1,22 @@
+================================
+Wagtailtrans 0.1.2 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+This is a minor update generally adding some convenience updates
+
+
+Features
+~~~~~~~~
+
+ - Add ``include_self=False`` kwarg to ``TranslatablePage.get_translations()`` to have the page return itself as well
+ - Add language selector template tags
+ - Update ``Language`` management to make use of ``wagtail.contrib.modeladmin``
