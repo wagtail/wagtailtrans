@@ -30,26 +30,42 @@ class TestAddTranslationView(object):
         view.request = request
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
-        
+
         parent_page_qs = view.form['parent_page'].field.queryset
-        
+
         assert response.status_code == 200
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is not TranslatablePage
         assert parent_page_qs.first() == self.pages[0]
-        
+
         french_root = pages.TranslatablePageFactory.build(language=fr, title="French root")
         self.pages[0].add_child(instance=french_root)
 
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
-        
+
         parent_page_qs = view.form['parent_page'].field.queryset
         # We have a french page to add our new translated page to
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is TranslatablePage
         assert parent_page_qs[0].language == fr
         assert parent_page_qs[0] == french_root
+
+    def test_post(self, rf):
+        with factory.django.mute_signals(signals.post_save):  # Fake SYNC_TREE=False
+            de = language.LanguageFactory(is_default=False, code='de', position=3)
+
+        assert TranslatablePage.objects.filter(language=de).count() == 0
+
+        request = rf.post('/', {'parent_page': self.pages[0].pk})
+
+        view = translation.TranslationView()
+        view.request = request
+        response = view.dispatch(
+            request, instance_id=self.pages[1].pk, language_code='de')
+
+        assert response.status_code == 302
+        assert response['Location'].endswith('/edit/')
 
     def test_post_existing(self, rf):
         """It should fail when adding an existing
@@ -66,7 +82,7 @@ class TestAddTranslationView(object):
             response = view.dispatch(
                 request, instance_id=self.last_page.pk,
                 language_code=self.default_language.code)
-            
+
         assert response.status_code == 200
         assert not view.form.is_valid()
 
