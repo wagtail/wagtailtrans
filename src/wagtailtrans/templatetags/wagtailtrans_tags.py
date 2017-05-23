@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 from django import VERSION as django_version
 from django.template import Library
 
@@ -20,14 +22,15 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
     """
     site = page.get_site()
     available_languages = get_languages_for_site(site)
-    if not include_self:
-        available_languages.remove(page.language)
+    if hasattr(page, 'language'):
+        if not include_self:
+            available_languages.remove(page.language)
 
-    page_translations = page.get_translations(
-        only_live=True, include_self=include_self)
-    available_translations = {
-        p.language.code: p for p in page_translations
-    }
+        page_translations = page.get_translations(
+            only_live=True, include_self=include_self)
+        available_translations = {
+            p.language.code: p for p in page_translations
+        }
 
     available_homepages = {}
     if homepage_fallback:
@@ -36,7 +39,7 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
             for p in site.root_page.get_children().live().specific()
         }
 
-    translations = {}
+    translations = OrderedDict()
     for language in available_languages:
         translation = available_translations.get(language.code)
         if translation:
