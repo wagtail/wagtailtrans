@@ -34,7 +34,6 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
         }
 
     available_homepages = {}
-
     if homepage_fallback:
         available_homepages = {
             p.language.code: p
