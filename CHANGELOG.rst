@@ -4,6 +4,9 @@ Changelog
 0.1.4 (XX-XX-XXXX)
 ------------------
 
+ - Update language selector templatetag to check for pages without languages
+ - Update language selector to order language selector based on langauge positions
+
 
 0.1.3 (21-04-2017)
 ------------------
