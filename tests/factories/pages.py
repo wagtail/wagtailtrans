@@ -65,3 +65,33 @@ class HomePageFactory(TranslatablePageFactory):
             if not getattr(obj, part):
                 setattr(obj, part, "{} {}".format(part, obj.language.code))
         return obj
+
+
+class WagtailPageFactory(factory.DjangoModelFactory):
+    depth = 0
+    title = 'root'
+
+    class Meta:
+        model = Page
+
+    @classmethod
+    def _create(cls, *args, **kwargs):
+        model = args[0]
+        parent = kwargs.pop(
+            'parent',
+            Page.objects.get(path='0001')
+        )
+
+        try:
+            return model.objects.get(title=kwargs['title'])
+        except model.DoesNotExist:
+            kwargs['depth'] = parent.depth + 1
+
+            if kwargs['depth'] == 0:
+                return model.add_root(**kwargs)
+            else:
+                return parent.add_child(
+                    instance=model(
+                        **kwargs
+                    )
+                )

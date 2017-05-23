@@ -21,6 +21,7 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
 
     """
     site = page.get_site()
+    available_translations = {}
     available_languages = get_languages_for_site(site)
     if hasattr(page, 'language'):
         if not include_self:
@@ -33,6 +34,7 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
         }
 
     available_homepages = {}
+
     if homepage_fallback:
         available_homepages = {
             p.language.code: p
@@ -41,9 +43,10 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
 
     translations = OrderedDict()
     for language in available_languages:
-        translation = available_translations.get(language.code)
-        if translation:
-            translations[language] = translation
+        if available_translations:
+            translation = available_translations.get(language.code)
+            if translation:
+                translations[language] = translation
         elif homepage_fallback:
             homepage = available_homepages.get(language.code)
             if homepage:
