@@ -43,14 +43,13 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
 
     translations = OrderedDict()
     for language in available_languages:
-        if available_translations:
             translation = available_translations.get(language.code)
             if translation:
                 translations[language] = translation
-        elif homepage_fallback:
-            homepage = available_homepages.get(language.code)
-            if homepage:
-                translations[language] = homepage
+            elif homepage_fallback:
+                homepage = available_homepages.get(language.code)
+                if homepage:
+                    translations[language] = homepage
 
     return translations
 
