@@ -1,10 +1,7 @@
 import pytest
 
-from tests.factories.pages import WagtailPageFactory
-from wagtailtrans.models import Language
 from wagtailtrans.templatetags import wagtailtrans_tags
 
-from tests._sandbox.pages.models import HomePage
 from tests.factories.sites import create_site_tree, SiteFactory
 
 
