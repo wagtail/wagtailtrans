@@ -34,7 +34,15 @@ class TestWagtailtransTags(object):
     def test_get_translations(self, languages):
         site = SiteFactory()
         pages = create_site_tree(languages[0], site=site)
-        translations = wagtailtrans_tags._get_translations(pages[0])
-        language_codes = [l.code for l in translations.keys()]
-        assert 'en' in language_codes
+        for language in languages[1:]:
+            create_site_tree(language, site=site)
+
         assert not hasattr(pages[0], 'language')
+        translations = wagtailtrans_tags._get_translations(pages[0])
+
+        language_codes = [l.code for l in translations.keys()]
+        assert 'en' in language_codes[0]
+        assert 'es' in language_codes[1]
+        assert 'fr' in language_codes[2]
+        assert 'de' in language_codes[3]
+        assert 'nl' in language_codes[4]
