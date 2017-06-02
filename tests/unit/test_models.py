@@ -32,8 +32,10 @@ class TestWagtailAdminLanguageForm(object):
             'position': language.position,
             'is_default': False,
         })
-        assert not form.is_valid()
-        assert 'is_default' in form.errors
+
+        assert form.is_valid()
+        # we pop the is_default field if language is already default.
+        assert 'is_default' not in form.fields
 
         form = self.form_class(instance=language, data={
             'code': language.code,

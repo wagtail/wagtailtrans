@@ -56,17 +56,21 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
 
         if self.initial.get('is_default') and not is_default:
             raise ValidationError(_(
-                "You can not remove is_default form a language. To change the "
+                "You can not remove is_default from a language. To change the "
                 "default language, select is_default on a different language"))
-
-        elif (
+        
+        return is_default
+    
+    def save(self, commit=True):
+        is_default = self.cleaned_data.get('is_default', False)
+        if (
             not self.initial.get('is_default') == is_default and
             is_default and
             not get_wagtailtrans_setting('LANGUAGES_PER_SITE')
         ):
             from wagtailtrans.utils.language_swich import change_default_language  # noqa
             change_default_language(self.instance)
-        return is_default
+        return super(WagtailAdminLanguageForm, self).save(commit=commit)
 
 
 def get_language_panels():
@@ -399,15 +403,15 @@ Page.permissions_for_user = page_permissions_for_user
 class SiteLanguagesForm(WagtailAdminModelForm):
     """Form to be used in the wagtail admin."""
 
-    def clean(self):
-        data = super(SiteLanguagesForm, self).clean()
 
+    def save(self, commit=True):
+        data = self.cleaned_data
         if not data['default_language'].pk == self.initial['default_language']:
             from wagtailtrans.utils.language_swich import change_default_language  # noqa
             change_default_language(
                 data['default_language'], self.instance.site)
 
-        return data
+        return super(SiteLanguagesForm, self).save(commit=commit)
 
 
 def register_site_languages():
