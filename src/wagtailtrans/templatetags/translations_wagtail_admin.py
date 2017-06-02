@@ -28,8 +28,3 @@ def get_canonical_pages_for_delete(page):
     ):
         return TranslatablePage.objects.filter(canonical_page=page)
     return False
-
-
-@assignment_tag
-def languages_per_site_enabled():
-    return get_wagtailtrans_setting('LANGUAGES_PER_SITE')
