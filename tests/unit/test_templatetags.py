@@ -41,8 +41,8 @@ class TestWagtailtransTags(object):
         translations = wagtailtrans_tags._get_translations(pages[0])
 
         language_codes = [l.code for l in translations.keys()]
-        assert 'en' in language_codes[0]
-        assert 'es' in language_codes[1]
-        assert 'fr' in language_codes[2]
-        assert 'de' in language_codes[3]
-        assert 'nl' in language_codes[4]
+        assert language_codes[0] == 'en'
+        assert language_codes[1] == 'es'
+        assert language_codes[2] == 'fr' 
+        assert language_codes[3] == 'de'
+        assert language_codes[4] == 'nl'
