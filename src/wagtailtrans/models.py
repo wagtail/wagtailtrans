@@ -58,9 +58,9 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
             raise ValidationError(_(
                 "You can not remove is_default from a language. To change the "
                 "default language, select is_default on a different language"))
-        
+
         return is_default
-    
+
     def save(self, commit=True):
         is_default = self.cleaned_data.get('is_default', False)
         if (
@@ -402,7 +402,6 @@ Page.permissions_for_user = page_permissions_for_user
 
 class SiteLanguagesForm(WagtailAdminModelForm):
     """Form to be used in the wagtail admin."""
-
 
     def save(self, commit=True):
         data = self.cleaned_data
