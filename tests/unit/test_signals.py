@@ -36,6 +36,17 @@ class TestSignals(object):
         assert not TranslatablePage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()
 
+    @override_settings(WAGTAILTRANS_SYNC_TREE=True)
+    def test_do_not_copy_non_translatable_page(self):
+        page = WagtailPageFactory.build(title='test')
+        self.last_page.add_child(instance=page)
+
+        lang = language.LanguageFactory(
+            is_default=False, code='fr', position=2)
+
+        assert TranslatablePage.objects.filter(
+            language=lang, canonical_page=self.last_page).exists()
+
 
 @pytest.mark.django_db
 class TestSignalsLanguagesPerSite(object):

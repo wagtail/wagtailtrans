@@ -20,4 +20,3 @@ def test_get_languages_for_site(languages):
     with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
         language_codes = [l.code for l in sites.get_languages_for_site(site)]
         assert language_codes == ['en', 'es', 'fr']
-

@@ -3,9 +3,10 @@ from wagtail.wagtailcore.models import Page
 from wagtail.wagtailimages.tests.utils import (
     get_image_model, get_test_image_file)
 
+from wagtailtrans import models
+
 from tests._sandbox.pages.models import HomePage
 from tests.factories import language
-from wagtailtrans import models
 
 
 class TranslatableSiteRootFactory(factory.DjangoModelFactory):
@@ -65,3 +66,11 @@ class HomePageFactory(TranslatablePageFactory):
             if not getattr(obj, part):
                 setattr(obj, part, "{} {}".format(part, obj.language.code))
         return obj
+
+
+class WagtailPageFactory(factory.DjangoModelFactory):
+    depth = 0
+    title = 'root'
+
+    class Meta:
+        model = Page
