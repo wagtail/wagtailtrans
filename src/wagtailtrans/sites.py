@@ -1,5 +1,5 @@
 from .conf import get_wagtailtrans_setting
-from .models import SiteLanguages, Language
+from .models import Language, SiteLanguages
 
 
 def get_languages_for_site(site):

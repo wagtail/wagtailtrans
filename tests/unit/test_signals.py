@@ -1,5 +1,4 @@
 import pytest
-
 from django.test import override_settings
 
 from wagtailtrans import signals
@@ -7,7 +6,7 @@ from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
 
 from tests.factories import language, sites
-from tests.factories.pages import HomePageFactory
+from tests.factories.pages import HomePageFactory, WagtailPageFactory
 
 
 @pytest.mark.django_db
@@ -34,6 +33,17 @@ class TestSignals(object):
 
         self.last_page.delete()
         assert not TranslatablePage.objects.filter(
+            language=lang, canonical_page=self.last_page).exists()
+
+    @override_settings(WAGTAILTRANS_SYNC_TREE=True)
+    def test_do_not_copy_non_translatable_page(self):
+        page = WagtailPageFactory.build(title='test')
+        self.last_page.add_child(instance=page)
+
+        lang = language.LanguageFactory(
+            is_default=False, code='fr', position=2)
+
+        assert TranslatablePage.objects.filter(
             language=lang, canonical_page=self.last_page).exists()
 
 

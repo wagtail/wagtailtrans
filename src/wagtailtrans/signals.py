@@ -76,8 +76,12 @@ def create_new_language_tree_for_site(site, language):
         return
     descendants = canonical_home_page.get_descendants(inclusive=True)
     for child_page in descendants:
-        if not child_page.specific.has_translation(language):
-            child_page.specific.create_translation(language, copy_fields=True)
+        child_page = child_page.specific
+        if (
+            hasattr(child_page, 'language') and
+            not child_page.has_translation(language)
+        ):
+            child_page.create_translation(language, copy_fields=True)
 
 
 def create_new_language_tree(sender, instance, **kwargs):
