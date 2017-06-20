@@ -3,9 +3,16 @@ import pytest
 from django.db.models import signals
 from django.http import Http404
 from django.test import override_settings
+from wagtail import VERSION as WAGTAIL_VERSION
 
 from wagtailtrans.models import TranslatablePage
-from wagtailtrans.views import translation
+
+if WAGTAIL_VERSION < (1, 11):
+    from wagtailtrans.views.translation import (
+        DeprecatedTranslationView as TranslationView
+    )
+else:
+    from wagtailtrans.views.translation import TranslationView
 
 from tests.factories import language, pages, sites
 
@@ -26,12 +33,15 @@ class TestAddTranslationView(object):
 
         request = rf.get('/')
 
-        view = translation.TranslationView()
+        view = TranslationView()
         view.request = request
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
 
-        parent_page_qs = view.form['parent_page'].field.queryset
+        if WAGTAIL_VERSION < (1, 11):
+            parent_page_qs = view.form['parent_page'].field.queryset
+        else:
+            parent_page_qs = view.get_form().fields['parent_page'].queryset
 
         assert response.status_code == 200
         assert parent_page_qs.count() == 1
@@ -44,7 +54,11 @@ class TestAddTranslationView(object):
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
 
-        parent_page_qs = view.form['parent_page'].field.queryset
+        if WAGTAIL_VERSION < (1, 11):
+            parent_page_qs = view.form['parent_page'].field.queryset
+        else:
+            parent_page_qs = view.get_form().fields['parent_page'].queryset
+
         # We have a french page to add our new translated page to
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is TranslatablePage
@@ -59,7 +73,7 @@ class TestAddTranslationView(object):
 
         request = rf.post('/', {'parent_page': self.pages[0].pk, 'copy_from_canonical': True})
 
-        view = translation.TranslationView()
+        view = TranslationView()
         view.request = request
         response = view.dispatch(
             request, instance_id=self.pages[1].pk, language_code='de')
@@ -77,17 +91,20 @@ class TestAddTranslationView(object):
         assert self.last_page.language.code == 'en'
 
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
-            view = translation.TranslationView()
+            view = TranslationView()
             view.request = request
             response = view.dispatch(
                 request, instance_id=self.last_page.pk,
                 language_code=self.default_language.code)
 
         assert response.status_code == 200
-        assert not view.form.is_valid()
+        if WAGTAIL_VERSION < (1, 11):
+            assert not view.form.is_valid()
+        else:
+            assert not view.get_form().is_valid()
 
     def test_post_404(self, rf):
         """It should raise a 404 when a wrong page_pk is given."""
-        view = translation.TranslationView.as_view()
+        view = TranslationView.as_view()
         with pytest.raises(Http404):
             view(rf.post('/'), instance_id=0, language_code='en')
