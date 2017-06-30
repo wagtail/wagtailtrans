@@ -92,7 +92,10 @@ class TestAddTranslationView(object):
                 language_code=self.default_language.code)
 
         assert response.status_code == 200
-        assert not view.get_form().is_valid()
+        if WAGTAIL_VERSION < (1, 11):
+            assert not view.form.is_valid()
+        else:
+            assert not view.get_form().is_valid()
 
     def test_post_404(self, rf):
         """It should raise a 404 when a wrong page_pk is given."""
