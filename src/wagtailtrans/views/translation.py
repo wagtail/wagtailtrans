@@ -9,7 +9,7 @@ from wagtailtrans.forms import TranslationForm
 from wagtailtrans.models import Language, TranslatablePage
 
 
-class TranslationView(CreateView):
+class AbstractTranslationView(CreateView):
     model = TranslatablePage
     form_class = TranslationForm
 
@@ -26,8 +26,30 @@ class TranslationView(CreateView):
         self.language = get_object_or_404(Language, code=language_code)
         self.instance = get_object_or_404(
             TranslatablePage, id=instance_id).specific
-        return super(TranslationView, self).dispatch(request, *args, **kwargs)
+        return super(AbstractTranslationView, self).dispatch(
+            request, *args, **kwargs)
 
+
+class TranslationView(AbstractTranslationView):
+
+    def get_form_kwargs(self):
+        kwargs = super(TranslationView, self).get_form_kwargs()
+        kwargs['language'] = self.language
+        kwargs['instance'] = self.instance
+        return kwargs
+
+    def form_valid(self, form):
+        parent = form.cleaned_data['parent_page']
+        copy_from_canonical = form.cleaned_data['copy_from_canonical']
+        new_page = self.instance.create_translation(
+            self.language, copy_fields=copy_from_canonical, parent=parent)
+        return redirect('wagtailadmin_pages:edit', new_page.id)
+
+
+class DeprecatedTranslationView(AbstractTranslationView):
+    """ 
+    TranslationView prior to Wagtail 1.11 
+    """
     def get(self, request):
         self.form = self.form_class(
             instance=self.instance, language=self.language)

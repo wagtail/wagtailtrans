@@ -3,6 +3,7 @@ import pytest
 from django.db.models import signals
 from django.http import Http404
 from django.test import override_settings
+from wagtail import VERSION as WAGTAIL_VERSION
 
 from wagtailtrans.models import TranslatablePage
 from wagtailtrans.views import translation
@@ -31,7 +32,10 @@ class TestAddTranslationView(object):
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
 
-        parent_page_qs = view.form['parent_page'].field.queryset
+        if WAGTAIL_VERSION < (1, 11):
+            parent_page_qs = view.form['parent_page'].field.queryset
+        else:
+            parent_page_qs = view.get_form().fields['parent_page'].queryset
 
         assert response.status_code == 200
         assert parent_page_qs.count() == 1
@@ -44,7 +48,11 @@ class TestAddTranslationView(object):
         response = view.dispatch(
             request, instance_id=self.last_page.pk, language_code='fr')
 
-        parent_page_qs = view.form['parent_page'].field.queryset
+        if WAGTAIL_VERSION < (1, 11):
+            parent_page_qs = view.form['parent_page'].field.queryset
+        else:
+            parent_page_qs = view.get_form().fields['parent_page'].queryset
+
         # We have a french page to add our new translated page to
         assert parent_page_qs.count() == 1
         assert parent_page_qs.model is TranslatablePage
@@ -84,7 +92,7 @@ class TestAddTranslationView(object):
                 language_code=self.default_language.code)
 
         assert response.status_code == 200
-        assert not view.form.is_valid()
+        assert not view.get_form().is_valid()
 
     def test_post_404(self, rf):
         """It should raise a 404 when a wrong page_pk is given."""
