@@ -47,8 +47,8 @@ class TranslationView(AbstractTranslationView):
 
 
 class DeprecatedTranslationView(AbstractTranslationView):
-    """ 
-    TranslationView prior to Wagtail 1.11 
+    """
+    TranslationView prior to Wagtail 1.11
     """
     def get(self, request):
         self.form = self.form_class(
