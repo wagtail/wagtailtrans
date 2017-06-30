@@ -4,11 +4,11 @@ from wagtail import VERSION as WAGTAIL_VERSION
 from django.conf.urls import url
 
 if WAGTAIL_VERSION < (1, 11):
-    from wagtailtrans.views.translation import TranslationView
-else:
     from wagtailtrans.views.translation import (
         DeprecatedTranslationView as TranslationView
     )
+else:
+    from wagtailtrans.views.translation import TranslationView
 
 app_name = 'wagtailtrans'
 
