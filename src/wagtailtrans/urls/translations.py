@@ -1,7 +1,7 @@
 from __future__ import absolute_import, unicode_literals
-from wagtail import VERSION as WAGTAIL_VERSION
 
 from django.conf.urls import url
+from wagtail import VERSION as WAGTAIL_VERSION
 
 if WAGTAIL_VERSION < (1, 11):
     from wagtailtrans.views.translation import (
