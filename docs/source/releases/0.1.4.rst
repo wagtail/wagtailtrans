@@ -1,6 +1,6 @@
-=================================================
-Wagtailtrans 0.1.4 release notes - IN DEVELOPMENT
-=================================================
+================================
+Wagtailtrans 0.1.4 release notes
+================================
 
 .. contents::
     :local:
@@ -11,13 +11,12 @@ Wagtailtrans 0.1.4 release notes - IN DEVELOPMENT
 What is new
 -----------
 
+This release mainly updates the language selector and brings full support for Wagtail 1.11.
 
 
 Features
 ~~~~~~~~
 
-
-------------------------------
-Backwards incompatible changes
-------------------------------
-
+ - Add support for ``Wagtail 1.11``
+ - Update language selector templatetag to work with pages without language as well
+ - Update language selector to order language selector based on language positions

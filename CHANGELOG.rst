@@ -1,9 +1,10 @@
 Changelog
 =========
 
-0.1.4 (XX-XX-XXXX)
+0.1.4 (03-07-2017)
 ------------------
-
+ 
+ - Add support for ``Wagtail 1.11``
  - Update language selector templatetag to work with pages without language as well
  - Update language selector to order language selector based on language positions
 
