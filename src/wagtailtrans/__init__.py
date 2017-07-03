@@ -2,7 +2,7 @@ from os import path
 
 default_app_config = 'wagtailtrans.apps.WagtailTransConfig'
 
-VERSION = (0, 1, 4, 'final')
+VERSION = (0, 1, 5, 'dev0')
 
 WAGTAILTRANS_TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 
