@@ -7,12 +7,12 @@ Management Commands
 
 .. _change_default_language:
 
-change_default_language
------------------------
+wagtailtrans_change_default_language
+------------------------------------
 
 .. code-block:: console
 
-    $ manage.py change_default_language --language LANGUAGE_CODE
+    $ manage.py wagtailtrans_change_default_language --language LANGUAGE_CODE
 
 This command changes the default canonical language of a site to another language.
 
