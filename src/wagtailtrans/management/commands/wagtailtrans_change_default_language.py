@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.core.management.base import BaseCommand, CommandError
 
 from wagtailtrans.models import Language
-from wagtailtrans.utils.language_swich import change_default_language
+from wagtailtrans.utils.language_switch import change_default_language
 
 
 class Command(BaseCommand):

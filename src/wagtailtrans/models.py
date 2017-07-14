@@ -68,7 +68,7 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
             is_default and
             not get_wagtailtrans_setting('LANGUAGES_PER_SITE')
         ):
-            from wagtailtrans.utils.language_swich import change_default_language  # noqa
+            from wagtailtrans.utils.language_switch import change_default_language  # noqa
             change_default_language(self.instance)
         return super(WagtailAdminLanguageForm, self).save(commit=commit)
 
@@ -406,7 +406,7 @@ class SiteLanguagesForm(WagtailAdminModelForm):
     def save(self, commit=True):
         data = self.cleaned_data
         if not data['default_language'].pk == self.initial['default_language']:
-            from wagtailtrans.utils.language_swich import change_default_language  # noqa
+            from wagtailtrans.utils.language_switch import change_default_language  # noqa
             change_default_language(
                 data['default_language'], self.instance.site)
 

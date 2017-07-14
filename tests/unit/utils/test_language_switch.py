@@ -3,7 +3,7 @@ import pytest
 from tests.factories.pages import TranslatablePageFactory
 from tests.factories.sites import create_site_tree
 from wagtailtrans import models
-from wagtailtrans.utils.language_swich import change_default_language
+from wagtailtrans.utils.language_switch import change_default_language
 
 
 @pytest.mark.django_db
