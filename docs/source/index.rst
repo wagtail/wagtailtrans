@@ -37,4 +37,4 @@ Table of contents
    settings
    reference/index
    releases/index
-   contributing/index
+   contributing
