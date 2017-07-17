@@ -17,7 +17,7 @@ The more the merrier, together we can create better than awesome software, so pl
 
 ## Code contributions
 
-Please read our [contributing guidelines](http://wagtailtrans.readthedocs.io/en/latest/contributing/index.html) before you start.
+Please read our [contributing guidelines](http://wagtailtrans.readthedocs.io/en/latest/contributing/index.html) before you get started.
 
 ## Code of conduct
 
