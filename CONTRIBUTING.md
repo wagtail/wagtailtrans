@@ -15,6 +15,9 @@ feature requests and submitting pull-requests. Please don't use this for support
 
 The more the merrier, together we can create better than awesome software, so please feel free to join the process.
 
+## Code contributions
+
+Please read our [contributing guidelines](http://wagtailtrans.readthedocs.io/en/latest/contributing/index.html) before you get started.
 
 ## Code of conduct
 
