@@ -8,6 +8,31 @@ PROJECT_DIR = os.path.dirname(__file__)
 sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version # noqa isort:skip
 
+dev_require =[
+    'Django',
+    'Wagtail',
+    'psycopg2',
+]
+
+docs_require = [
+    'sphinx',
+    'sphinx_rtd_theme',
+]
+
+debug_require = [
+    'flake8',
+    'isort',
+]
+
+tests_require = [
+    'pytest',
+    'pytest-cov',
+    'pytest-django',
+    'coverage',
+    'factory-boy',
+    'psycopg2'
+]
+
 setup(
     name='wagtailtrans',
     version=get_version().replace(' ', '-'),
@@ -15,6 +40,11 @@ setup(
     author='Lukkien BV',
     author_email='support@lukkien.com',
     url='https://lukkien.com/',
+    extras_require={
+        'test': tests_require,
+        'doc': docs_require,
+        'sandbox': dev_require + tests_require + debug_require + docs_require,
+    },
     packages=find_packages('src'),
     package_dir={'': 'src'},
     include_package_data=True,
