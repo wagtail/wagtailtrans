@@ -36,28 +36,24 @@ Wagtailtrans made it very easy to setup a runnable Django project to help with t
 
 * We suggest you use a virtual environment for development.
 
-* Activate your virtual environment and install following packages.
-
-.. code-block:: bash
-
-    Django
-    Wagtail
-    psycopg2
-    pytest
-    pytest-cov
-    pytest-django
-    coverage
-    factory-boy
-
 * Set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
 
-.. code-block:: bash
+    .. code-block:: bash
 
-    export POSTGRES_HOST=host
-    export POSTGRES_USER=user
-    export POSTGRES_PASSWORD=password
+        export POSTGRES_HOST=host
+        export POSTGRES_USER=user
+        export POSTGRES_PASSWORD=password
 
-* You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
+  You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
+
+* With your virtual environment activated, run following command :
+
+    .. code-block:: bash
+
+        make sandbox
+
+  This will install required packages and run the initial data migrations.
+
 
 Testing
 -------
