@@ -8,10 +8,10 @@ PROJECT_DIR = os.path.dirname(__file__)
 sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version # noqa isort:skip
 
-dev_require =[
-    'Django',
-    'Wagtail',
-    'psycopg2',
+sandbox_require =[
+    'Django>=1.8.1',
+    'Wagtail>=1.7',
+    'psycopg2>=2.5.4',
 ]
 
 docs_require = [
@@ -19,18 +19,17 @@ docs_require = [
     'sphinx_rtd_theme',
 ]
 
-debug_require = [
-    'flake8',
-    'isort',
-]
-
 tests_require = [
+    # Required for test and coverage
     'pytest',
     'pytest-cov',
     'pytest-django',
     'coverage',
     'factory-boy',
-    'psycopg2'
+    'psycopg2>=2.5.4',
+    # Linting
+    'flake8',
+    'isort',
 ]
 
 setup(
@@ -43,7 +42,7 @@ setup(
     extras_require={
         'test': tests_require,
         'doc': docs_require,
-        'sandbox': dev_require + tests_require + debug_require + docs_require,
+        'sandbox': sandbox_require + tests_require + docs_require,
     },
     packages=find_packages('src'),
     package_dir={'': 'src'},
