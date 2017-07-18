@@ -62,3 +62,7 @@ dist: clean
 
 release: dist
 	twine upload -r lukkien dist/*
+
+sandbox: clean
+	@pip install -e .[sandbox]
+	@python manage.py migrate

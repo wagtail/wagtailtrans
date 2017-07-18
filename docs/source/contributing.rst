@@ -34,30 +34,45 @@ Development
 
 Wagtailtrans made it very easy to setup a runnable Django project to help with the development. It ships with a Sandbox application that can be availed for this purpose. You need to have some additional packages installed and a PostgreSQL Database on your local machine.
 
-* We suggest you use a virtual environment for development.
+* **Get Codebase**
 
-* Activate your virtual environment and install following packages.
+  Get a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
 
-.. code-block:: bash
+\
 
-    Django
-    Wagtail
-    psycopg2
-    pytest
-    pytest-cov
-    pytest-django
-    coverage
-    factory-boy
+* **Setup Database**
 
-* Set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
+  There are a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
 
-.. code-block:: bash
+  Alternatively you can set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
 
-    export POSTGRES_HOST=host
-    export POSTGRES_USER=user
-    export POSTGRES_PASSWORD=password
+    .. code-block:: bash
 
-* You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
+        $ export POSTGRES_HOST=host
+        $ export POSTGRES_USER=user
+        $ export POSTGRES_PASSWORD=password
+
+  You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
+
+\
+
+* **Setup local development server**
+
+  1. Activate your virtual environment.
+
+  2. Run following command :
+
+      .. code-block:: bash
+
+          $ make sandbox
+
+    This will install required packages and run the initial data migrations.
+
+* **Run locally**
+
+  .. code-block:: bash
+
+    $ ./manage.py runserver
 
 Testing
 -------
@@ -66,22 +81,22 @@ We use `pytest <https://docs.pytest.org/en/latest/>`_ for unit testing. To execu
 
 .. code-block:: bash
 
-    make qt
+    $ make qt
 
 or for a specific file:
 
 .. code-block:: bash
 
-    py.test path/to/file
+    $ py.test path/to/file
 
 If you want to measure test coverage you can run:
 
 .. code-block:: bash
 
-    make coverage
+    $ make coverage
 
-Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command:
+Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command: (Please make sure you have a setup with `multiple versions of python <http://blog.pinaxproject.com/2015/12/08/how-test-against-multiple-python-versions-parallel/>`_, in order to run this command.)
 
 .. code-block:: bash
 
-    tox
+    $ tox
