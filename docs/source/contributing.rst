@@ -34,16 +34,14 @@ Development
 
 Wagtailtrans made it very easy to setup a runnable Django project to help with the development. It ships with a Sandbox application that can be availed for this purpose. You need to have some additional packages installed and a PostgreSQL Database on your local machine.
 
-* Clone a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_
+* **Get Codebase**
 
-  .. code-block:: bash
-
-    $ git clone https://github.com/LUKKIEN/wagtailtrans.git
-    $ cd wagtailtrans.
-
+  Get a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
+  
+\
 * **Setup Database**
 
-  There is a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
+  There are a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
 
   Alternatively you can set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
 
@@ -96,7 +94,7 @@ If you want to measure test coverage you can run:
 
     $ make coverage
 
-Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command:
+Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command: (Please make sure you have a setup with `multiple versions of python <https://anil.io/blog/python/pyenv/using-pyenv-to-install-multiple-python-versions-tox/>`_, in order to run this command.)
 
 .. code-block:: bash
 
