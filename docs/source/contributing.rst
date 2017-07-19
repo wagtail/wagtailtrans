@@ -36,7 +36,11 @@ Wagtailtrans made it very easy to setup a runnable Django project to help with t
 
 * We suggest you use a virtual environment for development.
 
-* Set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
+* **Database Setup**
+
+  There is a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
+
+  Alternatively you can set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
 
     .. code-block:: bash
 
@@ -46,14 +50,23 @@ Wagtailtrans made it very easy to setup a runnable Django project to help with t
 
   You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
 
-* With your virtual environment activated, run following command :
+* **Project Setup**
 
-    .. code-block:: bash
+  1. Activate your virtual environment.
 
-        make sandbox
+  2. Run following command :
 
-  This will install required packages and run the initial data migrations.
+      .. code-block:: bash
 
+          make sandbox
+
+    This will install required packages and run the initial data migrations.
+
+* Now run your local development server
+
+  .. code-block:: bash
+
+    ./manage.py runserver
 
 Testing
 -------
