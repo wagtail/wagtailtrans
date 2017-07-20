@@ -37,8 +37,9 @@ Wagtailtrans made it very easy to setup a runnable Django project to help with t
 * **Get Codebase**
 
   Get a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
-  
+
 \
+
 * **Setup Database**
 
   There are a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
