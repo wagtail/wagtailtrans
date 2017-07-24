@@ -95,7 +95,7 @@ If you want to measure test coverage you can run:
 
     $ make coverage
 
-Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command: (Please make sure you have a setup with `multiple versions of python <https://anil.io/blog/python/pyenv/using-pyenv-to-install-multiple-python-versions-tox/>`_, in order to run this command.)
+Wagtailtrans supports multiple environments which can be tested with ``tox``. It takes a bit longer to complete, but you can run it by a simple command: (Please make sure you have a setup with `multiple versions of python <http://blog.pinaxproject.com/2015/12/08/how-test-against-multiple-python-versions-parallel/>`_, in order to run this command.)
 
 .. code-block:: bash
 
