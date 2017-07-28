@@ -109,14 +109,20 @@ WSGI_APPLICATION = 'tests._sandbox.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': os.getenv('POSTGRES_DB', 'wagtailtrans_sandbox'),
-        'HOST': os.getenv('POSTGRES_HOST', ''),
-        'USER': os.getenv('POSTGRES_USER', ''),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+        'ENGINE': os.getenv('DATABASE_ENGINE' , 'django.db.backends.postgresql_psycopg2'),
+        'NAME': os.getenv('DATABASE_NAME', 'wagtailtrans_sandbox'),
+        'HOST': os.getenv('DATABASE_HOST', ''),
+        'USER': os.getenv('DATABASE_USER', ''),
+        'PASSWORD': os.getenv('DATABASE_PASS', ''),
     }
 }
 
+if DATABASES['default']['ENGINE'] == 'sql_server.pyodbc':
+    DATABASES['default']['OPTIONS'] = {
+        'driver': 'SQL Server Native Client 11.0',
+        'MARS_Connection': 'True',
+    }
+ 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
