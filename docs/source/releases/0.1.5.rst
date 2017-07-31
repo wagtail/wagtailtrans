@@ -16,6 +16,9 @@ What is new
 Features
 ~~~~~~~~
 
+- Added `appveyor` to the CI to ensure MSSQL compatibility
+- Added a settings example file to the sandbox environment to ease the contribution setup
+- Added documentation on ``Contributing to Wagtailtrans``
 
 ------------------------------
 Backwards incompatible changes

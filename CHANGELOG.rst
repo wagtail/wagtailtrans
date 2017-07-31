@@ -4,6 +4,9 @@ Changelog
 0.1.5 (XX-XX-XXXX)
 ------------------
 
+- Added `appveyor` to the CI to ensure MSSQL compatibility
+- Added a settings example file to the sandbox environment to ease the contribution setup
+- Added documentation on ``Contributing to Wagtailtrans``
 
 
 0.1.4 (03-07-2017)
