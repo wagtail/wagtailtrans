@@ -16,5 +16,4 @@ coverage:
 
     changes: true
 
-comment:
-  layout: "header, diff, tree"
+comment: off

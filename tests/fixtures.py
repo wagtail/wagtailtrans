@@ -45,7 +45,7 @@ def sites():
 
 @pytest.fixture
 def languages():
-    for i, code in enumerate(LANG_CODES):
+    for i, code in enumerate(LANG_CODES, 1):
         Language.objects.get_or_create(
             code=code, defaults={
                 'is_default': True,

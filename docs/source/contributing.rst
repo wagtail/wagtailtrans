@@ -34,27 +34,15 @@ Development
 
 Wagtailtrans made it very easy to setup a runnable Django project to help with the development. It ships with a Sandbox application that can be availed for this purpose. You need to have some additional packages installed and a PostgreSQL Database on your local machine.
 
-* **Get Codebase**
+* **Get the codebase**
 
   Get a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
 
 \
 
-* **Setup Database**
+* **Setup database**
 
-  There are a couple of different ways to do this. First, you can place your local settings in ``tests/_sandbox/settings/local_settings.py``. You can provide a standard `django database settings <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_ here to set your database up. (A sample copy is provided in  ``tests/_sandbox/settings/local_settings.sample``.)
-
-  Alternatively you can set PostgreSQL Database Authentication parameters host, user, and password as environment variables.
-
-    .. code-block:: bash
-
-        $ export POSTGRES_HOST=host
-        $ export POSTGRES_USER=user
-        $ export POSTGRES_PASSWORD=password
-
-  You can also set optional ``POSTGRES_DB`` variable. Otherwise, it will create a database named ``wagtailtrans_sandbox``.  Make sure your database user has sufficient permissions to create databases because Wagtailtrans needs to create a database for testing.
-
-\
+  Copy ``tests/_sandbox/settings/local_settings.sample`` to ``tests/_sandbox/settings/local_settings.py`` if you would like to use different database settings then we use in our default Sandbox application. This way you can setup your own `database settings for Django <https://docs.djangoproject.com/en/1.10/ref/settings/#databases>`_.
 
 * **Setup local development server**
 
