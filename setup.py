@@ -9,8 +9,8 @@ sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version # noqa isort:skip
 
 sandbox_require =[
-    'Django>=1.8.1',
-    'Wagtail>=1.7',
+    'Django>=1.8',
+    'Wagtail>=1.8',
     'psycopg2>=2.5.4',
 ]
 
