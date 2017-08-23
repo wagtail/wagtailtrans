@@ -12,12 +12,8 @@
 """
 import os
 
-try:
-    from wagtail import VERSION as wagtail_version
-except ImportError:
-    #: As of wagtail 1.7 VERSION is located in Wagtail's __init__
-    wagtail_version = (1, 6)
-
+from django import VERSION as django_version
+from wagtail import VERSION as wagtail_version
 from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -67,6 +63,7 @@ INSTALLED_APPS = [
     'tests._sandbox.search',
 ]
 
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -81,6 +78,9 @@ MIDDLEWARE = [
     'wagtail.wagtailredirects.middleware.RedirectMiddleware',
     'wagtailtrans.middleware.TranslationMiddleware'
 ]
+
+if django_version < (1, 10):
+    MIDDLEWARE_CLASSES = MIDDLEWARE
 
 ROOT_URLCONF = 'tests._sandbox.urls'
 
