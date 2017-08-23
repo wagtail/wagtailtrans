@@ -142,7 +142,7 @@ def _language_default():
 
 class TranslatablePage(Page):
 
-    #: Defined with a uniqe name, to prevent field clashes..
+    #: Defined with a unique name, to prevent field clashes..
     translatable_page_ptr = models.OneToOneField(
         Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
