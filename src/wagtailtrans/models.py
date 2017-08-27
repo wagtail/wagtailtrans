@@ -50,9 +50,6 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
         sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
         self.fields['code'].choices = sorted_choices
 
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            del self.fields['is_default']
-
     def clean_is_default(self):
         is_default = self.cleaned_data['is_default']
         default_lang = Language.objects.default()
@@ -145,7 +142,7 @@ def _language_default():
 
 class TranslatablePage(Page):
 
-    #: Defined with a uniqe name, to prevent field clashes..
+    #: Defined with a unique name, to prevent field clashes..
     translatable_page_ptr = models.OneToOneField(
         Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(

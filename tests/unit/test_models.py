@@ -22,9 +22,6 @@ class TestWagtailAdminLanguageForm(object):
 
         assert 'is_default' in self.form_class().fields.keys()
 
-        with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
-            assert 'is_default' not in self.form_class().fields.keys()
-
     def test_clean_is_default(self):
         language = LanguageFactory(is_default=True)
         form = self.form_class(instance=language, data={

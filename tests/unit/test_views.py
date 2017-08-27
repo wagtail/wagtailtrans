@@ -108,3 +108,19 @@ class TestAddTranslationView(object):
         view = TranslationView.as_view()
         with pytest.raises(Http404):
             view(rf.post('/'), instance_id=0, language_code='en')
+
+
+@pytest.mark.django_db
+class TestLanguageAdminView(object):
+
+    def setup(self):
+        self.language = language.LanguageFactory()
+
+    def test_response_language_add_view(self, admin_client):
+        response = admin_client.get('/admin/wagtailtrans/language/create/')
+        assert response.status_code == 200
+
+    def test_response_language_edit_view(self, admin_client):
+        response = admin_client.get(
+            '/admin/wagtailtrans/language/edit/%d/' % self.language.pk)
+        assert response.status_code == 200
