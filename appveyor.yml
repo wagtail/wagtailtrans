@@ -5,10 +5,11 @@ environment:
   matrix:
     - TOXENV: py27-dj18-mssql-wt18
     - TOXENV: py34-dj110-mssql-wt19
-    - TOXENV: py27-dj111-mssql-wt111
     - TOXENV: py34-dj111-mssql-wt111
-    - TOXENV: py35-dj111-mssql-wt111
-    - TOXENV: py36-dj111-mssql-wt111
+    - TOXENV: py27-dj111-mssql-wt112
+    - TOXENV: py34-dj111-mssql-wt112
+    - TOXENV: py35-dj111-mssql-wt112
+    - TOXENV: py36-dj111-mssql-wt112
 
 matrix:
   fast_finish: true
