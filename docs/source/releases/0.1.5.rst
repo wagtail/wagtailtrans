@@ -1,6 +1,6 @@
-=================================================
-Wagtailtrans 0.1.5 release notes - IN DEVELOPMENT
-=================================================
+================================
+Wagtailtrans 0.1.5 release notes
+================================
 
 .. contents::
     :local:
@@ -11,7 +11,7 @@ Wagtailtrans 0.1.5 release notes - IN DEVELOPMENT
 What is new
 -----------
 
-
+This release mainly fixes a blocking issue and adds some convenience updates for development.
 
 Features
 ~~~~~~~~
@@ -19,7 +19,4 @@ Features
 - Added `appveyor` to the CI to ensure MSSQL compatibility
 - Added a settings example file to the sandbox environment to ease the contribution setup
 - Added documentation on ``Contributing to Wagtailtrans``
-
-------------------------------
-Backwards incompatible changes
-------------------------------
+- Fix: language admin view throwing an exception with ``WAGTAILTRANS_LANGUAGES_PER_SITE`` set to ``True``

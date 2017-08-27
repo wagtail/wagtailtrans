@@ -1,12 +1,13 @@
 Changelog
 =========
 
-0.1.5 (XX-XX-XXXX)
+0.1.5 (27-08-2017)
 ------------------
 
-- Added `appveyor` to the CI to ensure MSSQL compatibility
-- Added a settings example file to the sandbox environment to ease the contribution setup
-- Added documentation on ``Contributing to Wagtailtrans``
+ - Added `appveyor` to the CI to ensure MSSQL compatibility
+ - Added a settings example file to the sandbox environment to ease the contribution setup
+ - Added documentation on ``Contributing to Wagtailtrans``
+ - Fix: language admin view throwing an exception with ``WAGTAILTRANS_LANGUAGES_PER_SITE`` set to ``True``
 
 
 0.1.4 (03-07-2017)
