@@ -35,6 +35,16 @@ clean:
 develop: clean requirements
 	@python manage.py migrate
 
+messages: ## Create the .po files used for i18n
+	cd scripts; ./rebuild-translation-sources.sh
+
+compiledmessages: ## Fetch the translations and compile the gettext files
+	cd scripts; ./fetch-translations.sh; 
+	cd scripts; python ./get-translator-credits.py
+
+push-translations: messages ## Create .po files and push to transifex
+	tx push -s
+
 docs:  ## Create wagtailtrans Sphinx documentation
 	@make -C docs/ html
 
