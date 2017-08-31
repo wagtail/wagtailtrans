@@ -10,7 +10,7 @@ from wagtailtrans import get_version # noqa isort:skip
 
 sandbox_require =[
     'Django>=1.8',
-    'Wagtail>=1.8',
+    'Wagtail>=1.12',
     'psycopg2>=2.5.4',
 ]
 
