@@ -1,8 +1,10 @@
 Changelog
 =========
 
-0.1.6 (XX-XX-XXXX)
+0.2 (XX-XX-XXXX)
 ------------------
+
+This release drops support for Wagtail versions below 1.12
 
 
 0.1.5 (27-08-2017)
@@ -46,7 +48,7 @@ This release drops support for wagtail 1.6 and adds support for wagtail 1.8 and 
 ------------------
 
  - Add ``TranslationMiddleware`` for earlier language activation (replaces django ``LocaleMiddleware``)
- - Add ``language_id`` filter to ``wagtailtrans.models.TranslatablePage`` so search results can be filterd by language
+ - Add ``language_id`` filter to ``wagtailtrans.models.TranslatablePage`` so search results can be filtered by language
  - Update documentation
 
 0.1.0 Initial release (14-12-2016)

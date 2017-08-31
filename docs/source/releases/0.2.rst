@@ -1,0 +1,24 @@
+===============================================
+Wagtailtrans 0.2 release notes - IN DEVELOPMENT
+===============================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+
+
+Features
+~~~~~~~~
+
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
+This release drops support for Wagtail versions below 1.12
