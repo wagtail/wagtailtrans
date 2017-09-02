@@ -9,7 +9,7 @@ from wagtailtrans.forms import TranslationForm
 from wagtailtrans.models import Language, TranslatablePage
 
 
-class AbstractTranslationView(CreateView):
+class TranslationView(CreateView):
     model = TranslatablePage
     form_class = TranslationForm
 
@@ -26,11 +26,8 @@ class AbstractTranslationView(CreateView):
         self.language = get_object_or_404(Language, code=language_code)
         self.instance = get_object_or_404(
             TranslatablePage, id=instance_id).specific
-        return super(AbstractTranslationView, self).dispatch(
+        return super(TranslationView, self).dispatch(
             request, *args, **kwargs)
-
-
-class TranslationView(AbstractTranslationView):
 
     def get_form_kwargs(self):
         kwargs = super(TranslationView, self).get_form_kwargs()
@@ -44,25 +41,3 @@ class TranslationView(AbstractTranslationView):
         new_page = self.instance.create_translation(
             self.language, copy_fields=copy_from_canonical, parent=parent)
         return redirect('wagtailadmin_pages:edit', new_page.id)
-
-
-class DeprecatedTranslationView(AbstractTranslationView):
-    """
-    TranslationView prior to Wagtail 1.11
-    """
-    def get(self, request):
-        self.form = self.form_class(
-            instance=self.instance, language=self.language)
-        return self.render_to_response()
-
-    def post(self, request):
-        self.form = self.form_class(
-            request.POST, instance=self.instance, language=self.language)
-        if self.form.is_valid():
-            parent = self.form.cleaned_data['parent_page']
-            copy_from_canonical = self.form.cleaned_data['copy_from_canonical']
-            new_page = self.instance.create_translation(
-                self.language, copy_fields=copy_from_canonical, parent=parent)
-            return redirect('wagtailadmin_pages:edit', new_page.id)
-        else:
-            return self.render_to_response()

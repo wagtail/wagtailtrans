@@ -1,4 +1,4 @@
-import django
+from django import VERSION as django_version
 from django import template
 
 from wagtailtrans.conf import get_wagtailtrans_setting
@@ -7,7 +7,7 @@ from wagtailtrans.models import TranslatablePage
 register = template.Library()
 
 
-if django.VERSION >= (1, 9):
+if django_version >= (1, 9):
     assignment_tag = register.simple_tag
 else:
     assignment_tag = register.assignment_tag
