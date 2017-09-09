@@ -1,5 +1,3 @@
-from os import path
-
 default_app_config = 'wagtailtrans.apps.WagtailTransConfig'
 
 VERSION = (0, 2, 0, 'dev0')
