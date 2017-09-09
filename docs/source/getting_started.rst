@@ -55,26 +55,7 @@ Installation
 .. note::
 
     It relies on ``wagtail.wagtailcore.middleware.SiteMiddleware``, which should come before it.
-    See http://docs.wagtail.io/en/v1.8/getting_started/integrating_into_django.html#settings for more information.
-
-
-4. Optionally, add ``WAGTAILTRANS_TEMPLATE_DIR`` to your ``TEMPLATES[0]['DIRS']``
-
-.. note::
-    As of Wagtail 1.8 ``Page.get_admin_display_title`` is added which doesn't require overriding admin templates anymore, so if you're on Wagtail >= 1.8 you can skip this step.
-
-
-.. code-block:: python
-
-    from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
-
-    TEMPLATES = [{
-        # ...
-        'DIRS': [
-            WAGTAILTRANS_TEMPLATE_DIR,
-        ],
-        # ...
-    }]
+    See http://docs.wagtail.io/en/latest/getting_started/integrating_into_django.html#settings for more information.
 
 
 -------------
