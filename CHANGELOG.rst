@@ -4,7 +4,8 @@ Changelog
 0.2 (XX-XX-XXXX)
 ------------------
 
-This release drops support for Wagtail versions below 1.12
+ - Dropped support for Wagtail versions earlier than 1.12
+ - Custom ``get_admin_display_title`` method now uses Wagtails ``draft_title``
 
 
 0.1.5 (27-08-2017)
