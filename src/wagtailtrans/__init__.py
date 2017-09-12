@@ -1,10 +1,6 @@
-from os import path
-
 default_app_config = 'wagtailtrans.apps.WagtailTransConfig'
 
 VERSION = (0, 2, 0, 'dev0')
-
-WAGTAILTRANS_TEMPLATE_DIR = path.join(path.dirname(__file__), 'templates')
 
 
 def get_version():

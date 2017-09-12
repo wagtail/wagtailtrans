@@ -100,6 +100,15 @@ class TestTranslatablePage(object):
     def test_create(self):
         assert self.canonical_page.language.code == 'en'
 
+    def test_get_admin_display_title(self):
+        en_root = self.canonical_page
+        assert en_root.get_admin_display_title()  == 'en homepage (English)'
+
+        en_root.draft_title = 'en draft example'
+        en_root.save()
+
+        assert en_root.get_admin_display_title()  == 'en draft example (English)'
+
     def test_create_translation(self, languages):
         """Test `create_translation` without copying fields."""
         nl = languages.get(code='nl')

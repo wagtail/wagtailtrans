@@ -11,14 +11,19 @@ Wagtailtrans 0.2 release notes - IN DEVELOPMENT
 What is new
 -----------
 
-
+This release is a new major since it will only support Wagtail 1.12 and up. 
+By dropping support for < 1.11 we are keeping inline with Wagtails own `release schedule <http://docs.wagtail.io/en/v1.12.1/releases/upgrading.html#version-numbers>`_.
 
 Features
 ~~~~~~~~
 
+- Dropped support for Wagtail versions earlier than 1.12
+- Custom ``get_admin_display_title`` method now uses Wagtails ``draft_title``
 
 ------------------------------
 Backwards incompatible changes
 ------------------------------
 
-This release drops support for Wagtail versions below 1.12
+This release drops support for Wagtail versions below 1.12.
+
+- References to ``WAGTAILTRANS_TEMPLATE_DIR`` can be cleaned up since it was a requirement prior to Wagtail 1.8

@@ -13,8 +13,6 @@
 import os
 
 from django import VERSION as django_version
-from wagtail import VERSION as wagtail_version
-from wagtailtrans import WAGTAILTRANS_TEMPLATE_DIR
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -99,9 +97,6 @@ TEMPLATES = [
         },
     },
 ]
-
-if wagtail_version < (1, 8):
-    TEMPLATES[0]['DIRS'].append(WAGTAILTRANS_TEMPLATE_DIR)
 
 WSGI_APPLICATION = 'tests._sandbox.wsgi.application'
 

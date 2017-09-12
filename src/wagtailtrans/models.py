@@ -171,7 +171,10 @@ class TranslatablePage(Page):
     base_form_class = AdminTranslatablePageForm
 
     def get_admin_display_title(self):
-        return "{} ({})".format(self.title, self.language)
+        return "{} ({})".format(
+            super(TranslatablePage, self).get_admin_display_title(),
+            self.language
+        )
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
