@@ -355,7 +355,7 @@ class TranslatableSiteRootPage(Page):
         """Serve TranslatablePage in the correct language
 
         :param request: request object
-        :return: Http403 or Http404
+        :return: Http302 or Http404
 
         """
         language = get_user_language(request)
