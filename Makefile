@@ -29,7 +29,7 @@ help:
 	@python -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 clean:
-	@find . -name '*.pyc' | xargs rm
+	@find . -name '*.pyc' | xargs rm -f
 	@find src -name '*.egg-info' | xargs rm -rf
 
 develop: clean requirements
