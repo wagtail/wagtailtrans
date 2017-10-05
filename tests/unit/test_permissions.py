@@ -20,6 +20,7 @@ class TestTranslatableUserProxyPermission(object):
         self.default_language = Language.objects.get(code='en')
         pages = sites.create_site_tree(language=self.default_language)
         self.last_page = pages[-1]
+        self.site_root_page = pages[0]
 
     def test_admin_user_permission(self):
         permission = permissions.TranslatableUserPagePermissionsProxy(self.admin_user)
