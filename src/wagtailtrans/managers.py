@@ -13,8 +13,10 @@ class LanguageManager(models.Manager):
     def default(self, site=None):
         """Return the first choice of default languages."""
 
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE') and \
-                site is not None:
+        if (
+            get_wagtailtrans_setting('LANGUAGES_PER_SITE') and
+            site is not None
+        ):
             return site.sitelanguages.default_language
 
         return self.live().filter(is_default=True).first()
