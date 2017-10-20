@@ -38,7 +38,9 @@ class TranslationMiddleware(MiddlewareMixin):
                     break
 
         if active_language is None:
-            default_language = Language.objects.default(site=request.site)
+            default_language = Language.objects.default_for_site(
+                site=request.site)
+
             if default_language:
                 active_language = default_language.code
             else:
