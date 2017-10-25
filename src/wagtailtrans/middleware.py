@@ -2,8 +2,8 @@ from django import VERSION as django_version
 from django.conf import settings
 from django.utils import translation
 
-from .conf import get_wagtailtrans_setting
-from .models import Language, SiteLanguages
+from .models import Language
+from .sites import get_languages_for_site
 
 if django_version >= (1, 10):
     from django.utils.deprecation import MiddlewareMixin
@@ -12,7 +12,6 @@ else:
 
 
 class TranslationMiddleware(MiddlewareMixin):
-
     def process_request(self, request):
         active_language = None
         language_from_path = translation.get_language_from_path(request.path)
@@ -22,7 +21,11 @@ class TranslationMiddleware(MiddlewareMixin):
         elif requested_languages:
             requested_languages = requested_languages.split(',')
             codes = tuple(
-                Language.objects.live().values_list('code', flat=True))
+                language.code
+                for language in get_languages_for_site(request.site)
+                if language
+            )
+
             for language in requested_languages:
                 language = language.split(';')[0]
                 active_language = (
@@ -34,14 +37,10 @@ class TranslationMiddleware(MiddlewareMixin):
                 if active_language is not None:
                     break
 
-        lang_per_site = get_wagtailtrans_setting('LANGUAGES_PER_SITE')
-        if active_language is None and lang_per_site and request.site:
-            site_languages = SiteLanguages.for_site(request.site)
-            if site_languages.default_language:
-                active_language = site_languages.default_language.code
-
         if active_language is None:
-            default_language = Language.objects.default()
+            default_language = Language.objects.default_for_site(
+                site=request.site)
+
             if default_language:
                 active_language = default_language.code
             else:

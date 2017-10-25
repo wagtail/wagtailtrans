@@ -6,8 +6,11 @@ from wagtail.wagtailadmin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import TranslatablePageFactory
-from tests.factories.sites import SiteFactory, create_site_tree
+from tests.factories.sites import SiteFactory, create_site_tree, SiteLanguagesFactory
+from tests.factories.users import UserFactory
+
 from wagtailtrans import models
+from wagtailtrans.middleware import TranslationMiddleware
 
 
 @pytest.mark.django_db
@@ -99,6 +102,11 @@ class TestTranslatablePage(object):
 
     def test_create(self):
         assert self.canonical_page.language.code == 'en'
+
+    def test_serve(self, rf):
+        request = rf.get('/en/')
+        response = self.canonical_page.serve(request)
+        assert response.status_code == 200
 
     def test_get_admin_display_title(self):
         en_root = self.canonical_page
@@ -287,6 +295,36 @@ class TestTranslatablePage(object):
 @pytest.mark.django_db
 class TestTranslatableSiteRootPage(object):
 
+    def setup(self):
+        self.site_root = models.TranslatableSiteRootPage(title='site root')
+
     def test_create(self):
-        site_root = models.TranslatableSiteRootPage(title='site root')
-        assert site_root
+        assert self.site_root
+
+    def test_page_permission_for_user(self):
+        user = UserFactory(is_superuser=True, username='admin')
+        perms = self.site_root.permissions_for_user(user)
+        assert perms.can_publish()
+
+        another_user = UserFactory(username='editor')
+        perms = self.site_root.permissions_for_user(another_user)
+        assert not perms.can_publish()
+
+    def test_serve(self,rf):
+        request = rf.get('/home/')
+        request.site = SiteFactory()
+        response = request.site.root_page.serve(request)
+        assert response.status_code == 200
+
+    def test_get_user_language(self, rf):
+        request = rf.get('/en/')
+        sitelanguages = SiteLanguagesFactory(default_language__code='fr')
+        request.site = sitelanguages.site
+
+        lang = models.get_user_language(request)
+        assert lang.code == 'en'
+
+        with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
+            lang = models.get_user_language(request)
+            assert lang == sitelanguages.default_language
+

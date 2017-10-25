@@ -339,7 +339,7 @@ def get_user_language(request):
             .first())
         if language:
             return language
-    return Language.objects.default()
+    return Language.objects.default_for_site(site=request.site)
 
 
 class TranslatableSiteRootPage(Page):
