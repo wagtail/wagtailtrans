@@ -1,6 +1,6 @@
-===============================================
-Wagtailtrans 0.2 release notes - IN DEVELOPMENT
-===============================================
+==============================
+Wagtailtrans 0.2 release notes
+==============================
 
 .. contents::
     :local:
@@ -11,7 +11,7 @@ Wagtailtrans 0.2 release notes - IN DEVELOPMENT
 What is new
 -----------
 
-This release is a new major since it will only support Wagtail 1.12 and up. 
+This release is a new major since it will only support Wagtail 1.12 and up.
 By dropping support for < 1.11 we are keeping inline with Wagtails own `release schedule <http://docs.wagtail.io/en/v1.12.1/releases/upgrading.html#version-numbers>`_.
 
 Features
@@ -19,6 +19,7 @@ Features
 
 - Dropped support for Wagtail versions earlier than 1.12
 - Custom ``get_admin_display_title`` method now uses Wagtails ``draft_title``
+- Fix: Get default language when ``languages_per_site`` is enabled now returns the correct default language for the site.
 
 ------------------------------
 Backwards incompatible changes

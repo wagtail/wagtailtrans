@@ -1,11 +1,12 @@
 Changelog
 =========
 
-0.2 (XX-XX-XXXX)
+0.2.0 (25-10-2017)
 ------------------
 
  - Dropped support for Wagtail versions earlier than 1.12
  - Custom ``get_admin_display_title`` method now uses Wagtails ``draft_title``
+ - Fix: Get default language when ``languages_per_site`` is enabled now returns the correct default language for the site.
 
 
 0.1.5 (27-08-2017)
@@ -19,7 +20,7 @@ Changelog
 
 0.1.4 (03-07-2017)
 ------------------
- 
+
  - Add support for ``Wagtail 1.11``
  - Update language selector templatetag to work with pages without language as well
  - Update language selector to order language selector based on language positions
