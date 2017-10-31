@@ -6,9 +6,9 @@ from setuptools import find_packages, setup
 PROJECT_DIR = os.path.dirname(__file__)
 
 sys.path.append(os.path.join(PROJECT_DIR, 'src'))
-from wagtailtrans import get_version # noqa isort:skip
+from wagtailtrans import get_version  # noqa isort:skip
 
-sandbox_require =[
+sandbox_require = [
     'Django>=1.8',
     'Wagtail>=1.12',
     'psycopg2>=2.5.4',
