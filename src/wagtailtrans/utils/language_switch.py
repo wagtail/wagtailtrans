@@ -43,3 +43,5 @@ def change_default_language(new_language, site=None):
             Q(canonical_page_id=old_pk) |
             Q(pk=old_pk)
         ).update(canonical_page_id=new_pk)
+
+        queryset.filter(pk=new_pk).update(canonical_page_id=None)
