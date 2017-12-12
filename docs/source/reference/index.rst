@@ -10,4 +10,5 @@ Reference
 
     synchronized_trees
     freeform_trees
+    management_commands
     templatetags

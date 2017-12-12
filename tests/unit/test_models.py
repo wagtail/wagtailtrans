@@ -30,17 +30,34 @@ class TestWagtailAdminLanguageForm(object):
         form = self.form_class(instance=language, data={
             'code': language.code,
             'position': language.position,
-            'is_default': False,
+            'is_default': True,
         })
-        assert not form.is_valid()
-        assert 'is_default' in form.errors
 
+        assert form.is_valid()
+
+    def test_remove_is_default(self):
+        language = LanguageFactory(is_default=True)
         form = self.form_class(instance=language, data={
             'code': language.code,
             'position': language.position,
+            'is_default': False,
+        })
+
+        assert not form.is_valid()
+        assert 'is_default' in form.errors
+
+    def test_switch_language(self):
+        language = LanguageFactory(is_default=True)
+        new_default = LanguageFactory(code='nl', is_default=False)
+        form = self.form_class(instance=new_default, data={
+            'code': new_default.code,
+            'position': new_default.position,
             'is_default': True,
         })
-        assert form.is_valid(), form.errors
+
+        assert form.is_valid()
+        new_default = form.save()
+        assert new_default.is_default
 
 
 @pytest.mark.django_db
@@ -110,12 +127,12 @@ class TestTranslatablePage(object):
 
     def test_get_admin_display_title(self):
         en_root = self.canonical_page
-        assert en_root.get_admin_display_title()  == 'en homepage (English)'
+        assert en_root.get_admin_display_title() == 'en homepage (English)'
 
         en_root.draft_title = 'en draft example'
         en_root.save()
 
-        assert en_root.get_admin_display_title()  == 'en draft example (English)'
+        assert en_root.get_admin_display_title() == 'en draft example (English)'
 
     def test_create_translation(self, languages):
         """Test `create_translation` without copying fields."""

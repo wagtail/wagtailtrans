@@ -2,9 +2,10 @@ import pytest
 
 from django.forms.widgets import Select
 from django.test import override_settings
-from tests.factories import sites
 from wagtail.contrib.settings.views import get_setting_edit_handler
-from wagtailtrans.edit_handlers import ReadOnlyWidget
+
+from tests.factories import sites
+
 from wagtailtrans.models import (
     Language, SiteLanguages, register_site_languages)
 
@@ -29,8 +30,3 @@ class TestSiteLanguagesAdminForm(object):
         form_cls = edit_handler.get_form_class(SiteLanguages)
         form = form_cls(instance=self.site.sitelanguages)
         assert isinstance(form.fields['default_language'].widget, Select)
-        sites.create_site_tree(
-            language=self.default_language, site=self.site)
-        form = form_cls(instance=self.site.sitelanguages)
-        assert isinstance(
-            form.fields['default_language'].widget, ReadOnlyWidget)

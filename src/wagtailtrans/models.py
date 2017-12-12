@@ -4,6 +4,7 @@ from operator import itemgetter
 
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.db.models import Q
 from django.http import Http404
@@ -52,10 +53,24 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
 
     def clean_is_default(self):
         is_default = self.cleaned_data['is_default']
-        default_lang = Language.objects.default()
-        if is_default != self.instance.is_default and default_lang is not None:
-            raise forms.ValidationError(_("Default language can't be changed"))
+
+        if self.initial.get('is_default') and not is_default:
+            raise ValidationError(_(
+                "You can not remove is_default from a language. To change the "
+                "default language, select is_default on a different language"))
+
         return is_default
+
+    def save(self, commit=True):
+        is_default = self.cleaned_data.get('is_default', False)
+        if (
+            not self.initial.get('is_default') == is_default and
+            is_default and
+            not get_wagtailtrans_setting('LANGUAGES_PER_SITE')
+        ):
+            from wagtailtrans.utils.language_switch import change_default_language  # noqa
+            change_default_language(self.instance)
+        return super(WagtailAdminLanguageForm, self).save(commit=commit)
 
 
 def get_language_panels():
@@ -388,17 +403,14 @@ Page.permissions_for_user = page_permissions_for_user
 class SiteLanguagesForm(WagtailAdminModelForm):
     """Form to be used in the wagtail admin."""
 
-    def __init__(self, *args, **kwargs):
-        super(SiteLanguagesForm, self).__init__(*args, **kwargs)
-        instance = self.instance
-        if (instance.site and instance.site.root_page and
-                instance.site.root_page.get_children_count() > 0 and
-                instance.default_language):
-            self.fields['default_language'].widget = ReadOnlyWidget(
-                text_display=instance.default_language)
-            qs = self.fields['other_languages'].queryset
-            self.fields['other_languages'].queryset = qs.exclude(
-                pk=instance.default_language.pk)
+    def save(self, commit=True):
+        data = self.cleaned_data
+        if not data['default_language'].pk == self.initial['default_language']:
+            from wagtailtrans.utils.language_switch import change_default_language  # noqa
+            change_default_language(
+                data['default_language'], self.instance.site)
+
+        return super(SiteLanguagesForm, self).save(commit=commit)
 
 
 def register_site_languages():
