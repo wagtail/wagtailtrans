@@ -27,6 +27,6 @@ class TestSiteLanguagesAdminForm(object):
 
     def test_default_language_widget(self):
         edit_handler = get_setting_edit_handler(SiteLanguages)
-        form_cls = edit_handler.get_form_class(SiteLanguages)
+        form_cls = edit_handler.get_form_class()
         form = form_cls(instance=self.site.sitelanguages)
         assert isinstance(form.fields['default_language'].widget, Select)
