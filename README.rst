@@ -28,8 +28,8 @@ Requirements
 ------------
 
  - Python 2.7+
- - Django 1.8+
- - Wagtail 1.12+
+ - Django 1.11+
+ - Wagtail 2.0+
 
 
 Getting started
