@@ -1,5 +1,5 @@
 import pytest
-from wagtail.wagtailcore.models import Page, Site
+from wagtail.core.models import Page, Site
 
 from wagtailtrans.models import Language, TranslatableSiteRootPage
 

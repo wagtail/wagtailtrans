@@ -1,14 +1,9 @@
-from django import VERSION as django_version
 from django.conf import settings
 from django.utils import translation
+from django.utils.deprecation import MiddlewareMixin
 
 from .models import Language
 from .sites import get_languages_for_site
-
-if django_version >= (1, 10):
-    from django.utils.deprecation import MiddlewareMixin
-else:
-    MiddlewareMixin = object
 
 
 class TranslationMiddleware(MiddlewareMixin):

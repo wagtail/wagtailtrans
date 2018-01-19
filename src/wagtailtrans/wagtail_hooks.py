@@ -1,12 +1,12 @@
 from django.conf.urls import include, url
 from django.contrib.staticfiles.templatetags.staticfiles import static
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
-from wagtail.wagtailadmin import widgets
-from wagtail.wagtailcore import hooks
+from wagtail.admin import widgets
+from wagtail.core import hooks
 
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language

@@ -1,9 +1,9 @@
 from __future__ import absolute_import, unicode_literals
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext_lazy as _
-from wagtail.wagtailadmin.views.generic import CreateView
+from wagtail.admin.views.generic import CreateView
 
 from wagtailtrans.forms import TranslationForm
 from wagtailtrans.models import Language, TranslatablePage

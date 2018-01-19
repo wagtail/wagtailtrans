@@ -42,7 +42,7 @@ Installation
     MIDDLEWARE_CLASSES = [
         # ...
         'django.contrib.sessions.middleware.SessionMiddleware',
-        'wagtail.wagtailcore.middleware.SiteMiddleware',
+        'wagtail.core.middleware.SiteMiddleware',
         'wagtailtrans.middleware.TranslationMiddleware',
         'django.middleware.common.CommonMiddleware',
         # ...
@@ -54,7 +54,7 @@ Installation
 
 .. note::
 
-    It relies on ``wagtail.wagtailcore.middleware.SiteMiddleware``, which should come before it.
+    It relies on ``wagtail.core.middleware.SiteMiddleware``, which should come before it.
     See http://docs.wagtail.io/en/latest/getting_started/integrating_into_django.html#settings for more information.
 
 
@@ -83,7 +83,7 @@ In this example we will also make a ``HomePage`` which will be translatable. Thi
 
 .. code-block:: python
 
-    from wagtail.wagtailcore.models import Page
+    from wagtail.core.models import Page
     from wagtailtrans.models import TranslatablePage
 
 
