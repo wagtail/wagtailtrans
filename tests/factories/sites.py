@@ -31,8 +31,7 @@ def create_site_tree(language, site=None, *items, **homepage_kwargs):
 
     pages = [root_page]
     for item in items:
-        page = HomePageFactory.build(
-            language=language, title=item, **homepage_kwargs)
+        page = HomePageFactory.build(language=language, title=item, **homepage_kwargs)
         pages[-1].add_child(instance=page)
         pages.append(page)
 

@@ -1,4 +1,3 @@
-# flake8: noqa
 from django import forms
 from django.template import Context, Template
 from django.utils.safestring import mark_safe
@@ -17,8 +16,7 @@ class ReadOnlyWidget(forms.Select):
     def render(self, *args, **kwargs):
         original_content = self.initial_widget.render(*args, **kwargs)
 
-        return mark_safe("""<span class="hidden">%s</span>%s""" % (
-            original_content, self.text_display))
+        return mark_safe("""<span class="hidden">%s</span>%s""" % (original_content, self.text_display))
 
 
 class CanonicalPageWidget(forms.Select):

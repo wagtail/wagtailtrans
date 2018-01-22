@@ -25,9 +25,7 @@ def django_db_setup(django_db_setup, django_db_blocker):
 @pytest.fixture
 def sites():
     for code in LANG_CODES:
-        site_root = (
-            TranslatableSiteRootPage
-            .add_root(title='site root %s.localhost' % code))
+        site_root = TranslatableSiteRootPage.add_root(title='site root %s.localhost' % code)
         site_root.save()
         language = Language.objects.get(code=code)
         page = HomePage(

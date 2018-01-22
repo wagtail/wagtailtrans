@@ -10,7 +10,6 @@ from tests.factories.users import UserFactory
 from tests.factories import sites
 
 
-
 @pytest.mark.django_db
 class TestTranslatableUserProxyPermission(object):
 

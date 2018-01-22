@@ -7,8 +7,7 @@ from wagtailtrans.models import TranslatablePage
 
 class TranslationForm(forms.ModelForm):
     copy_from_canonical = forms.BooleanField(required=False)
-    parent_page = forms.ModelChoiceField(
-        queryset=TranslatablePage.objects.none())
+    parent_page = forms.ModelChoiceField(queryset=TranslatablePage.objects.none())
 
     class Meta:
         model = TranslatablePage
@@ -27,15 +26,9 @@ class TranslationForm(forms.ModelForm):
 
     def get_queryset(self):
         site = self.instance.get_site()
-        qs = (
-            TranslatablePage.objects
-            .filter(language=self.language)
-            .exclude(id=self.instance.id))
+        qs = TranslatablePage.objects.filter(language=self.language).exclude(id=self.instance.id)
 
-        allowed_pages = [
-            p.pk for p in qs.specific()
-            if self.instance.can_move_to(p) and p.get_site() == site
-        ]
+        allowed_pages = [p.pk for p in qs.specific() if self.instance.can_move_to(p) and p.get_site() == site]
 
         qs = qs.filter(pk__in=allowed_pages)
         if not qs:
@@ -45,9 +38,6 @@ class TranslationForm(forms.ModelForm):
     def _page_has_required(self, page):
         common_fields = set(TranslatablePage._meta.fields)
         specific_fields = set(page.specific._meta.fields) - common_fields
-        required_fields = [
-            f for f in specific_fields
-            if not f.blank and not f.name.endswith('ptr')
-        ]
+        required_fields = [f for f in specific_fields if not f.blank and not f.name.endswith('ptr')]
 
         return len(required_fields) > 0

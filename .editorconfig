@@ -7,7 +7,7 @@ indent_style = space
 indent_size = 4
 
 [*.py]
-line_length = 79
+line_length = 119
 multi_line_output = 4
 balanced_wrapping = true
 use_parentheses = true

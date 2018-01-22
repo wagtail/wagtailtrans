@@ -22,25 +22,18 @@ class TestTranslatablePage(object):
         en = languages.get(code='en')
         nl = languages.get(code='nl')
 
-        nl_root = self.canonical_page.create_translation(
-            language=nl, copy_fields=True)
-        subpage1 = TranslatablePageFactory.build(
-            language=en, title='subpage1 in EN tree')
-        subpage2 = TranslatablePageFactory.build(
-            language=en, title='subpage2 in EN tree')
+        self.canonical_page.create_translation(language=nl, copy_fields=True)
+        subpage1 = TranslatablePageFactory.build(language=en, title='subpage1 in EN tree')
+        subpage2 = TranslatablePageFactory.build(language=en, title='subpage2 in EN tree')
 
         self.canonical_page.add_child(instance=subpage1)
         self.canonical_page.add_child(instance=subpage2)
 
-        TranslatablePageFactory.build(
-            language=nl, title='subpage1 in NL tree', canonical_page=subpage1)
-        TranslatablePageFactory.build(
-            language=nl, title='subpage2 in NL tree', canonical_page=subpage2)
+        TranslatablePageFactory.build(language=nl, title='subpage1 in NL tree', canonical_page=subpage1)
+        TranslatablePageFactory.build(language=nl, title='subpage2 in NL tree', canonical_page=subpage2)
 
         change_default_language(nl)
 
         assert nl.is_default
-        assert models.TranslatablePage.objects.filter(
-            language=en).first().canonical_page.language == nl
-        assert models.TranslatablePage.objects.filter(
-            language=nl).first().canonical_page is None
+        assert models.TranslatablePage.objects.filter(language=en).first().canonical_page.language == nl
+        assert models.TranslatablePage.objects.filter(language=nl).first().canonical_page is None

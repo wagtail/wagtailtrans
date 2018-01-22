@@ -29,8 +29,7 @@ modeladmin_register(LanguageModelAdmin)
 @hooks.register('register_admin_urls')
 def register_admin_urls():
     return [
-        url(r'^translate/',
-            include(translations, namespace='wagtailtrans_translations')),
+        url(r'^translate/', include(translations, namespace='wagtailtrans_translations')),
     ]
 
 
@@ -60,7 +59,8 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
             page=page,
             page_perms=page_perms,
             is_parent=is_parent,
-            priority=10)
+            priority=10
+        )
 
     @hooks.register('wagtailtrans_dropdown_hook')
     def page_translations_menu_items(page, page_perms, is_parent=False):
@@ -70,14 +70,9 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
         if hasattr(page, 'language') and page.language:
             exclude_lang = page.language
 
-        other_languages = set(
-            Language.objects
-            .live()
-            .exclude(pk=exclude_lang.pk)
-            .order_by('position'))
+        other_languages = set(Language.objects.live().exclude(pk=exclude_lang.pk).order_by('position'))
 
-        translations = (
-            page.get_translations(only_live=False).select_related('language'))
+        translations = page.get_translations(only_live=False).select_related('language')
         taken_languages = set(t.language for t in translations)
 
         translation_targets = other_languages - taken_languages

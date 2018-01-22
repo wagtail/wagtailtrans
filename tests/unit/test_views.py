@@ -28,8 +28,7 @@ class TestAddTranslationView(object):
 
         view = TranslationView()
         view.request = request
-        response = view.dispatch(
-            request, instance_id=self.last_page.pk, language_code='fr')
+        response = view.dispatch(request, instance_id=self.last_page.pk, language_code='fr')
 
         parent_page_qs = view.get_form().fields['parent_page'].queryset
 
@@ -41,8 +40,7 @@ class TestAddTranslationView(object):
         french_root = pages.TranslatablePageFactory.build(language=fr, title="French root")
         self.pages[0].add_child(instance=french_root)
 
-        response = view.dispatch(
-            request, instance_id=self.last_page.pk, language_code='fr')
+        response = view.dispatch(request, instance_id=self.last_page.pk, language_code='fr')
 
         parent_page_qs = view.get_form().fields['parent_page'].queryset
 
@@ -62,8 +60,7 @@ class TestAddTranslationView(object):
 
         view = TranslationView()
         view.request = request
-        response = view.dispatch(
-            request, instance_id=self.pages[1].pk, language_code='de')
+        response = view.dispatch(request, instance_id=self.pages[1].pk, language_code='de')
 
         assert response.status_code == 302
         assert response['Location'].endswith('/edit/')
@@ -80,9 +77,7 @@ class TestAddTranslationView(object):
         with override_settings(WAGTAILTRANS_SYNC_TREE=False):
             view = TranslationView()
             view.request = request
-            response = view.dispatch(
-                request, instance_id=self.last_page.pk,
-                language_code=self.default_language.code)
+            response = view.dispatch(request, instance_id=self.last_page.pk, language_code=self.default_language.code)
 
         assert response.status_code == 200
         assert not view.get_form().is_valid()
@@ -105,6 +100,5 @@ class TestLanguageAdminView(object):
         assert response.status_code == 200
 
     def test_response_language_edit_view(self, admin_client):
-        response = admin_client.get(
-            '/admin/wagtailtrans/language/edit/%d/' % self.language.pk)
+        response = admin_client.get('/admin/wagtailtrans/language/edit/%d/' % self.language.pk)
         assert response.status_code == 200

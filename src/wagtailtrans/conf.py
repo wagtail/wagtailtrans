@@ -7,5 +7,4 @@ DEFAULT_SETTINGS = {
 
 
 def get_wagtailtrans_setting(name):
-    return getattr(
-        settings, 'WAGTAILTRANS_{}'.format(name), DEFAULT_SETTINGS[name])
+    return getattr(settings, 'WAGTAILTRANS_{}'.format(name), DEFAULT_SETTINGS[name])

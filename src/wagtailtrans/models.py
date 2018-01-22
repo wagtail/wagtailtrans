@@ -13,10 +13,8 @@ from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import activate
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
-from wagtail.admin.edit_handlers import (
-    FieldPanel, MultiFieldPanel, PageChooserPanel)
-from wagtail.admin.forms import (
-    WagtailAdminModelForm, WagtailAdminPageForm)
+from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
+from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.core.models import Page
 from wagtail.search.index import FilterField
 
@@ -91,20 +89,12 @@ class Language(models.Model):
     code = models.CharField(max_length=12, unique=True)
 
     is_default = models.BooleanField(
-        default=False, help_text="""
-        Visitors with no language preference will see the site in
-        this language
-        """)
+        default=False, help_text="""Visitors with no language preference will see the site in this language""")
 
     position = models.IntegerField(
-        default=0, help_text="""
-        Language choices and translations will be displayed in this
-        order
-        """)
+        default=0, help_text="""Language choices and translations will be displayed in this order""")
 
-    live = models.BooleanField(
-        default=True,
-        help_text="Is this language available for visitors to view?")
+    live = models.BooleanField(default=True, help_text="Is this language available for visitors to view?")
 
     objects = LanguageManager()
 
@@ -118,10 +108,7 @@ class Language(models.Model):
         return force_text(dict(settings.LANGUAGES).get(self.code))
 
     def has_pages_in_site(self, site):
-        return (
-            self.pages.filter(
-                path__startswith=site.root_page.path
-            ).exists())
+        return self.pages.filter(path__startswith=site.root_page.path).exists()
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
@@ -133,13 +120,11 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
         self.fields['canonical_page'].widget = CanonicalPageWidget(
             canonical_page=self.instance.specific.canonical_page)
 
-        language_display = Language.objects.filter(
-            pk=self.initial['language']).first()
+        language_display = Language.objects.filter(pk=self.initial['language']).first()
         if self.instance.specific.is_canonical and language_display:
             language_display = "{} - {}".format(language_display, "canonical")
 
-        self.fields['language'].widget = ReadOnlyWidget(
-            text_display=language_display if language_display else '')
+        self.fields['language'].widget = ReadOnlyWidget(text_display=language_display if language_display else '')
 
 
 def _language_default():
@@ -155,14 +140,10 @@ def _language_default():
 class TranslatablePage(Page):
 
     #: Defined with a unique name, to prevent field clashes..
-    translatable_page_ptr = models.OneToOneField(
-        Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
+    translatable_page_ptr = models.OneToOneField(Page, parent_link=True, related_name='+', on_delete=models.CASCADE)
     canonical_page = models.ForeignKey(
-        'self', related_name='translations', blank=True,
-        null=True, on_delete=models.SET_NULL)
-    language = models.ForeignKey(
-        Language, related_name='pages', on_delete=models.PROTECT,
-        default=_language_default)
+        'self', related_name='translations', blank=True, null=True, on_delete=models.SET_NULL)
+    language = models.ForeignKey(Language, related_name='pages', on_delete=models.PROTECT, default=_language_default)
 
     is_creatable = False
 
@@ -183,10 +164,7 @@ class TranslatablePage(Page):
     base_form_class = AdminTranslatablePageForm
 
     def get_admin_display_title(self):
-        return "{} ({})".format(
-            super(TranslatablePage, self).get_admin_display_title(),
-            self.language
-        )
+        return "{} ({})".format(super(TranslatablePage, self).get_admin_display_title(), self.language)
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
@@ -209,11 +187,7 @@ class TranslatablePage(Page):
         else:
             is_default = self.language.is_default
 
-        if (
-            not suppress_sync and
-            get_wagtailtrans_setting('SYNC_TREE') and
-            is_default
-        ):
+        if not suppress_sync and get_wagtailtrans_setting('SYNC_TREE') and is_default:
             self.move_translated_pages(canonical_target=target, pos=pos)
 
     def move_translated_pages(self, canonical_target, pos=None):
@@ -249,10 +223,7 @@ class TranslatablePage(Page):
 
         """
         canonical_page_id = self.canonical_page_id or self.pk
-        translations = TranslatablePage.objects.filter(
-            Q(canonical_page=canonical_page_id) |
-            Q(pk=canonical_page_id)
-        )
+        translations = TranslatablePage.objects.filter(Q(canonical_page=canonical_page_id) | Q(pk=canonical_page_id))
 
         if not include_self:
             translations = translations.exclude(pk=self.pk)
@@ -278,11 +249,9 @@ class TranslatablePage(Page):
 
         translation_parent = (
             TranslatablePage.objects
-            .filter(
-                canonical_page=self.get_parent(),
-                language=language,
-                path__startswith=site.root_page.path
-            ).first())
+            .filter(canonical_page=self.get_parent(), language=language, path__startswith=site.root_page.path)
+            .first()
+        )
         return translation_parent
 
     def create_translation(self, language, copy_fields=False, parent=None):
@@ -344,11 +313,7 @@ def get_user_language(request):
     :return: Language instance
     """
     if hasattr(request, 'LANGUAGE_CODE'):
-        language = (
-            Language.objects
-            .live()
-            .filter(code=request.LANGUAGE_CODE)
-            .first())
+        language = Language.objects.live().filter(code=request.LANGUAGE_CODE).first()
         if language:
             return language
     return Language.objects.default_for_site(site=request.site)
@@ -404,8 +369,7 @@ class SiteLanguagesForm(WagtailAdminModelForm):
         data = self.cleaned_data
         if not data['default_language'].pk == self.initial['default_language']:
             from wagtailtrans.utils.language_switch import change_default_language  # noqa
-            change_default_language(
-                data['default_language'], self.instance.site)
+            change_default_language(data['default_language'], self.instance.site)
 
         return super(SiteLanguagesForm, self).save(commit=commit)
 
@@ -422,9 +386,7 @@ def register_site_languages():
 class SiteLanguages(BaseSetting):
     """Site specific settings are stored in the database"""
     default_language = models.ForeignKey(
-        Language, related_name="site_default_language",
-        null=True, on_delete=models.PROTECT
-    )
+        Language, related_name="site_default_language", null=True, on_delete=models.PROTECT)
     other_languages = models.ManyToManyField(Language, blank=True)
 
     panels = [

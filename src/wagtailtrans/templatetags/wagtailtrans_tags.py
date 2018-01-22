@@ -1,14 +1,10 @@
 from collections import OrderedDict
 
-from django import VERSION as django_version
 from django.template import Library
 
 from wagtailtrans.sites import get_languages_for_site
 
 register = Library()
-
-if django_version >= (1, 9):
-    register.assignment_tag = register.simple_tag
 
 
 def _get_translations(page, homepage_fallback=True, include_self=True):
@@ -27,18 +23,12 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
         if not include_self:
             available_languages.remove(page.language)
 
-        page_translations = page.get_translations(
-            only_live=True, include_self=include_self)
-        available_translations = {
-            p.language.code: p for p in page_translations
-        }
+        page_translations = page.get_translations(only_live=True, include_self=include_self)
+        available_translations = {p.language.code: p for p in page_translations}
 
     available_homepages = {}
     if homepage_fallback:
-        available_homepages = {
-            p.language.code: p
-            for p in site.root_page.get_children().live().specific()
-        }
+        available_homepages = {p.language.code: p for p in site.root_page.get_children().live().specific()}
 
     translations = OrderedDict()
     for language in available_languages:
@@ -53,7 +43,7 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
     return translations
 
 
-@register.assignment_tag
+@register.simple_tag
 def get_translations(page, homepage_fallback=True, include_self=True):
     """Return URLs for translations of the provided page.
 
@@ -63,8 +53,7 @@ def get_translations(page, homepage_fallback=True, include_self=True):
         {% get_language_urls page homepage_fallback=False include_self=False as language_urls %}  # noqa
 
     """
-    return _get_translations(
-        page, homepage_fallback=homepage_fallback, include_self=include_self)
+    return _get_translations(page, homepage_fallback=homepage_fallback, include_self=include_self)
 
 
 @register.inclusion_tag('wagtailtrans/templatetags/language_selector.html')
@@ -77,8 +66,8 @@ def render_language_selector(page, homepage_fallback=True, include_self=False):
         {% render_language_selector page homepage_fallback=False include_self=True %}  # noqa
 
     """
-    available_translations = _get_translations(
-        page, homepage_fallback=homepage_fallback, include_self=include_self)
+    available_translations = _get_translations(page, homepage_fallback=homepage_fallback, include_self=include_self)
+
     return {
         'current_page': page,
         'translations': available_translations,
