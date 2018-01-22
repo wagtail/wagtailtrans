@@ -3,7 +3,7 @@ Changelog
 
 1.0.0 (TBD)
 -----------
-
+ - Dropped support for Python 2
  - Dropped support for wagtail versions earlier than 2.0
  - Dropped support for Django versions earlier than 1.11
 
