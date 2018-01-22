@@ -1,5 +1,3 @@
-from __future__ import unicode_literals
-
 from operator import itemgetter
 
 from django import forms
@@ -88,7 +86,6 @@ def get_language_panels():
     ]
 
 
-@python_2_unicode_compatible
 class Language(models.Model):
     """User defined language."""
     code = models.CharField(max_length=12, unique=True)
