@@ -22,7 +22,7 @@ matrix:
 
     # Flake 8
     - env: TOXENV=flake8
-      python: 2.7
+      python: 3.6
 install:
   - pip install codecov tox
 script:
