@@ -5,7 +5,7 @@ Changelog
 -----------
 
  - Dropped support for Python 2
- - Dropped support for wagtail versions earlier than 2.0
+ - Dropped support for Wagtail versions earlier than 2.0
  - Dropped support for Django versions earlier than 1.11
  - Refactor .py files to line length 119
 
