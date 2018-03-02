@@ -16,12 +16,13 @@ matrix:
     - env: TOXENV=py36-dj2-postgres-wt2
       python: 3.6
 
-    # wagtail dev
-    - env: TOXENV=wagtaildev
-      python: 3.6
-
     # Flake 8
     - env: TOXENV=flake8
+      python: 3.6
+
+  allow_failures:
+    # wagtail dev
+    - env: TOXENV=wagtaildev
       python: 3.6
 install:
   - pip install codecov tox
