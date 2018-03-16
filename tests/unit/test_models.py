@@ -2,7 +2,7 @@ import pytest
 from django.core.exceptions import ValidationError
 from django.test import override_settings
 from django.utils import six
-from wagtail.wagtailadmin.edit_handlers import get_form_for_model
+from wagtail.admin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import TranslatablePageFactory
@@ -10,15 +10,13 @@ from tests.factories.sites import SiteFactory, create_site_tree, SiteLanguagesFa
 from tests.factories.users import UserFactory
 
 from wagtailtrans import models
-from wagtailtrans.middleware import TranslationMiddleware
 
 
 @pytest.mark.django_db
 class TestWagtailAdminLanguageForm(object):
 
     def setup(self):
-        self.form_class = get_form_for_model(
-            model=models.Language, form_class=models.WagtailAdminLanguageForm)
+        self.form_class = get_form_for_model(model=models.Language, form_class=models.WagtailAdminLanguageForm)
 
     def test_init(self):
         models.Language.objects.all().delete()
@@ -47,7 +45,7 @@ class TestWagtailAdminLanguageForm(object):
         assert 'is_default' in form.errors
 
     def test_switch_language(self):
-        language = LanguageFactory(is_default=True)
+        LanguageFactory(is_default=True)
         new_default = LanguageFactory(code='nl', is_default=False)
         form = self.form_class(instance=new_default, data={
             'code': new_default.code,
@@ -85,17 +83,11 @@ class TestLanguage(object):
     def test_has_pages_in_site(self):
         language = LanguageFactory()
 
-        site_one = SiteFactory(
-            hostname='remotehost', site_name='RemoteSite',
-            root_page__title='site_1')
-        site_two = SiteFactory(
-            hostname='losthost', site_name='LostSite',
-            root_page__title='site_2')
+        site_one = SiteFactory(hostname='remotehost', site_name='RemoteSite', root_page__title='site_1')
+        site_two = SiteFactory(hostname='losthost', site_name='LostSite', root_page__title='site_2')
 
-        create_site_tree(
-            language, site=site_one, subtitle='hophop flepflep')
-        create_site_tree(
-            language, site=site_two, subtitle='hophop flepflep')
+        create_site_tree(language, site=site_one, subtitle='hophop flepflep')
+        create_site_tree(language, site=site_two, subtitle='hophop flepflep')
 
         language.refresh_from_db()
 
@@ -147,8 +139,7 @@ class TestTranslatablePage(object):
     def test_create_translation_copy_fields(self, languages):
         """Test `create_translation` with `copy_fields` set to True."""
         nl = languages.get(code='nl')
-        nl_page = self.canonical_page.create_translation(
-            language=nl, copy_fields=True)
+        nl_page = self.canonical_page.create_translation(language=nl, copy_fields=True)
 
         assert nl_page.title == self.canonical_page.title
         assert nl_page.slug == '{}-{}'.format(self.canonical_page.slug, 'nl')
@@ -171,10 +162,8 @@ class TestTranslatablePage(object):
         nl = languages.get(code='nl')
         fr = languages.get(code='fr')
 
-        nl_root = self.canonical_page.create_translation(
-            language=nl, copy_fields=True)
-        fr_root = self.canonical_page.create_translation(
-            language=fr, copy_fields=True)
+        nl_root = self.canonical_page.create_translation(language=nl, copy_fields=True)
+        fr_root = self.canonical_page.create_translation(language=fr, copy_fields=True)
 
         # Change title
         fr_root.title = 'FR language'
@@ -185,10 +174,7 @@ class TestTranslatablePage(object):
         nl_root.live = True
         nl_root.save()
 
-        en_translations = (
-            self.canonical_page
-            .get_translations(only_live=False)
-            .specific())
+        en_translations = self.canonical_page.get_translations(only_live=False).specific()
         assert nl_root in en_translations
         assert fr_root in en_translations
         assert self.canonical_page not in en_translations
@@ -210,18 +196,12 @@ class TestTranslatablePage(object):
         assert self.canonical_page not in en_translations
 
         # Test include self
-        translations_and_self = (
-            self.canonical_page
-            .get_translations(include_self=True)
-            .specific())
+        translations_and_self = self.canonical_page.get_translations(include_self=True).specific()
         assert self.canonical_page in translations_and_self
         assert nl_root in translations_and_self
         assert fr_root not in translations_and_self
 
-        translations_and_self = (
-            self.canonical_page
-            .get_translations(only_live=False, include_self=True)
-            .specific())
+        translations_and_self = self.canonical_page.get_translations(only_live=False, include_self=True).specific()
         assert self.canonical_page in translations_and_self
         assert nl_root in translations_and_self
         assert fr_root in translations_and_self
@@ -242,23 +222,17 @@ class TestTranslatablePage(object):
         #         |        |- leaf_page
         #         |- subpage2
 
-        nl_root = self.canonical_page.create_translation(
-            language=nl, copy_fields=True)
-        subpage1 = TranslatablePageFactory.build(
-            language=en, title='subpage1 in EN tree')
-        subpage2 = TranslatablePageFactory.build(
-            language=en, title='subpage2 in EN tree')
+        nl_root = self.canonical_page.create_translation(language=nl, copy_fields=True)
+        subpage1 = TranslatablePageFactory.build(language=en, title='subpage1 in EN tree')
+        subpage2 = TranslatablePageFactory.build(language=en, title='subpage2 in EN tree')
 
-        leaf_page = TranslatablePageFactory.build(
-            language=en, title='leafpage in EN tree')
+        leaf_page = TranslatablePageFactory.build(language=en, title='leafpage in EN tree')
         self.canonical_page.add_child(instance=subpage1)
         self.canonical_page.add_child(instance=subpage2)
         subpage1.add_child(instance=leaf_page)
 
-        nl_subpage1 = TranslatablePageFactory.build(
-            language=nl, title='subpage1 in NL tree', canonical_page=subpage1)
-        nl_subpage2 = TranslatablePageFactory.build(
-            language=nl, title='subpage2 in NL tree', canonical_page=subpage2)
+        nl_subpage1 = TranslatablePageFactory.build(language=nl, title='subpage1 in NL tree', canonical_page=subpage1)
+        nl_subpage2 = TranslatablePageFactory.build(language=nl, title='subpage2 in NL tree', canonical_page=subpage2)
         nl_leaf_page = TranslatablePageFactory.build(
             language=nl, title='leafpage in NL tree', canonical_page=leaf_page)
         nl_root.add_child(instance=nl_subpage1)
@@ -344,4 +318,3 @@ class TestTranslatableSiteRootPage(object):
         with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
             lang = models.get_user_language(request)
             assert lang == sitelanguages.default_language
-

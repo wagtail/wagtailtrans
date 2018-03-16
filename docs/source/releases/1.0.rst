@@ -1,0 +1,28 @@
+==============================
+Wagtailtrans 1.0 release notes
+==============================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+This release is a new major since it will only support Wagtail 2.0 and up.
+
+Features
+~~~~~~~~
+
+- Dropped support for Python 2
+- Dropped support for Wagtail versions earlier than 2.0
+- Dropped support for Django versions earlier than 1.11
+- Refactor .py files to line length 119
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
+This release drops support for Wagtail versions below 2.0.

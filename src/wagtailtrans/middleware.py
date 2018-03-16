@@ -1,14 +1,9 @@
-from django import VERSION as django_version
 from django.conf import settings
 from django.utils import translation
+from django.utils.deprecation import MiddlewareMixin
 
 from .models import Language
 from .sites import get_languages_for_site
-
-if django_version >= (1, 10):
-    from django.utils.deprecation import MiddlewareMixin
-else:
-    MiddlewareMixin = object
 
 
 class TranslationMiddleware(MiddlewareMixin):
@@ -20,26 +15,19 @@ class TranslationMiddleware(MiddlewareMixin):
             active_language = language_from_path
         elif requested_languages:
             requested_languages = requested_languages.split(',')
-            codes = tuple(
-                language.code
-                for language in get_languages_for_site(request.site)
-                if language
-            )
+            codes = tuple(language.code for language in get_languages_for_site(request.site) if language)
 
             for language in requested_languages:
                 language = language.split(';')[0]
-                active_language = (
-                    language if language in codes else None)
+                active_language = language if language in codes else None
+
                 if active_language is None and language.startswith(codes):
-                    active_language = [
-                        code for code in codes
-                        if language.startswith(code)][0]
+                    active_language = [c for c in codes if language.startswith(c)][0]
                 if active_language is not None:
                     break
 
         if active_language is None:
-            default_language = Language.objects.default_for_site(
-                site=request.site)
+            default_language = Language.objects.default_for_site(site=request.site)
 
             if default_language:
                 active_language = default_language.code

@@ -27,9 +27,9 @@ Support multiple languages for your Wagtail site.
 Requirements
 ------------
 
- - Python 2.7+
- - Django 1.8+
- - Wagtail 1.12+
+ - Python 3.4+
+ - Django 1.11+
+ - Wagtail 2.0+
 
 
 Getting started

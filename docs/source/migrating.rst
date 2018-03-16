@@ -32,11 +32,11 @@ Non Wagtailtrans site
         # ...
     ]
 
-3. Add ``wagtailtrans.models.TranslatablePage`` to the existing ``wagtail.wagtailcore.models.Page`` models.
+3. Add ``wagtailtrans.models.TranslatablePage`` to the existing ``wagtail.core.models.Page`` models.
 
 .. code-block:: python
 
-    from wagtail.wagtailcore.models import Page
+    from wagtail.core.models import Page
     from wagtailtrans.models import TranslatablePage
 
 
@@ -113,11 +113,11 @@ Before the 0.1 final release we've made a backwards incompatible change by defin
 
 Migrating can be done by following these steps:
 
-1. Update code where necessary, models inheriting from ``wagtailtrans.models.TranslatablePage`` should also inherit from ``wagtail.wagtailcore.models.Page``
+1. Update code where necessary, models inheriting from ``wagtailtrans.models.TranslatablePage`` should also inherit from ``wagtail.core.models.Page``
 
 .. code-block:: python
 
-    from wagtail.wagtailcore.models import Page
+    from wagtail.core.models import Page
     from wagtailtrans.models import TranslatablePage
 
 

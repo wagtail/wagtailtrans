@@ -9,9 +9,10 @@ sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version  # noqa isort:skip
 
 sandbox_require = [
-    'Django>=1.8',
-    'Wagtail>=1.12',
+    'Django>=2.0',
+    'Wagtail>=2.0',
     'psycopg2>=2.5.4',
+    'djangorestframework>=3.7',
 ]
 
 docs_require = [
@@ -56,14 +57,12 @@ setup(
         'License :: OSI Approved :: BSD License',
         'Operating System :: OS Independent',
         'Programming Language :: Python',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3.4',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Framework :: Django',
-        'Framework :: Django :: 1.8',
-        'Framework :: Django :: 1.10',
         'Framework :: Django :: 1.11',
+        'Framework :: Django :: 2.0',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ]
 )

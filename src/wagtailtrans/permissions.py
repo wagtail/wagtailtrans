@@ -1,5 +1,5 @@
 from django.contrib.auth.models import Group, Permission
-from wagtail.wagtailcore.models import (
+from wagtail.core.models import (
     Collection, GroupCollectionPermission, GroupPagePermission,
     PagePermissionTester, UserPagePermissionsProxy)
 

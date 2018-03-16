@@ -9,9 +9,6 @@ def test_get_wagtailtrans_setting_defaults():
 
 
 def test_get_wagtailtrans_setting_override():
-    with override_settings(
-        WAGTAILTRANS_SYNC_TREE=False,
-        WAGTAILTRANS_LANGUAGES_PER_SITE=True
-    ):
+    with override_settings(WAGTAILTRANS_SYNC_TREE=False, WAGTAILTRANS_LANGUAGES_PER_SITE=True):
         assert not conf.get_wagtailtrans_setting('SYNC_TREE')
         assert conf.get_wagtailtrans_setting('LANGUAGES_PER_SITE')

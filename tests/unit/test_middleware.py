@@ -87,7 +87,6 @@ class TestTranslationMiddleware(object):
 
         assert request.LANGUAGE_CODE == 'es'
 
-
     def test_request_no_languages(self, rf):
         Language.objects.all().delete()
         request = rf.get('/')
@@ -100,6 +99,5 @@ class TestTranslationMiddleware(object):
     def test_response(self, rf):
         request = rf.get('/nl/random/page/')
         TranslationMiddleware().process_request(request)
-        response = TranslationMiddleware().process_response(
-            request, HttpResponse())
+        response = TranslationMiddleware().process_response(request, HttpResponse())
         assert response['Content-Language'] == 'nl'

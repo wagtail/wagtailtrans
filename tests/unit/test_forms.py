@@ -16,9 +16,7 @@ class TestSiteLanguagesAdminForm(object):
     def setup(self):
         # use a context manager to ensure these settings are
         # only used here
-        with override_settings(
-                WAGTAILTRANS_SYNC_TREE=True,
-                WAGTAILTRANS_LANGUAGES_PER_SITE=True):
+        with override_settings(WAGTAILTRANS_SYNC_TREE=True, WAGTAILTRANS_LANGUAGES_PER_SITE=True):
             register_site_languages()(SiteLanguages)
             self.site = sites.SiteFactory()
             SiteLanguages.for_site(self.site)
@@ -27,6 +25,6 @@ class TestSiteLanguagesAdminForm(object):
 
     def test_default_language_widget(self):
         edit_handler = get_setting_edit_handler(SiteLanguages)
-        form_cls = edit_handler.get_form_class(SiteLanguages)
+        form_cls = edit_handler.get_form_class()
         form = form_cls(instance=self.site.sitelanguages)
         assert isinstance(form.fields['default_language'].widget, Select)

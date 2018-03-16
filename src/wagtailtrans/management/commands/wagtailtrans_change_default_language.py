@@ -20,7 +20,6 @@ class Command(BaseCommand):
 
         current_default = Language.objects.default()
         if new_default == current_default:
-            raise CommandError(
-                "Language {} is already default language".format(new_default))
+            raise CommandError("Language {} is already default language".format(new_default))
 
         change_default_language(new_default)

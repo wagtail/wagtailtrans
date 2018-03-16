@@ -24,8 +24,7 @@ class TestWagtailtransTags(object):
         assert 'de' in language_codes
         assert 'nl' in language_codes
 
-        translations = wagtailtrans_tags._get_translations(
-            pages[1], include_self=False)
+        translations = wagtailtrans_tags._get_translations(pages[1], include_self=False)
         language_codes = [l.code for l in translations.keys()]
         assert 'en' not in language_codes
         assert 'es' in language_codes
@@ -62,6 +61,6 @@ def test_get_canonical_pages_for_delete(languages):
 
     non_canocial_page = WagtailPageFactory(path='/root')
     assert not translations_wagtail_admin.get_canonical_pages_for_delete(non_canocial_page)
-    
+
     with override_settings(WAGTAILTRANS_SYNC_TREE=False):
         assert not translations_wagtail_admin.get_canonical_pages_for_delete(page)

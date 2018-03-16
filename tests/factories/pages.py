@@ -1,6 +1,6 @@
 import factory
-from wagtail.wagtailcore.models import Page
-from wagtail.wagtailimages.tests.utils import (
+from wagtail.core.models import Page
+from wagtail.images.tests.utils import (
     get_image_model, get_test_image_file)
 
 from wagtailtrans import models
