@@ -1,5 +1,5 @@
 ==============================
-Wagtailtrans 1.0 release notes
+Wagtailtrans 2.0 release notes
 ==============================
 
 .. contents::
@@ -20,6 +20,7 @@ Features
 - Dropped support for Wagtail versions earlier than 2.0
 - Dropped support for Django versions earlier than 1.11
 - Refactor .py files to line length 119
+- Changed the version number to be inline with Wagtail
 
 ------------------------------
 Backwards incompatible changes

@@ -1,13 +1,14 @@
 Changelog
 =========
 
-1.0.0 (TBD)
------------
+2.0.0 (16-03-2018)
+------------------
 
  - Dropped support for Python 2
  - Dropped support for Wagtail versions earlier than 2.0
  - Dropped support for Django versions earlier than 1.11
  - Refactor .py files to line length 119
+ - Changed the version number to be inline with Wagtail
 
 
 0.2.0 (25-10-2017)
