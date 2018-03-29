@@ -1,0 +1,13 @@
+================================
+Wagtailtrans 2.0.1 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+Bugfixes
+~~~~~~~~
+
+- Added missing database migration
