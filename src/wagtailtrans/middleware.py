@@ -38,6 +38,6 @@ class TranslationMiddleware(MiddlewareMixin):
         request.LANGUAGE_CODE = active_language
 
     def process_response(self, request, response):
-        if 'Content-Language' not in response:
+        if 'Content-Language' not in response and hasattr(request, 'LANGUAGE_CODE'):
             response['Content-Language'] = request.LANGUAGE_CODE
         return response
