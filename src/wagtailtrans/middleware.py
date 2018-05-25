@@ -9,10 +9,12 @@ from .sites import get_languages_for_site
 class TranslationMiddleware(MiddlewareMixin):
     def process_request(self, request):
         active_language = None
-        language_from_path = translation.get_language_from_path(request.path)
+
+        language_from_request = translation.get_language_from_request(
+            request, check_path=True)
         requested_languages = request.META.get('HTTP_ACCEPT_LANGUAGE')
-        if language_from_path:
-            active_language = language_from_path
+        if language_from_request:
+            active_language = language_from_request
         elif requested_languages:
             requested_languages = requested_languages.split(',')
             codes = tuple(language.code for language in get_languages_for_site(request.site) if language)
@@ -40,4 +42,11 @@ class TranslationMiddleware(MiddlewareMixin):
     def process_response(self, request, response):
         if 'Content-Language' not in response:
             response['Content-Language'] = request.LANGUAGE_CODE
+
+        response.set_cookie(
+            settings.LANGUAGE_COOKIE_NAME, request.LANGUAGE_CODE,
+            max_age=settings.LANGUAGE_COOKIE_AGE,
+            path=settings.LANGUAGE_COOKIE_PATH,
+            domain=settings.LANGUAGE_COOKIE_DOMAIN,
+        )
         return response
