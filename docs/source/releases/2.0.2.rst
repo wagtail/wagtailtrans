@@ -1,0 +1,14 @@
+================================
+Wagtailtrans 2.0.2 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+Features
+~~~~~~~~
+
+- Set cookie with language preference
+- Check language cookie as fallback in the `TranslationMiddleware`

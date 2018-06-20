@@ -1,10 +1,18 @@
 Changelog
 =========
 
+2.0.2 (20-06-2018)
+------------------
+
+ - Set cookie with language preference
+ - Check language cookie as fallback in the `TranslationMiddleware`
+
+
 2.0.1 (29-03-2018)
 ------------------
 
  - Added missing database migration
+
 
 2.0.0 (16-03-2018)
 ------------------
