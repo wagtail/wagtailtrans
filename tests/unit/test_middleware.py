@@ -1,13 +1,12 @@
-import pytest
-
+from django.conf import settings
 from django.http import HttpResponse
 from django.test import override_settings
 
+import pytest
+from tests.factories.language import LanguageFactory
+from tests.factories.sites import SiteFactory, SiteLanguagesFactory
 from wagtailtrans.middleware import TranslationMiddleware
 from wagtailtrans.models import Language
-
-from tests.factories.language import LanguageFactory
-from tests.factories.sites import SiteLanguagesFactory, SiteFactory
 
 
 @pytest.mark.django_db
@@ -101,3 +100,32 @@ class TestTranslationMiddleware(object):
         TranslationMiddleware().process_request(request)
         response = TranslationMiddleware().process_response(request, HttpResponse())
         assert response['Content-Language'] == 'nl'
+
+    def test_set_cookie_in_response(self, rf):
+        request = rf.get('/nl/random/page/')
+        TranslationMiddleware().process_request(request)
+        response = TranslationMiddleware().process_response(request, HttpResponse())
+        assert response.cookies.get(settings.LANGUAGE_COOKIE_NAME).value == 'nl'
+
+    def test_prefer_cookie_over_default_and_accept_header_in_request(self, rf):
+        Language.objects.all().delete()
+        LanguageFactory(code='en', is_default=True, live=True)
+        LanguageFactory(code='fr', is_default=False, live=True)
+        LanguageFactory(code='nl', is_default=False, live=True)
+
+        request = rf.get('/', HTTP_ACCEPT_LANGUAGE='fr')
+        request.COOKIES[settings.LANGUAGE_COOKIE_NAME] = 'nl'
+        TranslationMiddleware().process_request(request)
+        assert request.LANGUAGE_CODE == 'nl'
+
+    def test_prefer_path_over_cookie_in_request(self, rf):
+        Language.objects.all().delete()
+        LanguageFactory(code='en', is_default=True, live=True)
+        LanguageFactory(code='fr', is_default=False, live=True)
+        LanguageFactory(code='nl', is_default=False, live=True)
+        LanguageFactory(code='es', is_default=False, live=True)
+
+        request = rf.get('/es/', HTTP_ACCEPT_LANGUAGE='fr')
+        request.COOKIES[settings.LANGUAGE_COOKIE_NAME] = 'nl'
+        TranslationMiddleware().process_request(request)
+        assert request.LANGUAGE_CODE == 'es'
