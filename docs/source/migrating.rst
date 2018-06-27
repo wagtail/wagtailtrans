@@ -32,7 +32,7 @@ Non Wagtailtrans site
         # ...
     ]
 
-3. Replace ``wagtailtrans.models.TranslatablePage`` with the existing ``wagtail.core.models.Page`` models.
+3. Replace the existing ``wagtail.core.models.Page`` with the ``wagtailtrans.models.TranslatablePage``.
 
 .. code-block:: python
 
@@ -50,7 +50,7 @@ Non Wagtailtrans site
     $ python manage.py makemigrations <appname>
 
 
-5. Update migrations file to add the newly ``translatablepage_ptr_id`` field in the required table.
+5. Update migrations file to replace the ``page_ptr_id`` with the newly ``translatablepage_ptr_id`` field in the required table.
 
 .. note::
     We've made some assumptions when creating this migration file, for example a default language ``en`` and a page model named `HomePage` in the custom named app `pages`. Please make sure you've checked all the database queries and adjusted them according to your own setup before executing.
