@@ -27,10 +27,5 @@ def get_related_pages_for_language(language):
     :return: queryset or False
     """
     if isinstance(language, Language):
-        pages = language.pages.all()
-        for page in pages:
-            if page.is_canonical:
-                translated_pages = page.get_translations()
-                pages = pages.union(translated_pages)
-        return pages.order_by("title")
+        return language.pages.all().order_by("title")
     return False

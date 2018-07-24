@@ -162,13 +162,9 @@ class TestLanguageDeleteView(object):
         assert response['Location'].endswith('/language/')
 
 
-    def test_post_canonical(self, rf):
+    def test_post_default(self, rf):
         """
-        When we delete canonical language it should also delete the related
-        pages and other non canonical pages.
-
-        After a successfull post request the language and related pages for that
-        specific language plus the non canonical pages should also be deleted.
+        We should't delete the default language.
         """
         request = rf.post('/')
 
@@ -190,19 +186,8 @@ class TestLanguageDeleteView(object):
         assert TranslatablePage.objects.filter(language=self.default_language).count() == 3
         assert self.default_language in Language.objects.all()
 
-        response = self.view(self.default_language).dispatch(request)
+        with pytest.raises(Exception) as excinfo:
+            response = self.view(self.default_language).dispatch(request)
 
-        # Language and Pages does not exists after post request.
-        assert TranslatablePage.objects.count() == 0
-        assert TranslatablePage.objects.filter(language=self.default_language).count() == 0
-        assert self.default_language not in Language.objects.all()
-
-        # but the second language should not be deleted
-        assert self.second_language in Language.objects.all()
-
-        # New messages should be added
-        assert messages.added_new
-
-        # after a successfull post request it should redirect to index page.
-        assert response.status_code == 302
-        assert response['Location'].endswith('/language/')
+        # should raise proper error
+        assert repr(excinfo.value) == 'Exception("Can\'t delete a default language",)'

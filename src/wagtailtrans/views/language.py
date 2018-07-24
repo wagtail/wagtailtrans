@@ -12,9 +12,11 @@ class LanguageDeleteView(DeleteView):
         translatable pages (if there is any) before we can delete a Language
         which are references through protected foreign key.
 
-        TODO: Look into the posibilities to make the Language as CASCASE instead
-            of PROTECTED.
+        Also we'll not allow to delete the default language.
         """
+        if self.instance.is_default:
+            raise Exception("Can't delete a default language")
+
         if self.instance.pages.count():
             self.instance.pages.all().delete()
 

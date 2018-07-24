@@ -11,36 +11,44 @@
             </ul>
             <p><a href="{{ view.index_url }}" class="button">{% trans 'Go back to listing' %}</a></p>
         {% else %}
-            {% get_related_pages_for_language instance as related_pages %}
-            {% with instance as instance_name %}
-                <p>{% blocktrans %}Are you sure you want to delete the language <strong>{{ instance_name }}</strong>?{% endblocktrans %}</p>
+            {# Won't be able to delete if it is a default language #}
+            {% if instance.is_default == True %}
+                <h2 class="title">{% blocktrans with instance as instance_name %} Default language could not be deleted. {% endblocktrans %}</h2>
+                <p>{% blocktrans with instance as instance_name %} Language <strong>{{ instance_name }}</strong> is set to default and you can't delete a default language. Try setting another language as default first.{% endblocktrans %}</p>
 
-                {% if related_pages %}
-                    <p>{% blocktrans %}If you delete the language <strong>{{ instance_name }}</strong> all of the following pages will be deleted:{% endblocktrans %}</p>
-                    <table class="listing">
-                        <thead>
-                            <tr>
-                                <th>{% trans "Page" %}</th>
-                                <th>{% trans "Language" %}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                        {% for page_obj in related_pages %}
-                            <tr>
-                                <td class="title">{{ page_obj }}</td>
-                                <td>{{ page_obj.language }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% endif %}
-            {% endwith %}
+                <a href="{{ view.index_url }}" class="button button-primary">{% trans "Back" %}</a>
+            {% else %}
+                {% get_related_pages_for_language instance as related_pages %}
+                {% with instance as instance_name %}
+                    <p>{% blocktrans %}Are you sure you want to delete the language <strong>{{ instance_name }}</strong>?{% endblocktrans %}</p>
 
-            <form action="{{ view.delete_url }}" method="POST">
-                {% csrf_token %}
-                <input type="submit" value="{% trans 'Yes, delete it' %}" class="button serious" />
-                <a href="{{ view.index_url }}" class="button button-secondary">{% trans "No, don't delete it" %}</a>
-            </form>
+                    {% if related_pages %}
+                        <p>{% blocktrans %}If you delete the language <strong>{{ instance_name }}</strong> all of the following pages will be deleted:{% endblocktrans %}</p>
+                        <table class="listing">
+                            <thead>
+                                <tr>
+                                    <th>{% trans "Page" %}</th>
+                                    <th>{% trans "Language" %}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for page_obj in related_pages %}
+                                <tr>
+                                    <td class="title">{{ page_obj }}</td>
+                                    <td>{{ page_obj.language }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    {% endif %}
+                {% endwith %}
+
+                <form action="{{ view.delete_url }}" method="POST">
+                    {% csrf_token %}
+                    <input type="submit" value="{% trans 'Yes, delete it' %}" class="button serious" />
+                    <a href="{{ view.index_url }}" class="button button-secondary">{% trans "No, don't delete it" %}</a>
+                </form>
+            {% endif %}
         {% endif %}
     </div>
 {% endblock %}
