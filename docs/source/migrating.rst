@@ -32,15 +32,14 @@ Non Wagtailtrans site
         # ...
     ]
 
-3. Add ``wagtailtrans.models.TranslatablePage`` to the existing ``wagtail.core.models.Page`` models.
+3. Replace the existing ``wagtail.core.models.Page`` with the ``wagtailtrans.models.TranslatablePage``.
 
 .. code-block:: python
 
-    from wagtail.core.models import Page
     from wagtailtrans.models import TranslatablePage
 
 
-    class HomePage(TranslatablePage, Page):
+    class HomePage(TranslatablePage):
         # ...
 
 
@@ -51,10 +50,10 @@ Non Wagtailtrans site
     $ python manage.py makemigrations <appname>
 
 
-5. Update migrations file to add the newly ``translatablepage_ptr_id`` field in the required table.
+5. Update migrations file to replace the ``page_ptr_id`` with the newly ``translatablepage_ptr_id`` field in the required table.
 
 .. note::
-    We've made some assumptions when creating this migration file, for example a default language ``en``. Please make sure you've checked all the database queries and adjusted them according to your own setup before executing.
+    We've made some assumptions when creating this migration file, for example a default language ``en`` and a page model named `HomePage` in the custom named app `pages`. Please make sure you've checked all the database queries and adjusted them according to your own setup before executing.
 
 .. code-block:: python
 
@@ -86,6 +85,9 @@ Non Wagtailtrans site
                 ALTER TABLE pages_homepage ALTER COLUMN translatablepage_ptr_id SET NOT NULL;
                 ALTER TABLE pages_homepage ADD PRIMARY KEY (translatablepage_ptr_id);
 
+                -- Remove old page_ptr column
+                ALTER TABLE pages_homepage DROP COLUMN IF EXISTS page_ptr_id;
+
                 COMMIT;
                 """,
                 state_operations=[
@@ -95,10 +97,9 @@ Non Wagtailtrans site
                         field=models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailtrans.TranslatablePage'),
                         preserve_default=False,
                     ),
-                    migrations.AlterField(
+                    migrations.RemoveField(
                         model_name='homepage',
                         name='page_ptr',
-                        field=models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, to='wagtailcore.Page'),
                     ),
                 ]
             ),

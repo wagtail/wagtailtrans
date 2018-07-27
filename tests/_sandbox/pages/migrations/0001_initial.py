@@ -19,7 +19,6 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='HomePage',
             fields=[
-                ('page_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, to='wagtailcore.Page')),
                 ('translatablepage_ptr', models.OneToOneField(auto_created=True, on_delete=django.db.models.deletion.CASCADE, parent_link=True, primary_key=True, serialize=False, to='wagtailtrans.TranslatablePage')),
                 ('subtitle', models.CharField(help_text='A required field, for test purposes', max_length=255)),
                 ('body', wagtail.core.fields.RichTextField(blank=True, default='')),
@@ -28,6 +27,6 @@ class Migration(migrations.Migration):
             options={
                 'abstract': False,
             },
-            bases=('wagtailtrans.translatablepage', 'wagtailcore.page'),
+            bases=('wagtailtrans.translatablepage', ),
         ),
     ]

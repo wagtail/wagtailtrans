@@ -7,7 +7,7 @@ from wagtail.images.edit_handlers import ImageChooserPanel
 from wagtailtrans.models import TranslatablePage
 
 
-class HomePage(TranslatablePage, Page):
+class HomePage(TranslatablePage):
     """An implementation of TranslatablePage."""
 
     subtitle = models.CharField(max_length=255, help_text="A required field, for test purposes")

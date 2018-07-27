@@ -79,15 +79,14 @@ Incorporating
 
 To start using wagtailtrans we first need to create a translation home page. This page will route the requests to the homepage in the right language. We can create a translation site root page by creating the ``wagtailtrans.models.TranslatableSiteRootPage`` as the first page under the root page.
 
-In this example we will also make a ``HomePage`` which will be translatable. This is done by implementing the ``wagtailtrans.models.TranslatablePage`` next to Wagtail's ``Page``
+In this example we will also make a ``HomePage`` which will be translatable. This is done by implementing the ``wagtailtrans.models.TranslatablePage`` instead of Wagtail's ``Page``
 
 .. code-block:: python
 
-    from wagtail.core.models import Page
     from wagtailtrans.models import TranslatablePage
 
 
-    class HomePage(TranslatablePage, Page):
+    class HomePage(TranslatablePage):
         body = RichTextField(blank=True, default="")
         image = models.ForeignKey('wagtailimages.Image', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
 
