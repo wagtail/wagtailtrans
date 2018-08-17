@@ -2,6 +2,7 @@ import factory
 import pytest
 from django.contrib.auth.models import Permission
 from django.contrib.messages.storage.fallback import FallbackStorage
+from django.core.exceptions import PermissionDenied
 from django.db.models import signals
 from django.http import Http404
 from django.test import override_settings
@@ -161,7 +162,6 @@ class TestLanguageDeleteView(object):
         assert response.status_code == 302
         assert response['Location'].endswith('/language/')
 
-
     def test_post_default(self, rf):
         """
         We should't delete the default language.
@@ -186,8 +186,7 @@ class TestLanguageDeleteView(object):
         assert TranslatablePage.objects.filter(language=self.default_language).count() == 3
         assert self.default_language in Language.objects.all()
 
-        with pytest.raises(Exception) as excinfo:
+        with pytest.raises(PermissionDenied) as excinfo:
             response = self.view(self.default_language).dispatch(request)
-
         # should raise proper error
-        assert repr(excinfo.value) == 'Exception("Can\'t delete a default language",)'
+        assert repr(excinfo.value) == 'PermissionDenied("Can\'t delete a default language",)'
