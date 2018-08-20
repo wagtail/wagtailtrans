@@ -8,6 +8,8 @@ from django.http import Http404
 from django.test import override_settings
 
 from tests.factories import language, pages, sites, users
+from django.contrib.auth.models import Group
+from wagtailtrans import permissions
 from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.views.language import LanguageDeleteView
 from wagtailtrans.views.translation import TranslationView
@@ -112,7 +114,7 @@ class TestLanguageAdminView(object):
 class TestLanguageDeleteView(object):
 
     def setup(self):
-        self.default_language = language.LanguageFactory.create(code='en', is_default=True)
+        self.default_language = language.LanguageFactory(is_default=True, code='en', position=1)
         self.pages = sites.create_site_tree(language=self.default_language)
         self.second_language = language.LanguageFactory(is_default=False, code='fr', position=2)
         self.view = lambda language: LanguageDeleteView(
@@ -120,10 +122,13 @@ class TestLanguageDeleteView(object):
             model_admin=LanguageModelAdmin()
         )
 
+    def _get_language_group_name(self, language):
+        return 'translator-%s' % language.code
+
     def test_post(self, rf):
         """
         When we delete non canonical language it should also delete the related
-        pages.
+        pages and related roles/groups.
 
         After a successfull post request the language and related pages for
         that specific language should be deleted.
@@ -147,6 +152,8 @@ class TestLanguageDeleteView(object):
         assert TranslatablePage.objects.count() == 6
         assert TranslatablePage.objects.filter(language=self.second_language).count() == 3
         assert self.second_language in Language.objects.all()
+        assert Group.objects.\
+            filter(name=self._get_language_group_name(self.second_language)).count() == 1
 
         response = self.view(self.second_language).dispatch(request)
 
@@ -154,6 +161,8 @@ class TestLanguageDeleteView(object):
         assert TranslatablePage.objects.count() == 3
         assert TranslatablePage.objects.filter(language=self.second_language).count() == 0
         assert self.second_language not in Language.objects.all()
+        assert Group.objects.\
+            filter(name=self._get_language_group_name(self.second_language)).count() == 0
 
         # New messages should be added
         assert messages.added_new

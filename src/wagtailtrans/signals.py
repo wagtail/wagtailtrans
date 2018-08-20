@@ -1,12 +1,12 @@
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models.signals import m2m_changed, post_save, pre_delete
+from django.db.models.signals import m2m_changed, post_save, pre_delete, post_delete
 from wagtail.admin.signals import init_new_page
 from wagtail.core.models import Site, get_page_models
 
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.permissions import (
-    create_group_permissions, get_or_create_language_group)
+    create_group_permissions, get_or_create_language_group, remove_language_group)
 
 
 def synchronize_trees(sender, instance, **kwargs):
@@ -122,6 +122,16 @@ def create_language_permissions_and_group(sender, instance, **kwargs):
     create_group_permissions(group, instance)
 
 
+def remove_language_roles(sender, instance, **kwargs):
+    """Remove the `Translator` role which was created along with Language.
+
+    :param sender: Sender model
+    :param instance: Language instance
+    :param kwargs: kwargs
+    """
+    remove_language_group(instance)
+
+
 def force_parent_language(**kwargs):
     """Force the initial language of the first page, before creating..
 
@@ -154,6 +164,7 @@ def register_signal_handlers():
 
     """
     post_save.connect(create_language_permissions_and_group, sender=Language)
+    post_delete.connect(remove_language_roles, sender=Language)
     init_new_page.connect(force_parent_language)
     if get_wagtailtrans_setting('SYNC_TREE'):
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
