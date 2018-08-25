@@ -107,6 +107,22 @@ def update_language_trees_for_site(sender, instance, action, pk_set, **kwargs):
             create_new_language_tree_for_site(instance.site, language)
 
 
+def check_default_language_not_in_others(sender, instance, action, pk_set, **kwargs):
+    """Check that the default language is not included as an other language
+
+    :param sender: Sender model
+    :param instance: Language instance
+    :param action: The type of change to the m2m field
+    :param pk_set: Pks of the changed relations
+    :param kwargs: kwargs e.g. created
+
+    """
+    if action == 'pre_add':
+        dir(instance)
+        print(instance)
+        pk_set.discard(instance.default_language_id)
+
+
 def create_language_permissions_and_group(sender, instance, **kwargs):
     """Create a new `Translator` role with it's required permissions.
 
@@ -158,6 +174,7 @@ def register_signal_handlers():
     if get_wagtailtrans_setting('SYNC_TREE'):
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             m2m_changed.connect(update_language_trees_for_site, sender=SiteLanguages.other_languages.through)
+            m2m_changed.connect(check_default_language_not_in_others, sender=SiteLanguages.other_languages.through)
         else:
             post_save.connect(create_new_language_tree, sender=Language)
 
