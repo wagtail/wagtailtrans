@@ -90,6 +90,11 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
 
 @hooks.register('construct_explorer_page_queryset')
 def hide_non_canonical_languages(parent_page, pages, request):
+    """Hide translations when WAGTAILTRANS_HIDE_TRANSLATION_TREES=True.
+
+    This allows the user to only see the canonical language in the admin.
+
+    """
     if parent_page.depth > 1 and get_wagtailtrans_setting('HIDE_TRANSLATION_TREES'):
         return pages.filter(
             pk__in=(
@@ -103,6 +108,14 @@ def hide_non_canonical_languages(parent_page, pages, request):
 
 @hooks.register('register_page_listing_buttons')
 def edit_in_language_button(page, page_perms, is_parent=False):
+    """Add ``Edit in`` button to the page explorer.
+
+    When hiding all other translation except the canonical language, which is
+    done via ``WAGTAILTRANS_HIDE_TRANSLATION_TREES`` this will add an button to
+    allow the user to select a other language to edit, which provides a more
+    clear interface to work in.
+
+    """
     if not hasattr(page, 'language'):
         return
 
@@ -118,6 +131,13 @@ def edit_in_language_button(page, page_perms, is_parent=False):
 
 @hooks.register('wagtailtrans_dropdown_edit_hook')
 def edit_in_language_items(page, page_perms, is_parent=False):
+    """Add all other languages in the ``Edit in`` dropdown.
+
+    All languages other than the canonical language are listed as dropdown
+    options which allows the user to click on them and edit the page in the
+    language they prefer.
+
+    """
     other_languages = (
         page.specific
         .get_translations(only_live=False)
