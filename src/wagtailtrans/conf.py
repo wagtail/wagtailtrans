@@ -3,6 +3,7 @@ from django.conf import settings
 DEFAULT_SETTINGS = {
     'SYNC_TREE': True,
     'LANGUAGES_PER_SITE': False,
+    'HIDE_TRANSLATION_TREES': False,
 }
 
 

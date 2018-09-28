@@ -4,12 +4,12 @@ from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
-from wagtail.admin import widgets
-from wagtail.core import hooks
 
+from wagtail.admin import widgets
+from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
+from wagtail.core import hooks
 from wagtailtrans.conf import get_wagtailtrans_setting
-from wagtailtrans.models import Language
+from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.urls import translations
 
 
@@ -86,3 +86,49 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
                 priority=prio)
 
             prio += 1
+
+
+@hooks.register('construct_explorer_page_queryset')
+def hide_non_canonical_languages(parent_page, pages, request):
+    if parent_page.depth > 1 and get_wagtailtrans_setting('HIDE_TRANSLATION_TREES'):
+        return pages.filter(
+            pk__in=(
+                TranslatablePage.objects
+                .filter(canonical_page__isnull=True)
+                .values_list('pk', flat=True)
+            )
+        )
+    return pages
+
+
+@hooks.register('register_page_listing_buttons')
+def edit_in_language_button(page, page_perms, is_parent=False):
+    if not hasattr(page, 'language'):
+        return
+
+    yield widgets.ButtonWithDropdownFromHook(
+        _("Edit in"),
+        hook_name='wagtailtrans_dropdown_edit_hook',
+        page=page,
+        page_perms=page_perms,
+        is_parent=is_parent,
+        priority=10
+    )
+
+
+@hooks.register('wagtailtrans_dropdown_edit_hook')
+def edit_in_language_items(page, page_perms, is_parent=False):
+    other_languages = (
+        page.specific
+        .get_translations(only_live=False)
+        .exclude(pk=page.pk)
+        .select_related('language')
+        .order_by('language__position')
+    )
+
+    for prio, language_page in enumerate(other_languages):
+        yield widgets.Button(
+            force_text(language_page.language),
+            reverse('wagtailadmin_pages:edit', args=(language_page.pk,)),
+            priority=prio,
+        )
