@@ -5,7 +5,10 @@
 Settings
 ========
 
-There are a few settings which can be used to configure wagtailtrans to suit your needs, these settings need to be configured in your django settings module. All wagtailtrans settings are prefixed with ``WAGTAILTRANS_`` to avoid conflicts with other packages used.
+There are a few settings which can be used to configure wagtailtrans to suit
+your needs, these settings need to be configured in your django settings module.
+All wagtailtrans settings are prefixed with ``WAGTAILTRANS_`` to avoid conflicts
+with other packages used.
 
 
 ``WAGTAILTRANS_SYNC_TREE``
@@ -27,4 +30,17 @@ If set to ``False`` wagtailtrans will work with ``Freeform`` trees.
 
 :Default: ``False``
 
-If set to ``True`` wagtailtrans will allow you to define a default language and additional languages per site. This is mostly used in a ``multi site`` setup and allowes you to define the languages per site, this way they can differ for all available sites.
+If set to ``True`` wagtailtrans will allow you to define a default language and
+additional languages per site. This is mostly used in a ``multi site`` setup and
+allowes you to define the languages per site, this way they can differ for all
+available sites.
+
+
+``WAGTAILTRANS_HIDE_TRANSLATION_TREES``
+---------------------------------------
+
+:Default: ``False``
+
+If set to ``True`` the CMS user will only see the tree of the canonical
+language, with an ``edit in`` button where they can choose the language to edit
+the page in.
