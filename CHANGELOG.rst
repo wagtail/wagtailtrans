@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.3 (09-10-2018)
+------------------
+
+ - Add a `HIDE_TRANSLATION_TREES` setting with an edit in [language] button
+
+
 2.0.2 (20-06-2018)
 ------------------
 
