@@ -153,6 +153,9 @@ def edit_in_language_items(page, page_perms, is_parent=False):
 
         yield widgets.Button(
             force_text(language_page.language),
-            f"{edit_url}?next={next_url}",
+            "{edit_url}?next={next_url}".format(
+                edit_url=edit_url,
+                next_url=next_url
+            ),
             priority=prio,
         )
