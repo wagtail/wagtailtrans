@@ -1,0 +1,13 @@
+================================
+Wagtailtrans 2.0.4 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+Bugfixes
+~~~~~~~~
+
+- Add "?next=" to edit url to redirect back to the right tree after edit when `HIDE_TRANSLATION_TREES` is enabled.

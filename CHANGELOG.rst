@@ -1,6 +1,11 @@
 Changelog
 =========
 
+2.0.4 (11-10-2018)
+------------------
+
+ - Fix: Add "?next=" to edit url to redirect back to the right tree after edit when `HIDE_TRANSLATION_TREES` is enabled.
+
 2.0.3 (09-10-2018)
 ------------------
 
