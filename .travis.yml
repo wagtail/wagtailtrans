@@ -44,6 +44,8 @@ matrix:
       python: 3.6
     - env: TOXENV=py37-dj2-wt2
       python: 3.7
+      sudo: true
+      dist: xenial
 
     # Wagtail 2.1
     - env: TOXENV=py35-dj2-wt21
@@ -52,6 +54,8 @@ matrix:
       python: 3.6
     - env: TOXENV=py37-dj2-wt21
       python: 3.7
+      sudo: true
+      dist: xenial
 
     # Wagtail 2.2
     - env: TOXENV=py35-dj2-wt22
@@ -60,6 +64,8 @@ matrix:
       python: 3.6
     - env: TOXENV=py37-dj2-wt22
       python: 3.7
+      sudo: true
+      dist: xenial
 
     # Wagtail 2.3
     - env: TOXENV=py35-dj2-wt23
@@ -68,6 +74,8 @@ matrix:
       python: 3.6
     - env: TOXENV=py37-dj2-wt23
       python: 3.7
+      sudo: true
+      dist: xenial
 
     # Django 2.1
     # Wagtail 2.3
@@ -77,6 +85,8 @@ matrix:
       python: 3.6
     - env: TOXENV=py37-dj21-wt23
       python: 3.7
+      sudo: true
+      dist: xenial
 
     # Flake 8
     - env: TOXENV=flake8
