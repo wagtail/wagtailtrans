@@ -147,8 +147,15 @@ def edit_in_language_items(page, page_perms, is_parent=False):
     )
 
     for prio, language_page in enumerate(other_languages):
+        edit_url = reverse('wagtailadmin_pages:edit', args=(language_page.pk,))
+        return_page = language_page.canonical_page or language_page
+        next_url = reverse('wagtailadmin_explore', args=(return_page.get_parent().pk,))
+
         yield widgets.Button(
             force_text(language_page.language),
-            reverse('wagtailadmin_pages:edit', args=(language_page.pk,)),
+            "{edit_url}?next={next_url}".format(
+                edit_url=edit_url,
+                next_url=next_url
+            ),
             priority=prio,
         )
