@@ -103,5 +103,7 @@ script:
   - tox -e $TOXENV
 services:
   - postgresql
+addons:
+    postgresql: 9.4
 after_success:
   - codecov
