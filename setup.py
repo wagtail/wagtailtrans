@@ -65,10 +65,6 @@ setup(
         'Framework :: Django :: 2.0',
         'Framework :: Django :: 2.1',
         'Framework :: Wagtail',
-        'Framework :: Wagtail :: 2.0',
-        'Framework :: Wagtail :: 2.1',
-        'Framework :: Wagtail :: 2.2',
-        'Framework :: Wagtail :: 2.3',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ]
 )
