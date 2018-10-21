@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-21 12:04+0800\n"
-"PO-Revision-Date: 2018-10-21 12:18+0806\n"
+"POT-Creation-Date: 2018-10-21 17:19+0800\n"
+"PO-Revision-Date: 2018-10-21 17:20+0806\n"
 "Last-Translator: b'  <admin@xx.com>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
@@ -27,7 +27,7 @@ msgstr "Wagtail翻译"
 msgid "All fields need to be copied because of some required fields"
 msgstr "因为某些非空字段，所有字段都需要拷贝"
 
-#: models.py:33
+#: models.py:33 models.py:106
 msgid "Language"
 msgstr "语言"
 
@@ -45,15 +45,25 @@ msgstr "你不能取消is_default选择，要修改默认语言，请在另一�
 msgid "Language details"
 msgstr "语言详情"
 
-#: models.py:156
-msgid "Translations"
-msgstr "翻译"
-
-#: models.py:394 wagtail_hooks.py:19
+#: models.py:107 models.py:400 wagtail_hooks.py:19
 msgid "Languages"
 msgstr "语言"
 
-#: models.py:406 models.py:407
+#: models.py:158
+msgid "Translations"
+msgstr "翻译"
+
+#: models.py:310
+#| msgid "Translate"
+msgid "Translatable page"
+msgstr "多语言页面"
+
+#: models.py:311
+#| msgid "Translate"
+msgid "Translatable pages"
+msgstr "多语言页面"
+
+#: models.py:412 models.py:413
 msgid "Site languages"
 msgstr "站点语言"
 
