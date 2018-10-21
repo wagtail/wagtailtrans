@@ -1,0 +1,155 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2018-10-21 12:04+0800\n"
+"PO-Revision-Date: 2018-10-21 12:18+0806\n"
+"Last-Translator: b'  <admin@xx.com>'\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Translated-Using: django-rosetta 0.9.0\n"
+
+#: apps.py:12
+msgid "Wagtail Translations"
+msgstr "Wagtail翻译"
+
+#: forms.py:25
+msgid "All fields need to be copied because of some required fields"
+msgstr "因为某些非空字段，所有字段都需要拷贝"
+
+#: models.py:33
+msgid "Language"
+msgstr "语言"
+
+#: models.py:34
+msgid "One of the languages defined in LANGUAGES"
+msgstr "在LANGUAGES中定义了的一门语言"
+
+#: models.py:55
+msgid ""
+"You can not remove is_default from a language. To change the default "
+"language, select is_default on a different language"
+msgstr "你不能取消is_default选择，要修改默认语言，请在另一个语言上选择is_default。"
+
+#: models.py:83
+msgid "Language details"
+msgstr "语言详情"
+
+#: models.py:156
+msgid "Translations"
+msgstr "翻译"
+
+#: models.py:394 wagtail_hooks.py:19
+msgid "Languages"
+msgstr "语言"
+
+#: models.py:406 models.py:407
+msgid "Site languages"
+msgstr "站点语言"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:3
+#, python-format
+msgid "Delete %(title)s"
+msgstr "删除 %(title)s"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:6
+msgid "Delete"
+msgstr "删除"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:11
+msgid "Are you sure you want to delete this page?"
+msgstr "您确定要删除该页面吗？"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:13
+#, python-format
+msgid ""
+"\n"
+"                    This will also delete one more subpage.\n"
+"                "
+msgid_plural ""
+"\n"
+"                    This will also delete %(descendant_count)s more subpages.\n"
+"                "
+msgstr[0] ""
+"\n"
+"同时删除一个以上的子页面。"
+msgstr[1] ""
+"\n"
+"同时删除 %(descendant_count)s 以上的子页面。"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:23
+msgid ""
+"Deleting this page will also delete the following translated page(s) and "
+"their subpages"
+msgstr "删除该页的同时也会删除以下翻译过的页面及其子页面。"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:36
+msgid "Yes, delete it"
+msgstr "确认删除"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:37
+msgid "No, don't delete it"
+msgstr "取消删除"
+
+#: templates/wagtailadmin/pages/confirm_delete.html:43
+#, python-format
+msgid ""
+"Alternatively you can <a href=\"%(unpublish_url)s\">unpublish the page</a>. "
+"This removes the page from public view and you can edit or publish it again "
+"later."
+msgstr "你也可以 <a href=\"%(unpublish_url)s\">取消发布</a>。这样会移除该页面的公开视图，后续您可以继续编辑或重新发布。"
+
+#: templates/wagtailadmin/pages/listing/_page_title_explore.html:7
+msgid "Edit this page"
+msgstr "编辑该页"
+
+#: templates/wagtailtrans/translation/add.html:5
+#, python-format
+msgid "New %(page_type)s"
+msgstr "添加 %(page_type)s"
+
+#: templates/wagtailtrans/translation/add.html:15
+msgid "Translate"
+msgstr "翻译"
+
+#: templates/wagtailtrans/translation/add.html:29
+msgid "Saving..."
+msgstr "保存中..."
+
+#: templates/wagtailtrans/translation/add.html:29
+msgid "Save draft"
+msgstr "保存草稿"
+
+#: templates/wagtailtrans/translation/add.html:34
+msgid "Publishing..."
+msgstr "发布中..."
+
+#: templates/wagtailtrans/translation/add.html:34
+msgid "Publish"
+msgstr "发布"
+
+#: templates/wagtailtrans/translation/add.html:37
+msgid "Submit for moderation"
+msgstr "提交审核"
+
+#: templates/wagtailtrans/translation/add.html:60
+msgid "This page has unsaved changes."
+msgstr "该页面有未保存的修改。"
+
+#: views/translation.py:15
+msgid "Translate {} to {}"
+msgstr "把{}翻译成{}"
+
+#: wagtail_hooks.py:123
+msgid "Edit in"
+msgstr "编辑语言"
