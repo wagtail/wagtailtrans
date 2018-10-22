@@ -1,3 +1,5 @@
+from functools import wraps
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
 from wagtail.admin.signals import init_new_page
@@ -9,6 +11,18 @@ from wagtailtrans.permissions import (
     create_group_permissions, get_or_create_language_group)
 
 
+def disable_for_loaddata(signal_handler):
+    """Decorator that turns off signal handlers when loading fixture data."""
+
+    @wraps(signal_handler)
+    def wrapper(*args, **kwargs):
+        if kwargs.get('raw'):
+            return
+        signal_handler(*args, **kwargs)
+    return wrapper
+
+
+@disable_for_loaddata
 def synchronize_trees(sender, instance, **kwargs):
     """synchronize the translation trees when
     a TranslatablePage is created.
@@ -38,6 +52,7 @@ def synchronize_trees(sender, instance, **kwargs):
         instance.create_translation(language=lang, copy_fields=True)
 
 
+@disable_for_loaddata
 def synchronize_deletions(sender, instance, **kwargs):
     """We use pre_delete because when sync is disabled the foreign_key on
     canonical pages on_delete is set_null.
@@ -92,6 +107,7 @@ def create_new_language_tree(sender, instance, **kwargs):
         create_new_language_tree_for_site(site, instance)
 
 
+@disable_for_loaddata
 def update_language_trees_for_site(sender, instance, action, pk_set, **kwargs):
     """Create a new language tree for a site if a new language is added to it..
 
@@ -107,6 +123,7 @@ def update_language_trees_for_site(sender, instance, action, pk_set, **kwargs):
             create_new_language_tree_for_site(instance.site, language)
 
 
+@disable_for_loaddata
 def create_language_permissions_and_group(sender, instance, **kwargs):
     """Create a new `Translator` role with it's required permissions.
 
