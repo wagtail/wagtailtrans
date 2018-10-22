@@ -111,12 +111,6 @@ DATABASES = {
     }
 }
 
-if DATABASES['default']['ENGINE'] == 'sql_server.pyodbc':
-    DATABASES['default']['OPTIONS'] = {
-        'driver': 'SQL Server Native Client 11.0',
-        'MARS_Connection': 'True',
-    }
-
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
 AUTH_PASSWORD_VALIDATORS = [
