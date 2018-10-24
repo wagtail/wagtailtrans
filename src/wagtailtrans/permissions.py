@@ -57,6 +57,23 @@ def get_or_create_language_group(language):
     return group
 
 
+def remove_language_group(language):
+    """Remove translator group for a specific language (if exists).
+
+    :param language: Language instance
+    :return: Boolean True
+    """
+    try:
+        group = Group.objects.get(name='translator-%s' % language.code)
+    except Group.DoesNotExist:
+        # Do Nothing
+        pass
+    else:
+        group.delete()
+
+    return True
+
+
 def create_group_page_permission(page, language):
     """Create new GroupPagePermissions for
     the newly created page

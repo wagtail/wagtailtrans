@@ -1,5 +1,5 @@
 {% extends "wagtailadmin/base.html" %}
-{% load i18n wagtailadmin_tags translations_wagtail_admin %}
+{% load i18n wagtailadmin_tags wagtailtrans_admin_tags %}
 {% block titletag %}{% blocktrans with title=page.title %}Delete {{ title }}{% endblocktrans %}{% endblock %}
 
 {% block content %}

@@ -11,6 +11,7 @@ from wagtail.core import hooks
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.urls import translations
+from wagtailtrans.views.language import LanguageDeleteView
 
 
 class LanguageModelAdmin(ModelAdmin):
@@ -21,6 +22,7 @@ class LanguageModelAdmin(ModelAdmin):
     menu_order = 1000
     list_display = ['__str__', 'position', 'live', 'is_default']
     list_filter = ['live']
+    delete_view_class = LanguageDeleteView
 
 
 modeladmin_register(LanguageModelAdmin)
