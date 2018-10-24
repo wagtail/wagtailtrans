@@ -1,13 +1,13 @@
-.. image:: https://raw.githubusercontent.com/LUKKIEN/wagtailtrans/master/docs/source/_static/wagtailtrans-logo.png
+.. image:: https://raw.githubusercontent.com/wagtail/wagtailtrans/master/docs/source/_static/wagtailtrans-logo.png
     :alt: Wagtailtrans logo
 
 
-.. image:: https://travis-ci.org/LUKKIEN/wagtailtrans.svg?branch=master
-    :target: https://travis-ci.org/LUKKIEN/wagtailtrans
+.. image:: https://travis-ci.org/wagtail/wagtailtrans.svg?branch=master
+    :target: https://travis-ci.org/wagtail/wagtailtrans
     :alt: Build status
 
-.. image:: https://codecov.io/gh/LUKKIEN/wagtailtrans/branch/master/graph/badge.svg
-    :target: https://codecov.io/gh/LUKKIEN/wagtailtrans
+.. image:: https://codecov.io/gh/wagtail/wagtailtrans/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/wagtail/wagtailtrans
     :alt: Code coverage
 
 .. image:: https://badge.fury.io/py/wagtailtrans.svg
