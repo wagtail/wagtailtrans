@@ -40,7 +40,7 @@ available sites.
     When using Django's loaddata wagtailtrans detaches all signals so there
     aren't any weird side-effects triggered when loading your data. However
     using loaddata in combination with ``WAGTAILTRANS_LANGUAGES_PER_SITE`` there
-    is still one signal which can't be detatched ``m2m_changed`` to do this you
+    is still one signal which can't be detached ``m2m_changed`` to do this you
     can provide the environment variable ``WAGTAILTRANS_DISABLE_SIGNALS=True`` to
     your loadddata command, this will skip adding the signals as well.
 
