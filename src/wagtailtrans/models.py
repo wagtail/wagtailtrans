@@ -9,12 +9,13 @@ from django.http import Http404
 from django.shortcuts import redirect
 from django.utils.encoding import force_text
 from django.utils.functional import cached_property
-from django.utils.translation import ugettext_lazy as _
 from django.utils.translation import activate
-from wagtail.contrib.settings.models import BaseSetting
-from wagtail.contrib.settings.registry import register_setting
+from django.utils.translation import ugettext_lazy as _
+
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
+from wagtail.contrib.settings.models import BaseSetting
+from wagtail.contrib.settings.registry import register_setting
 from wagtail.core.models import Page
 from wagtail.search.index import FilterField
 
@@ -370,6 +371,14 @@ Page.permissions_for_user = page_permissions_for_user
 
 class SiteLanguagesForm(WagtailAdminModelForm):
     """Form to be used in the wagtail admin."""
+
+    def clean_other_languages(self):
+        if (
+            'default_language' in self.cleaned_data and
+            self.cleaned_data['default_language'] in self.cleaned_data['other_languages']
+        ):
+            raise forms.ValidationError(_("Default language cannot be in other_languages"))
+        return self.cleaned_data['other_languages']
 
     def save(self, commit=True):
         data = self.cleaned_data
