@@ -3,3 +3,4 @@ include README.rst
 
 recursive-include src/wagtailtrans/templates *.*
 recursive-include src/wagtailtrans/static *
+recursive-include src/wagtailtrans/locale *.mo

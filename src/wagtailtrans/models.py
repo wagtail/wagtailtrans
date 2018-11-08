@@ -104,6 +104,8 @@ class Language(models.Model):
 
     class Meta:
         ordering = ['position']
+        verbose_name = _('Language')
+        verbose_name_plural = _('Languages')
 
     def __str__(self):
         return force_text(dict(settings.LANGUAGES).get(self.code))
@@ -304,6 +306,10 @@ class TranslatablePage(Page):
     @cached_property
     def is_canonical(self):
         return not self.canonical_page_id and self.has_translations
+
+    class Meta:
+        verbose_name = _('Translatable page')
+        verbose_name_plural = _('Translatable pages')
 
 
 def get_user_language(request):
