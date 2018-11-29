@@ -11,6 +11,7 @@ from wagtail.core import hooks
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.urls import translations
+from wagtailtrans.utils.strict_permissions import is_privileged_user, allowed_language_codes
 
 
 class LanguageModelAdmin(ModelAdmin):
@@ -63,14 +64,24 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
         )
 
     @hooks.register('wagtailtrans_dropdown_hook')
-    def page_translations_menu_items(page, page_perms, is_parent=False):
-        prio = 1
-        exclude_lang = None
+    def page_translations_menu_items(page, page_perms, request, is_parent=False):
+        priority = 1
+        exclude_lang = []
 
         if hasattr(page, 'language') and page.language:
-            exclude_lang = page.language
+            exclude_lang += [page.language.code]
 
-        other_languages = set(Language.objects.live().exclude(pk=exclude_lang.pk).order_by('position'))
+        if get_wagtailtrans_setting('STRICT_TRANSLATE_PERMISSIONS'):
+            user_groups = request.user.groups.values_list('name', flat=True)
+            if not is_privileged_user(user_groups):
+                exclude_lang += [
+                    lang for lang in Language.objects.live().values_list('code', flat=True)
+                    if lang not in allowed_language_codes(user_groups)
+                ]
+
+        other_languages = set(
+            Language.objects.live().exclude(code__in=exclude_lang).order_by('position')
+        )
 
         translations = page.get_translations(only_live=False).select_related('language')
         taken_languages = set(t.language for t in translations)
@@ -83,9 +94,10 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
                     'instance_id': page.pk,
                     'language_code': language.code,
                 }),
-                priority=prio)
+                priority=priority
+            )
 
-            prio += 1
+            priority += 1
 
 
 @hooks.register('construct_explorer_page_queryset')
@@ -130,23 +142,31 @@ def edit_in_language_button(page, page_perms, is_parent=False):
 
 
 @hooks.register('wagtailtrans_dropdown_edit_hook')
-def edit_in_language_items(page, page_perms, is_parent=False):
-    """Add all other languages in the ``Edit in`` dropdown.
+def edit_in_language_items(page, page_perms, request, is_parent=False):
+    """
+    Add all other languages in the ``Edit in`` dropdown.
 
     All languages other than the canonical language are listed as dropdown
     options which allows the user to click on them and edit the page in the
     language they prefer.
-
     """
+    excluded_language_codes = []
+    if get_wagtailtrans_setting('STRICT_TRANSLATE_PERMISSIONS'):
+        """Restricting translate permissions according to user's groups."""
+        user_groups = request.user.groups.values_list('name', flat=True)
+        if not is_privileged_user(user_groups):
+            excluded_language_codes += [
+                lang for lang in Language.objects.live().values_list('code', flat=True)
+                if lang not in allowed_language_codes(user_groups)
+            ]
+
     other_languages = (
-        page.specific
-        .get_translations(only_live=False)
-        .exclude(pk=page.pk)
-        .select_related('language')
-        .order_by('language__position')
+        page.specific.get_translations(only_live=False).exclude(
+            pk=page.pk, language__code__in=excluded_language_codes
+        ).select_related('language').order_by('language__position')
     )
 
-    for prio, language_page in enumerate(other_languages):
+    for priority, language_page in enumerate(other_languages):
         edit_url = reverse('wagtailadmin_pages:edit', args=(language_page.pk,))
         return_page = language_page.canonical_page or language_page
         next_url = reverse('wagtailadmin_explore', args=(return_page.get_parent().pk,))
@@ -157,5 +177,5 @@ def edit_in_language_items(page, page_perms, is_parent=False):
                 edit_url=edit_url,
                 next_url=next_url
             ),
-            priority=prio,
+            priority=priority,
         )
