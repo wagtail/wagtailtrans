@@ -36,7 +36,7 @@ tests_require = [
 
 setup(
     name='wagtailtrans',
-    version='intelligems-1.0.0',
+    version='1.0.0rc1',
     description='A Wagtail add-on for supporting multilingual sites',
     author='Lukkien BV',
     author_email='support@lukkien.com',
