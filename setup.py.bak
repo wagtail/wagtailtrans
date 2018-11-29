@@ -6,8 +6,7 @@ from setuptools import find_packages, setup
 PROJECT_DIR = os.path.dirname(__file__)
 
 sys.path.append(os.path.join(PROJECT_DIR, 'src'))
-# from wagtailtrans import get_version  # noqa isort:skip
-
+from wagtailtrans import get_version  # noqa isort:skip
 
 sandbox_require = [
     'Django>=2.1',
@@ -36,7 +35,7 @@ tests_require = [
 
 setup(
     name='wagtailtrans',
-    version='intelligems-1.0.0',
+    version=get_version().replace(' ', '-'),
     description='A Wagtail add-on for supporting multilingual sites',
     author='Lukkien BV',
     author_email='support@lukkien.com',
