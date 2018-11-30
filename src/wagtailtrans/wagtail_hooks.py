@@ -64,7 +64,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
         )
 
     @hooks.register('wagtailtrans_dropdown_hook')
-    def page_translations_menu_items(page, page_perms, request, is_parent=False):
+    def page_translations_menu_items(page, page_perms, is_parent=False):
         priority = 1
         exclude_lang = []
 
@@ -72,7 +72,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
             exclude_lang += [page.language.code]
 
         if get_wagtailtrans_setting('STRICT_TRANSLATE_PERMISSIONS'):
-            user_groups = request.user.groups.values_list('name', flat=True)
+            user_groups = page_perms.user.groups.values_list('name', flat=True)
             if not is_privileged_user(user_groups):
                 exclude_lang += [
                     lang for lang in Language.objects.live().values_list('code', flat=True)
@@ -142,7 +142,7 @@ def edit_in_language_button(page, page_perms, is_parent=False):
 
 
 @hooks.register('wagtailtrans_dropdown_edit_hook')
-def edit_in_language_items(page, page_perms, request, is_parent=False):
+def edit_in_language_items(page, page_perms, is_parent=False):
     """
     Add all other languages in the ``Edit in`` dropdown.
 
@@ -153,7 +153,7 @@ def edit_in_language_items(page, page_perms, request, is_parent=False):
     excluded_language_codes = []
     if get_wagtailtrans_setting('STRICT_TRANSLATE_PERMISSIONS'):
         """Restricting translate permissions according to user's groups."""
-        user_groups = request.user.groups.values_list('name', flat=True)
+        user_groups = page_perms.user.groups.values_list('name', flat=True)
         if not is_privileged_user(user_groups):
             excluded_language_codes += [
                 lang for lang in Language.objects.live().values_list('code', flat=True)
