@@ -18,13 +18,14 @@ Installation
 
     $ pip install wagtailtrans
 
-2. Add ``wagtailtrans`` and ``wagtail.contrib.modeladmin`` to your ``INSTALLED_APPS``::
+2. Add ``wagtailtrans``, ``wagtail.contrib.modeladmin`` and if you're using languages per site ``wagtail.contrib.settings`` to your ``INSTALLED_APPS``::
 
 .. code-block:: python
 
     INSTALLED_APPS = [
         # ...
         'wagtail.contrib.modeladmin',
+        'wagtail.contrib.settings',  # Only required when WAGTAILTRANS_LANGUAGES_PER_SITE=True
         'wagtailtrans',
         # ...
     ]
