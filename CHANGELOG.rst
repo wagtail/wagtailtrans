@@ -1,10 +1,23 @@
 Changelog
 =========
 
+2.0.5 (04-02-2019)
+------------------
+
+ - Add mention of wagtail.contrib.settings in the documentation
+ - Show languages in their local names.
+ - Add W504 to flake8 ignore, it's changed in a newer version of flake8
+ - Add env var WAGTAILTRANS_DISABLE_SIGNALS to disable many to many signal
+ - Add a disable_for_loaddata decorator on signals
+ - Add Simplified Chinese translation
+ - Validate default_language to not exist in other_languages
+
+
 2.0.4 (11-10-2018)
 ------------------
 
  - Fix: Add "?next=" to edit url to redirect back to the right tree after edit when `HIDE_TRANSLATION_TREES` is enabled.
+
 
 2.0.3 (09-10-2018)
 ------------------
