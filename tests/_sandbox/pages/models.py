@@ -25,8 +25,6 @@ class HomePage(TranslatablePage):
 
 
 class Article(Page):
-    image = models.ForeignKey(
-        'wagtailimages.Image', null=True, blank=True, on_delete=models.SET_NULL, related_name='+')
     date = models.DateField()
     language = models.ForeignKey('wagtailtrans.Language', on_delete=models.SET_NULL, null=True)
     intro_text = RichTextField()
@@ -36,6 +34,4 @@ class Article(Page):
         FieldPanel('date'),
         FieldPanel('intro_text'),
         FieldPanel('language'),
-        ImageChooserPanel('image')
-
     ]
