@@ -41,27 +41,25 @@ if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
                 path=static('wagtailtrans/js/site_languages_editor.js'))
         )
 
+if not get_wagtailtrans_setting('SYNC_TREE'):
+    """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled"""
 
-@hooks.register('register_page_listing_buttons')
-def page_translations_menu(page, page_perms, is_parent=False):
-    if get_wagtailtrans_setting('SYNC_TREE'):
-        """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled"""
-        return
+    @hooks.register('register_page_listing_buttons')
+    def page_translations_menu(page, page_perms, is_parent=False):
+        if not isinstance(page, TranslatablePage) or not hasattr(page, 'language'):
+            return
 
-    if not isinstance(page, TranslatablePage) or not hasattr(page, 'language'):
-        return
+        if hasattr(page, 'canonical_page') and page.canonical_page:
+            return
 
-    if hasattr(page, 'canonical_page') and page.canonical_page:
-        return
-
-    yield widgets.ButtonWithDropdownFromHook(
-        _("Translate into"),
-        hook_name='wagtailtrans_dropdown_hook',
-        page=page,
-        page_perms=page_perms,
-        is_parent=is_parent,
-        priority=10
-    )
+        yield widgets.ButtonWithDropdownFromHook(
+            'Translate into',
+            hook_name='wagtailtrans_dropdown_hook',
+            page=page,
+            page_perms=page_perms,
+            is_parent=is_parent,
+            priority=10
+        )
 
     @hooks.register('wagtailtrans_dropdown_hook')
     def page_translations_menu_items(page, page_perms, is_parent=False):
