@@ -111,7 +111,8 @@ class Language(models.Model):
         return force_text(dict(settings.LANGUAGES).get(self.code))
 
     def has_pages_in_site(self, site):
-        return self.pages.filter(path__startswith=site.root_page.path).exists()
+        return True  # FIXME
+        # return self.pages.filter(path__startswith=site.root_page.path).exists()
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
@@ -143,7 +144,7 @@ def _language_default():
 class TranslatableMixin(models.Model):
     canonical_page = models.ForeignKey(
         'self', related_name='translations', blank=True, null=True, on_delete=models.SET_NULL)
-    language = models.ForeignKey(Language, related_name='pages', on_delete=models.PROTECT, default=_language_default)
+    language = models.ForeignKey(Language, on_delete=models.PROTECT, default=_language_default)
 
     def get_admin_display_title(self):
         return "{} ({})".format(super().get_admin_display_title(), self.language)
@@ -181,9 +182,11 @@ class TranslatableMixin(models.Model):
         if getattr(canonical_target, 'canonical_page', False):
             canonical_target = canonical_target.canonical_page
 
+        translation_model = self.get_translation_model()
+
         for page in translations:
             # get target because at this point we assume the tree is in sync.
-            target = self.__class__.objects.filter(
+            target = translation_model.objects.filter(
                 Q(language=page.language),
                 Q(canonical_page=canonical_target) | Q(pk=canonical_target.pk)
             ).get()
@@ -200,8 +203,9 @@ class TranslatableMixin(models.Model):
         :return: TranslatablePage instance
 
         """
+        translation_model = self.get_translation_model()
         canonical_page_id = self.canonical_page_id or self.pk
-        translations = self.__class__.objects.filter(Q(canonical_page=canonical_page_id) | Q(pk=canonical_page_id))
+        translations = translation_model.objects.filter(Q(canonical_page=canonical_page_id) | Q(pk=canonical_page_id))
 
         if not include_self:
             translations = translations.exclude(pk=self.pk)
@@ -218,19 +222,28 @@ class TranslatableMixin(models.Model):
         :return: Boolean
 
         """
-        return language.pages.filter(canonical_page=self).exists()
+        translation_model = self.get_translation_model()
+        return translation_model.objects.filter(language=language, canonical_page=self).exists()
 
     def get_translation_parent(self, language):
         site = self.get_site()
         if not language.has_pages_in_site(site):
             return site.root_page
 
-        translation_parent = (
-            self.__class__.objects
-            .filter(canonical_page=self.get_parent(), language=language, path__startswith=site.root_page.path)
+        parent = self.get_parent()
+        parent_class = parent.specific_class
+
+        if not issubclass(parent_class, TranslatableMixin):
+            # Parent is not translatable
+            return parent
+
+        parent_translation_model = parent_class.get_translation_model()
+
+        return (
+            parent_translation_model.objects
+            .filter(canonical_page=parent, language=language, path__startswith=site.root_page.path)
             .first()
         )
-        return translation_parent
 
     def create_translation(self, language, copy_fields=False, parent=None):
         """Create a translation for this page. If tree syncing is enabled the
@@ -273,6 +286,18 @@ class TranslatableMixin(models.Model):
             parent.add_child(instance=new_page)
 
         return new_page
+
+    @classmethod
+    def get_translation_model(self):
+        """
+        Gets the model which manages the translations for this model.
+
+        (The model that has the "canonical_page" and "language" fields)
+
+        For page models that inherit from TranslatedPage, this is always TranslatedPage.
+        For page models that inherit from TranslatableMixin,this is always the page model
+        """
+        return self._meta.get_field('language').model
 
     @cached_property
     def has_translations(self):

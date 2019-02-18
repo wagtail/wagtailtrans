@@ -5,7 +5,7 @@ from wagtail.core.models import Site
 from wagtailtrans import models
 
 from tests.factories.language import LanguageFactory
-from tests.factories.pages import HomePageFactory, TranslatableSiteRootFactory
+from tests.factories.pages import HomePageFactory, MixinHomePageFactory, TranslatableSiteRootFactory
 
 
 class SiteFactory(factory.DjangoModelFactory):
@@ -20,7 +20,7 @@ class SiteFactory(factory.DjangoModelFactory):
         django_get_or_create = ['hostname']
 
 
-def create_site_tree(language, site=None, *items, **homepage_kwargs):
+def create_site_tree(language, site=None, *items, using_mixin=False, **homepage_kwargs):
     if not items:
         items = ['%s homepage' % language.code, 'subpage1', 'subpage2']
 
@@ -30,8 +30,9 @@ def create_site_tree(language, site=None, *items, **homepage_kwargs):
     root_page = site.root_page
 
     pages = [root_page]
+    homepage_factory = MixinHomePageFactory if using_mixin else HomePageFactory
     for item in items:
-        page = HomePageFactory.build(language=language, title=item, **homepage_kwargs)
+        page = homepage_factory.build(language=language, title=item, **homepage_kwargs)
         pages[-1].add_child(instance=page)
         pages.append(page)
 
