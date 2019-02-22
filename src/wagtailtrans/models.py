@@ -1,6 +1,7 @@
 from operator import itemgetter
 
 from django import forms
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
@@ -110,9 +111,24 @@ class Language(models.Model):
     def __str__(self):
         return force_text(dict(settings.LANGUAGES).get(self.code))
 
+    def get_all_pages(self):
+        """
+        Returns a queryset of all pages that have been translated into this language.
+        """
+        q = Q()
+
+        for model in get_translatable_models():
+            q |= Q(id__in=model.objects.filter(language=self).values_list('id', flat=True))
+
+        return Page.objects.filter(q)
+
     def has_pages_in_site(self, site):
-        return True  # FIXME
-        # return self.pages.filter(path__startswith=site.root_page.path).exists()
+        pages = self.get_all_pages()
+
+        if site is not None:
+            pages = pages.descendant_of(site.root_page, inclusive=True)
+
+        return pages.exists()
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
@@ -309,6 +325,33 @@ class TranslatableMixin(models.Model):
 
     class Meta:
         abstract = True
+
+
+def get_translatable_models(include_subclasses=False):
+    """
+    Returns a list of all concrete models that inherit from TranslatableMixin.
+
+    By default, this only includes models that are direct children of TranslatableMixin,
+    to get all models, set the include_subclasses attribute to True.
+    """
+    translatable_models = [
+        model for model in apps.get_models()
+        if issubclass(model, TranslatableMixin) and not model._meta.abstract
+    ]
+
+    if include_subclasses is False:
+        # Exclude models that inherit from another translatable model
+        root_translatable_models = set()
+
+        for model in translatable_models:
+            root_translatable_models.add(model.get_translation_model())
+
+        translatable_models = [
+            model for model in translatable_models
+            if model in root_translatable_models
+        ]
+
+    return translatable_models
 
 
 class TranslatablePage(TranslatableMixin, Page):
