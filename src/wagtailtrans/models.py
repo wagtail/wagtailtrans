@@ -321,7 +321,7 @@ class TranslatableMixin(models.Model):
 
     @cached_property
     def is_canonical(self):
-        return not self.canonical_page_id and self.has_translations
+        return not self.canonical_page_id
 
     class Meta:
         abstract = True
