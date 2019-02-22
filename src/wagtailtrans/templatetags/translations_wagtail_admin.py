@@ -1,7 +1,7 @@
 from django import template
 
 from wagtailtrans.conf import get_wagtailtrans_setting
-from wagtailtrans.models import TranslatablePage
+from wagtailtrans.models import TranslatableMixin
 
 register = template.Library()
 
@@ -14,6 +14,7 @@ def get_canonical_pages_for_delete(page):
     :return: queryset or False
     """
     page = page.specific
-    if get_wagtailtrans_setting('SYNC_TREE') and getattr(page, 'language', False) and not page.canonical_page:
-        return TranslatablePage.objects.filter(canonical_page=page)
+    if get_wagtailtrans_setting('SYNC_TREE') and isinstance(page, TranslatableMixin) and not page.is_canonical:
+        return page.translations.all()
+
     return False
