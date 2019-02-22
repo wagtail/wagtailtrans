@@ -4,7 +4,7 @@ from wagtail.core.models import Site
 
 
 @pytest.mark.django_db
-class TestHomePage(object):
+class TestHomePage:
 
     def test_get(self, rf, languages, sites):
         site = sites.get(hostname='es.localhost')

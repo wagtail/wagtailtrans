@@ -15,7 +15,7 @@ class UserFactory(factory.DjangoModelFactory):
     @classmethod
     def _create(cls, target_class, *args, **kwargs):
         password = kwargs.pop('password', None)
-        user = super(UserFactory, cls)._create(target_class, *args, **kwargs)
+        user = super()._create(target_class, *args, **kwargs)
 
         if password:
             user.set_password(password)

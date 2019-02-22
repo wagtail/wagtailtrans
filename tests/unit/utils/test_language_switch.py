@@ -7,7 +7,7 @@ from wagtailtrans.utils.language_switch import change_default_language
 
 
 @pytest.mark.django_db
-class TestTranslatablePage(object):
+class TestTranslatablePage:
 
     def setup(self):
         """Setup a Site root and add an english page.

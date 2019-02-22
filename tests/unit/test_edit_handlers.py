@@ -6,7 +6,7 @@ from tests.factories import sites
 
 
 @pytest.mark.django_db
-class TestEditHandlers(object):
+class TestEditHandlers:
 
     def setup(self):
         self.default_language = Language.objects.get(code='en')

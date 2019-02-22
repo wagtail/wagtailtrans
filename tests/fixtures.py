@@ -32,7 +32,7 @@ def sites():
             title='{} title'.format(code),
             subtitle='{} subtitle'.format(code),
             language=language,
-            body=u'{} body'.format(code))
+            body='{} body'.format(code))
         site_root.add_child(instance=page)
         Site.objects.create(
             hostname='{}.localhost'.format(code),

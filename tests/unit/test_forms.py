@@ -9,7 +9,7 @@ from wagtailtrans.models import (Language, SiteLanguages,
 
 
 @pytest.mark.django_db
-class TestSiteLanguagesAdminForm(object):
+class TestSiteLanguagesAdminForm:
 
     def setup(self):
         # use a context manager to ensure these settings are

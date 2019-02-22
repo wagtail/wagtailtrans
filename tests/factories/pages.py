@@ -34,7 +34,7 @@ class TranslatablePageFactory(factory.DjangoModelFactory):
 
     @classmethod
     def _build(cls, *args, **kwargs):
-        obj = super(TranslatablePageFactory, cls)._build(*args, **kwargs)
+        obj = super()._build(*args, **kwargs)
         if not obj.title:
             obj.title = "Page-{}".format(obj.language.code)
         return obj
@@ -55,7 +55,7 @@ class HomePageFactory(TranslatablePageFactory):
 
     @classmethod
     def _build(cls, *args, **kwargs):
-        obj = super(HomePageFactory, cls)._build(*args, **kwargs)
+        obj = super()._build(*args, **kwargs)
 
         # Set an image if not present yet
         if not obj.image:

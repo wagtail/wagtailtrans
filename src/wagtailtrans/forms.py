@@ -15,7 +15,7 @@ class TranslationForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         self.language = kwargs.pop('language')
-        super(TranslationForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         self.fields['parent_page'].queryset = self.get_queryset()
 
         if self._page_has_required(kwargs.get('instance')):

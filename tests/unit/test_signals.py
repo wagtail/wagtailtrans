@@ -10,7 +10,7 @@ from tests.factories.pages import HomePageFactory, WagtailPageFactory
 
 
 @pytest.mark.django_db
-class TestSignals(object):
+class TestSignals:
 
     def setup(self):
         self.default_language = Language.objects.get(code='en')
@@ -41,7 +41,7 @@ class TestSignals(object):
 
 
 @pytest.mark.django_db
-class TestSignalsLanguagesPerSite(object):
+class TestSignalsLanguagesPerSite:
 
     def setup(self):
         # use a context manager to ensure these settings are
@@ -65,7 +65,7 @@ class TestSignalsLanguagesPerSite(object):
 
 
 @pytest.mark.django_db
-class TestForceParentLanguage(object):
+class TestForceParentLanguage:
 
     def test_parent_language(self):
         parent_page = HomePageFactory.build()

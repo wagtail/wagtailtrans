@@ -11,7 +11,7 @@ class ReadOnlyWidget(forms.Select):
     def __init__(self, text_display, *args, **kwargs):
         self.text_display = text_display
         self.initial_widget = forms.HiddenInput()
-        super(ReadOnlyWidget, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def render(self, *args, **kwargs):
         original_content = self.initial_widget.render(*args, **kwargs)
@@ -25,7 +25,7 @@ class CanonicalPageWidget(forms.Select):
     def __init__(self, canonical_page, *args, **kwargs):
         self.canonical_page = canonical_page
         self.initial_widget = forms.HiddenInput()
-        super(CanonicalPageWidget, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def render(self, *args, **kwargs):
         original_content = self.initial_widget.render(*args, **kwargs)
