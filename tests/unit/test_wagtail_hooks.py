@@ -18,7 +18,7 @@ class TestWagtailHooks:
     def page_translations_menu(self, page, page_perms, is_parent=False):
         # To test this hook i need to add it here, if we don't do this
         # we can't import the hook like the edit_in_language_button
-        if not isinstance(page, TranslatablePage):
+        if not issubclass(page.__class__, TranslatablePage):
             return
 
         if hasattr(page, 'canonical_page') and page.canonical_page:
