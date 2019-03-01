@@ -46,7 +46,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
 
     @hooks.register('register_page_listing_buttons')
     def page_translations_menu(page, page_perms, is_parent=False):
-        if not isinstance(page, TranslatablePage) or not hasattr(page, 'language'):
+        if not isinstance(page, TranslatablePage):
             return
 
         if hasattr(page, 'canonical_page') and page.canonical_page:
@@ -115,7 +115,7 @@ def edit_in_language_button(page, page_perms, is_parent=False):
     clear interface to work in.
 
     """
-    if not isinstance(page, TranslatablePage) or not hasattr(page, 'language'):
+    if not isinstance(page, TranslatablePage):
         return
 
     yield widgets.ButtonWithDropdownFromHook(
