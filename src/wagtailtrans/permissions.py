@@ -14,21 +14,21 @@ def create_group_permissions(group, language):
     """
     collection_perms = [
         Permission.objects.get_by_natural_key(
-            u'add_document', u'wagtaildocs', u'document'),
+            'add_document', 'wagtaildocs', 'document'),
         Permission.objects.get_by_natural_key(
-            u'change_document', u'wagtaildocs', u'document'),
+            'change_document', 'wagtaildocs', 'document'),
         Permission.objects.get_by_natural_key(
-            u'delete_document', u'wagtaildocs', u'document'),
+            'delete_document', 'wagtaildocs', 'document'),
         Permission.objects.get_by_natural_key(
-            u'change_image', u'wagtailimages', u'image'),
+            'change_image', 'wagtailimages', 'image'),
         Permission.objects.get_by_natural_key(
-            u'add_image', u'wagtailimages', u'image'),
+            'add_image', 'wagtailimages', 'image'),
         Permission.objects.get_by_natural_key(
-            u'delete_image', u'wagtailimages', u'image'),
+            'delete_image', 'wagtailimages', 'image'),
     ]
     # access wagtail admin permission
     group.permissions.add(Permission.objects.get_by_natural_key(
-        u'access_admin', u'wagtailadmin', u'admin'
+        'access_admin', 'wagtailadmin', 'admin'
     ))
 
     collection = Collection.objects.filter(
@@ -92,7 +92,7 @@ class TranslatablePagePermissionTester(PagePermissionTester):
             not self.user.is_superuser
         ):
             return False
-        return super(TranslatablePagePermissionTester, self).can_delete()
+        return super().can_delete()
 
 
 class TranslatableUserPagePermissionsProxy(UserPagePermissionsProxy):

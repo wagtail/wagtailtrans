@@ -8,7 +8,7 @@ from wagtailtrans.templatetags import (
 
 
 @pytest.mark.django_db
-class TestWagtailtransTags(object):
+class TestWagtailtransTags:
 
     def test_get_translations_util(self, languages):
         pages = create_site_tree(languages[0])
