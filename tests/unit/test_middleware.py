@@ -10,7 +10,7 @@ from wagtailtrans.models import Language
 
 
 @pytest.mark.django_db
-class TestTranslationMiddleware(object):
+class TestTranslationMiddleware:
 
     def test_request_from_path(self, rf):
         request = rf.get('/nl/random/page/')

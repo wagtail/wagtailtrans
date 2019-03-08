@@ -11,7 +11,7 @@ from tests.factories import sites
 
 
 @pytest.mark.django_db
-class TestTranslatableUserProxyPermission(object):
+class TestTranslatableUserProxyPermission:
 
     def setup(self):
         self.admin_user = UserFactory(is_superuser=True)

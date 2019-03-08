@@ -43,7 +43,7 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
         ]
 
     def __init__(self, *args, **kwargs):
-        super(WagtailAdminLanguageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
         self.fields['code'].choices = sorted_choices
@@ -67,7 +67,7 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
         ):
             from wagtailtrans.utils.language_switch import change_default_language  # noqa
             change_default_language(self.instance)
-        return super(WagtailAdminLanguageForm, self).save(commit=commit)
+        return super().save(commit=commit)
 
 
 def get_language_panels():
@@ -118,7 +118,7 @@ class AdminTranslatablePageForm(WagtailAdminPageForm):
     """Form to be used in the wagtail admin."""
 
     def __init__(self, *args, **kwargs):
-        super(AdminTranslatablePageForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
         self.fields['canonical_page'].widget = CanonicalPageWidget(
             canonical_page=self.instance.specific.canonical_page)
@@ -167,11 +167,11 @@ class TranslatablePage(Page):
     base_form_class = AdminTranslatablePageForm
 
     def get_admin_display_title(self):
-        return "{} ({})".format(super(TranslatablePage, self).get_admin_display_title(), self.language)
+        return "{} ({})".format(super().get_admin_display_title(), self.language)
 
     def serve(self, request, *args, **kwargs):
         activate(self.language.code)
-        return super(TranslatablePage, self).serve(request, *args, **kwargs)
+        return super().serve(request, *args, **kwargs)
 
     def move(self, target, pos=None, suppress_sync=False):
         """Move the page to another target.
@@ -181,7 +181,7 @@ class TranslatablePage(Page):
         :param suppress_sync: suppress syncing the translated pages
 
         """
-        super(TranslatablePage, self).move(target, pos)
+        super().move(target, pos)
 
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             site = self.get_site()
@@ -386,7 +386,7 @@ class SiteLanguagesForm(WagtailAdminModelForm):
             from wagtailtrans.utils.language_switch import change_default_language  # noqa
             change_default_language(data['default_language'], self.instance.site)
 
-        return super(SiteLanguagesForm, self).save(commit=commit)
+        return super().save(commit=commit)
 
 
 def register_site_languages():

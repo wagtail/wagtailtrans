@@ -13,7 +13,7 @@ from wagtailtrans import models
 
 
 @pytest.mark.django_db
-class TestWagtailAdminLanguageForm(object):
+class TestWagtailAdminLanguageForm:
 
     def setup(self):
         self.form_class = get_form_for_model(model=models.Language, form_class=models.WagtailAdminLanguageForm)
@@ -59,7 +59,7 @@ class TestWagtailAdminLanguageForm(object):
 
 
 @pytest.mark.django_db
-class TestLanguage(object):
+class TestLanguage:
 
     def test_create(self):
         en, created = models.Language.objects.get_or_create(
@@ -96,7 +96,7 @@ class TestLanguage(object):
 
 
 @pytest.mark.django_db
-class TestTranslatablePage(object):
+class TestTranslatablePage:
 
     def setup(self):
         """Setup a Site root and add an english page.
@@ -284,7 +284,7 @@ class TestTranslatablePage(object):
 
 
 @pytest.mark.django_db
-class TestTranslatableSiteRootPage(object):
+class TestTranslatableSiteRootPage:
 
     def setup(self):
         self.site_root = models.TranslatableSiteRootPage(title='site root')

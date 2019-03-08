@@ -20,10 +20,10 @@ class TranslationView(CreateView):
     def dispatch(self, request, instance_id, language_code, *args, **kwargs):
         self.language = get_object_or_404(Language, code=language_code)
         self.instance = get_object_or_404(TranslatablePage, id=instance_id).specific
-        return super(TranslationView, self).dispatch(request, *args, **kwargs)
+        return super().dispatch(request, *args, **kwargs)
 
     def get_form_kwargs(self):
-        kwargs = super(TranslationView, self).get_form_kwargs()
+        kwargs = super().get_form_kwargs()
         kwargs['language'] = self.language
         kwargs['instance'] = self.instance
         return kwargs

@@ -11,7 +11,7 @@ from tests.factories import language, pages, sites
 
 
 @pytest.mark.django_db
-class TestAddTranslationView(object):
+class TestAddTranslationView:
 
     def setup(self):
         self.default_language = language.LanguageFactory.create(code='en', is_default=True)
@@ -90,7 +90,7 @@ class TestAddTranslationView(object):
 
 
 @pytest.mark.django_db
-class TestLanguageAdminView(object):
+class TestLanguageAdminView:
 
     def setup(self):
         self.language = language.LanguageFactory()
