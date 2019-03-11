@@ -1,0 +1,17 @@
+================================
+Wagtailtrans 2.0.6 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+Features
+~~~~~~~~
+
+- Remove Python 2 syntax from the codebase
+
+Bugfixes
+~~~~~~~~
+
+- Added missing migration

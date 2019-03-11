@@ -1,6 +1,13 @@
 Changelog
 =========
 
+2.0.6 (11-03-2019)
+------------------
+
+ - Added missing migration
+ - Removed Python 2 syntax
+
+
 2.0.5 (04-02-2019)
 ------------------
 
