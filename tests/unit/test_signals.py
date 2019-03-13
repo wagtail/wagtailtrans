@@ -1,12 +1,11 @@
 import pytest
 from django.test import override_settings
 
+from tests.factories import language, sites
+from tests.factories.pages import HomePageFactory, WagtailPageFactory
 from wagtailtrans import signals
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
-
-from tests.factories import language, sites
-from tests.factories.pages import HomePageFactory, WagtailPageFactory
 
 
 @pytest.mark.django_db
@@ -46,7 +45,7 @@ class TestSignalsLanguagesPerSite:
     def setup(self):
         # use a context manager to ensure these settings are
         # only used here
-        with override_settings(WAGTAILTRANS_SYNC_TREE=True, WAGTAILTRANS_LANGUAGES_PER_SITE=True):
+        with override_settings(WAGTAILTRANS_SYNC_TREE=True):
             register_signal_handlers()
             self.site = sites.SiteFactory()
             SiteLanguages.for_site(self.site)
@@ -56,7 +55,7 @@ class TestSignalsLanguagesPerSite:
             self.last_page = pages[-1]
 
     def test_add_language_to_site(self):
-        with override_settings(WAGTAILTRANS_SYNC_TREE=True, WAGTAILTRANS_LANGUAGES_PER_SITE=True):
+        with override_settings(WAGTAILTRANS_SYNC_TREE=True):
             lang = language.LanguageFactory(is_default=False, code='fr', position=2)
             assert not TranslatablePage.objects.filter(language=lang, canonical_page=self.last_page).exists()
             self.site.sitelanguages.other_languages.add(lang)
@@ -74,7 +73,6 @@ class TestForceParentLanguage:
         signals.force_parent_language(page=new_page, parent=parent_page)
         assert new_page.language == parent_page.language
 
-    @override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True)
     def test_site_languages(self):
         site = sites.SiteFactory()
         SiteLanguages.for_site(site)  # Initialize sitelanguages
