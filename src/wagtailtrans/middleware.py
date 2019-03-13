@@ -1,8 +1,10 @@
 from django.conf import settings
 from django.utils import translation
 from django.utils.deprecation import MiddlewareMixin
-from django.utils.translation import LANGUAGE_SESSION_KEY, check_for_language, get_language_from_path
-from django.utils.translation.trans_real import get_languages, get_supported_language_variant
+from django.utils.translation import (LANGUAGE_SESSION_KEY, check_for_language,
+                                      get_language_from_path)
+from django.utils.translation.trans_real import (get_languages,
+                                                 get_supported_language_variant)
 
 from .models import Language
 from .sites import get_languages_for_site

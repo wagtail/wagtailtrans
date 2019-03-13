@@ -11,7 +11,6 @@ from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate
 from django.utils.translation import ugettext_lazy as _
-
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.contrib.settings.models import BaseSetting
@@ -37,7 +36,6 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
     class Meta:
         fields = [
             'code',
-            'is_default',
             'position',
             'live',
         ]
@@ -47,42 +45,6 @@ class WagtailAdminLanguageForm(WagtailAdminModelForm):
 
         sorted_choices = sorted(self.fields['code'].choices, key=itemgetter(1))
         self.fields['code'].choices = sorted_choices
-
-    def clean_is_default(self):
-        is_default = self.cleaned_data['is_default']
-
-        if self.initial.get('is_default') and not is_default:
-            raise ValidationError(_(
-                "You can not remove is_default from a language. To change the "
-                "default language, select is_default on a different language"))
-
-        return is_default
-
-    def save(self, commit=True):
-        is_default = self.cleaned_data.get('is_default', False)
-        if (
-            not self.initial.get('is_default') == is_default and
-            is_default and
-            not get_wagtailtrans_setting('LANGUAGES_PER_SITE')
-        ):
-            from wagtailtrans.utils.language_switch import change_default_language  # noqa
-            change_default_language(self.instance)
-        return super().save(commit=commit)
-
-
-def get_language_panels():
-    children = [
-        FieldPanel('code'),
-        FieldPanel('position'),
-        FieldPanel('live'),
-    ]
-
-    if not get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-        children.insert(1, FieldPanel('is_default'))
-
-    return [
-        MultiFieldPanel(heading=_("Language details"), children=children),
-    ]
 
 
 class Language(models.Model):
@@ -100,7 +62,13 @@ class Language(models.Model):
     objects = LanguageManager()
 
     base_form_class = WagtailAdminLanguageForm
-    panels = get_language_panels()
+    panels = [
+        MultiFieldPanel(heading=_("Language details"), children=[
+            FieldPanel('code'),
+            FieldPanel('position'),
+            FieldPanel('live'),
+        ])
+    ]
 
     class Meta:
         ordering = ['position']
@@ -109,9 +77,6 @@ class Language(models.Model):
 
     def __str__(self):
         return force_text(dict(settings.LANGUAGES).get(self.code))
-
-    def has_pages_in_site(self, site):
-        return self.pages.filter(path__startswith=site.root_page.path).exists()
 
 
 class AdminTranslatablePageForm(WagtailAdminPageForm):
@@ -183,12 +148,9 @@ class TranslatablePage(Page):
         """
         super().move(target, pos)
 
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            site = self.get_site()
-            lang_settings = SiteLanguages.for_site(site)
-            is_default = lang_settings.default_language == self.language
-        else:
-            is_default = self.language.is_default
+        site = self.get_site()
+        lang_settings = SiteLanguages.for_site(site)
+        is_default = lang_settings.default_language == self.language
 
         if not suppress_sync and get_wagtailtrans_setting('SYNC_TREE') and is_default:
             self.move_translated_pages(canonical_target=target, pos=pos)
@@ -247,15 +209,15 @@ class TranslatablePage(Page):
 
     def get_translation_parent(self, language):
         site = self.get_site()
-        if not language.has_pages_in_site(site):
-            return site.root_page
-
         translation_parent = (
             TranslatablePage.objects
-            .filter(canonical_page=self.get_parent(), language=language, path__startswith=site.root_page.path)
+            .in_site(site)
+            .filter(canonical_page=self.get_parent(), language=language)
+            .order_by('path')
             .first()
         )
-        return translation_parent
+
+        return translation_parent or site.root_page
 
     def create_translation(self, language, copy_fields=False, parent=None):
         """Create a translation for this page. If tree syncing is enabled the
@@ -354,9 +316,8 @@ class TranslatableSiteRootPage(Page):
 def page_permissions_for_user(self, user):
     """Patch for the page permissions adding our custom proxy
 
-    Note: Since wagtail doesn't call this method on the
-          specific page we need to patch the default page
-          implementation for this.
+    Note: Since wagtail doesn't call this method on the specific page we need to patch
+          the default page implementation for this.
 
     :param user: User instance
     :return: user permissions for page
@@ -389,15 +350,7 @@ class SiteLanguagesForm(WagtailAdminModelForm):
         return super().save(commit=commit)
 
 
-def register_site_languages():
-    def decorate(func):
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            return register_setting(func)
-        return func
-    return decorate
-
-
-@register_site_languages()
+@register_setting()
 class SiteLanguages(BaseSetting):
     """Site specific settings are stored in the database"""
     default_language = models.ForeignKey(
