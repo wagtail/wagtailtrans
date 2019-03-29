@@ -14,7 +14,7 @@ def get_canonical_pages_for_delete(page):
     :return: queryset or False
     """
     page = page.specific
-    if get_wagtailtrans_setting('SYNC_TREE') and isinstance(page, TranslatableMixin) and not page.is_canonical:
+    if get_wagtailtrans_setting('SYNC_TREE') and isinstance(page, TranslatableMixin) and page.is_canonical:
         return page.translations.all()
 
     return False
