@@ -1,7 +1,7 @@
 import pytest
 from django.test import override_settings
 
-from tests.factories.pages import TranslatablePageFactory, WagtailPageFactory
+from tests.factories.pages import WagtailPageFactory
 from tests.factories.sites import SiteFactory, create_site_tree
 from wagtailtrans.templatetags import (
     translations_wagtail_admin, wagtailtrans_tags)
