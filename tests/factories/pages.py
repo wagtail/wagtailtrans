@@ -5,7 +5,7 @@ from wagtail.images.tests.utils import (
 
 from wagtailtrans import models
 
-from tests._sandbox.pages.models import HomePage
+from tests._sandbox.pages.models import HomePage, MixinHomePage
 from tests.factories import language
 
 
@@ -56,6 +56,26 @@ class HomePageFactory(TranslatablePageFactory):
     @classmethod
     def _build(cls, *args, **kwargs):
         obj = super()._build(*args, **kwargs)
+
+        # Set an image if not present yet
+        if not obj.image:
+            obj.image = ImageFactory.create()
+
+        # Set some other basic attributes
+        for part in ('subtitle', 'body'):
+            if not getattr(obj, part):
+                setattr(obj, part, "{} {}".format(part, obj.language.code))
+        return obj
+
+
+class MixinHomePageFactory(TranslatablePageFactory):
+
+    class Meta:
+        model = MixinHomePage
+
+    @classmethod
+    def _build(cls, *args, **kwargs):
+        obj = super(MixinHomePageFactory, cls)._build(*args, **kwargs)
 
         # Set an image if not present yet
         if not obj.image:
