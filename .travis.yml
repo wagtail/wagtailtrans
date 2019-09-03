@@ -3,51 +3,6 @@ language: python
 cache: pip
 matrix:
   include:
-    # Django 1.11
-    # Wagtail 2.0
-    - env: TOXENV=py35-dj111-wt2
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt2
-      python: 3.6
-    - env: TOXENV=py37-dj111-wt2
-      python: 3.7
-
-    # Django 1.11
-    # Wagtail 2.1
-    - env: TOXENV=py35-dj111-wt21
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt21
-      python: 3.6
-    - env: TOXENV=py37-dj111-wt21
-      python: 3.7
-
-    # Django 1.11
-    # Wagtail 2.2
-    - env: TOXENV=py35-dj111-wt22
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt22
-      python: 3.6
-    - env: TOXENV=py37-dj111-wt22
-      python: 3.7
-
-    # Django 1.11
-    # Wagtail 2.3
-    - env: TOXENV=py35-dj111-wt23
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt23
-      python: 3.6
-    - env: TOXENV=py37-dj111-wt23
-      python: 3.7
-
-    # Django 1.11
-    # Wagtail 2.4
-    - env: TOXENV=py35-dj111-wt24
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt24
-      python: 3.6
-    - env: TOXENV=py37-dj111-wt24
-      python: 3.7
-
     # Django 2.1
     # Wagtail 2.3
     - env: TOXENV=py35-dj21-wt23
