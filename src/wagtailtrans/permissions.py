@@ -1,7 +1,7 @@
 from django.contrib.auth.models import Group, Permission
-from wagtail.core.models import (
-    Collection, GroupCollectionPermission, GroupPagePermission,
-    PagePermissionTester, UserPagePermissionsProxy)
+from wagtail.core.models import (Collection, GroupCollectionPermission,
+                                 GroupPagePermission, PagePermissionTester,
+                                 UserPagePermissionsProxy)
 
 from wagtailtrans.conf import get_wagtailtrans_setting
 
@@ -31,8 +31,7 @@ def create_group_permissions(group, language):
         'access_admin', 'wagtailadmin', 'admin'
     ))
 
-    collection = Collection.objects.filter(
-        name='collection-%s' % language.code).first()
+    collection = Collection.objects.filter(name='collection-%s' % language.code).first()
     if not collection:
         root = Collection.objects.first().get_root()
         collection = root.add_child(name='collection-%s' % language.code)

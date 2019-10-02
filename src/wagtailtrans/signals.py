@@ -3,9 +3,9 @@ from functools import wraps
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
-
 from wagtail.admin.signals import init_new_page
 from wagtail.core.models import Site, get_page_models
+
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.permissions import create_group_permissions, get_or_create_language_group
@@ -38,13 +38,9 @@ def synchronize_trees(sender, instance, **kwargs):
     except ObjectDoesNotExist:
         return
 
-    if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-        site_default = site.sitelanguages.default_language
-        is_default_language = instance.language == site_default
-        other_languages = site.sitelanguages.other_languages.all()
-    else:
-        is_default_language = instance.language.is_default
-        other_languages = Language.objects.filter(is_default=False)
+    site_default = site.sitelanguages.default_language
+    is_default_language = instance.language == site_default
+    other_languages = site.sitelanguages.other_languages.all()
 
     if not kwargs.get('created') or not getattr(instance, 'language', False) or not is_default_language:
         return
@@ -75,15 +71,13 @@ def create_new_language_tree_for_site(site, language):
     :param language: The language in which the tree wil be created
     """
     site_pages = site.root_page.get_children().values_list('pk', flat=True)
-    default_language = (
-        site.sitelanguages.default_language
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE')
-        else Language.objects.default()
-    )
+    default_language = site.sitelanguages.default_language
+
     canonical_home_page = TranslatablePage.objects.filter(pk__in=site_pages, language=default_language).first()
     if not canonical_home_page:
         # no pages created yet.
         return
+
     descendants = canonical_home_page.get_descendants(inclusive=True)
     for child_page in descendants:
         child_page = child_page.specific
@@ -157,11 +151,11 @@ def force_parent_language(**kwargs):
     #: For now we assume there isn't more than 1 site rooted at the parent.
     if hasattr(parent, 'language'):
         page.language = parent.language
-    elif get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
+    else:
         site = parent.sites_rooted_here.first()
         if site:
             lang_settings = SiteLanguages.for_site(site)
-            page.language = lang_settings.default_language or Language.objects.default()
+            page.language = lang_settings.default_language
 
 
 def register_signal_handlers():
@@ -173,11 +167,9 @@ def register_signal_handlers():
     """
     post_save.connect(create_language_permissions_and_group, sender=Language)
     init_new_page.connect(force_parent_language)
+
     if get_wagtailtrans_setting('SYNC_TREE'):
-        if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
-            m2m_changed.connect(update_language_trees_for_site, sender=SiteLanguages.other_languages.through)
-        else:
-            post_save.connect(create_new_language_tree, sender=Language)
+        m2m_changed.connect(update_language_trees_for_site, sender=SiteLanguages.other_languages.through)
 
         for model in get_page_models():
             if hasattr(model, 'create_translation'):

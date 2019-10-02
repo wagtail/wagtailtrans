@@ -1,11 +1,9 @@
 import factory
-
 from wagtail.core.models import Site
-
-from wagtailtrans import models
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import HomePageFactory, TranslatableSiteRootFactory
+from wagtailtrans import models
 
 
 class SiteFactory(factory.DjangoModelFactory):
@@ -18,6 +16,11 @@ class SiteFactory(factory.DjangoModelFactory):
     class Meta:
         model = Site
         django_get_or_create = ['hostname']
+
+    @factory.post_generation
+    def sitelanguages(self, create, extracted, **kwargs):
+        if create:
+            self.sitelanguages = SiteLanguagesFactory(site=self)
 
 
 def create_site_tree(language, site=None, *items, **homepage_kwargs):

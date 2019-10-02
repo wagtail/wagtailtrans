@@ -1,8 +1,8 @@
+import pytest
 from django.conf import settings
 from django.http import HttpResponse
 from django.test import override_settings
 
-import pytest
 from tests.factories.language import LanguageFactory
 from tests.factories.sites import SiteFactory, SiteLanguagesFactory
 from wagtailtrans.middleware import TranslationMiddleware
@@ -19,27 +19,23 @@ class TestTranslationMiddleware:
         assert request.LANGUAGE_CODE == 'nl'
 
     def test_request_default_language(self, rf):
-        LanguageFactory(code='en', is_default=True, live=True)
-        LanguageFactory(code='fr', is_default=False, live=True)
-
-        request = rf.get('/home/')
-        TranslationMiddleware().process_request(request)
-        assert request.LANGUAGE_CODE == 'en'
-
-    def test_request_site_language(self, rf):
-        SiteLanguagesFactory(default_language__code='fr')
+        site = SiteFactory()
+        SiteLanguagesFactory(default_language__code='fr', site=site)
 
         request = rf.get('/random/page/')
-        request.site = SiteFactory()
-        with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
-            TranslationMiddleware().process_request(request)
+        request.site = site
+        TranslationMiddleware().process_request(request)
 
-        assert request.LANGUAGE_CODE == 'fr'
+        assert request.LANGUAGE_CODE == site.sitelanguages.default_language.code
 
     def test_settings_fallback(self, rf):
-        Language.objects.all().delete()
+        site = SiteFactory()
+        site.sitelanguages.default_language = None
+        site.sitelanguages.save()
 
         request = rf.get('/random/page/')
+        request.site = site
+
         with override_settings(LANGUAGE_CODE='en-us'):
             TranslationMiddleware().process_request(request)
 
@@ -86,24 +82,16 @@ class TestTranslationMiddleware:
 
         assert request.LANGUAGE_CODE == 'es'
 
-    def test_request_no_languages(self, rf):
-        Language.objects.all().delete()
-        request = rf.get('/')
-
-        with override_settings(LANGUAGE_CODE='en'):
-            TranslationMiddleware().process_request(request)
-
-        assert request.LANGUAGE_CODE == 'en'
-
     def test_response(self, rf):
         request = rf.get('/nl/random/page/')
-        TranslationMiddleware().process_request(request)
+        request.LANGUAGE_CODE = 'nl'
         response = TranslationMiddleware().process_response(request, HttpResponse())
+
         assert response['Content-Language'] == 'nl'
 
     def test_set_cookie_in_response(self, rf):
         request = rf.get('/nl/random/page/')
-        TranslationMiddleware().process_request(request)
+        request.LANGUAGE_CODE = 'nl'
         response = TranslationMiddleware().process_response(request, HttpResponse())
         assert response.cookies.get(settings.LANGUAGE_COOKIE_NAME).value == 'nl'
 

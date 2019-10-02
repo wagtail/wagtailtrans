@@ -24,7 +24,7 @@ If set to ``False`` wagtailtrans will work with ``Freeform`` trees.
 .. seealso::
     The documentation about :ref:`freeform_trees`
 
-
+# TODO: Update this for the loaddata env var
 ``WAGTAILTRANS_LANGUAGES_PER_SITE``
 -----------------------------------
 

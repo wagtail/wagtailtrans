@@ -6,9 +6,8 @@ from wagtail.admin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import TranslatablePageFactory
-from tests.factories.sites import SiteFactory, create_site_tree, SiteLanguagesFactory
+from tests.factories.sites import SiteFactory, SiteLanguagesFactory, create_site_tree
 from tests.factories.users import UserFactory
-
 from wagtailtrans import models
 
 
@@ -79,20 +78,6 @@ class TestLanguage:
 
     def test_default(self, languages):
         assert models.Language.objects.default().code == 'en'
-
-    def test_has_pages_in_site(self):
-        language = LanguageFactory()
-
-        site_one = SiteFactory(hostname='remotehost', site_name='RemoteSite', root_page__title='site_1')
-        site_two = SiteFactory(hostname='losthost', site_name='LostSite', root_page__title='site_2')
-
-        create_site_tree(language, site=site_one, subtitle='hophop flepflep')
-        create_site_tree(language, site=site_two, subtitle='hophop flepflep')
-
-        language.refresh_from_db()
-
-        assert language.has_pages_in_site(site_one)
-        assert language.has_pages_in_site(site_two)
 
 
 @pytest.mark.django_db
@@ -315,6 +300,5 @@ class TestTranslatableSiteRootPage:
         lang = models.get_user_language(request)
         assert lang.code == 'en'
 
-        with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
-            lang = models.get_user_language(request)
-            assert lang == sitelanguages.default_language
+        lang = models.get_user_language(request)
+        assert lang == sitelanguages.default_language

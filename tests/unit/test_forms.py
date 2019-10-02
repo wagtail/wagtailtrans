@@ -1,11 +1,10 @@
+import pytest
 from django.forms.widgets import Select
 from django.test import override_settings
-
-import pytest
-from tests.factories import sites
 from wagtail.contrib.settings.views import get_setting_edit_handler
-from wagtailtrans.models import (Language, SiteLanguages,
-                                 register_site_languages)
+
+from tests.factories import sites
+from wagtailtrans.models import Language, SiteLanguages
 
 
 @pytest.mark.django_db
@@ -14,8 +13,7 @@ class TestSiteLanguagesAdminForm:
     def setup(self):
         # use a context manager to ensure these settings are
         # only used here
-        with override_settings(WAGTAILTRANS_SYNC_TREE=True, WAGTAILTRANS_LANGUAGES_PER_SITE=True):
-            register_site_languages()(SiteLanguages)
+        with override_settings(WAGTAILTRANS_SYNC_TREE=True):
             self.site = sites.SiteFactory()
             SiteLanguages.for_site(self.site)
             self.default_language = Language.objects.get(code='en')
