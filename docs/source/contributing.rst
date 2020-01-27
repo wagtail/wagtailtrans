@@ -11,7 +11,7 @@ documentation, tests or feature requests.
 Issues
 ------
 
-Our Github `issue tracker <https://github.com/LUKKIEN/wagtailtrans/issues>`_ is the preferred channel for bug reports, feature requests and submitting pull requests. When creating new issues please provide as much relevant context as possible. Even your detailed comments on existing issues are a big help.
+Our Github `issue tracker <https://github.com/wagtail/wagtailtrans/issues>`_ is the preferred channel for bug reports, feature requests and submitting pull requests. When creating new issues please provide as much relevant context as possible. Even your detailed comments on existing issues are a big help.
 
 Pull request
 ------------
@@ -36,7 +36,7 @@ Wagtailtrans made it very easy to setup a runnable Django project to help with t
 
 * **Get the codebase**
 
-  Get a copy of the `Wagtailtrans codebase <https://github.com/LUKKIEN/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
+  Get a copy of the `Wagtailtrans codebase <https://github.com/wagtail/wagtailtrans>`_. Create your own fork and make changes there. For a brief, take a look at this `guideline <https://guides.github.com/activities/forking/>`_.
 
 \
 

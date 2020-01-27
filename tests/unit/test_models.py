@@ -1,7 +1,7 @@
+import six
 import pytest
 from django.core.exceptions import ValidationError
 from django.test import override_settings
-from django.utils import six
 from wagtail.admin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
