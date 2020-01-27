@@ -1,8 +1,5 @@
 from django.conf.urls import include, url
-try:
-    from django.contrib.staticfiles.templatetags.staticfiles import static
-except ImportError:
-    from django.templatetags.static import static
+from django.templatetags.static import static
 from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
