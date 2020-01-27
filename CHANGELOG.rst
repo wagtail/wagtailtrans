@@ -1,8 +1,11 @@
 Changelog
 =========
 
-X.X.X (XX-XX-XXXX)
-------------------
+2.1 (XX-XX-XXXX)
+----------------
+
+- Dropped support for Wagtail versions earlier than 2.3
+- Added support for Wagtail 2.8 and therefore Django 3.0
 
 
 2.0.6 (11-03-2019)
