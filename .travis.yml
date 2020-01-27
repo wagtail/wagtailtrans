@@ -82,8 +82,6 @@ matrix:
       python: 3.8
 
     # Django 3.0
-    - env: TOXENV=py35-dj30-wt28
-      python: 3.5
     - env: TOXENV=py36-dj30-wt28
       python: 3.6
     - env: TOXENV=py37-dj30-wt28
