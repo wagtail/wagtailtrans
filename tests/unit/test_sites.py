@@ -1,9 +1,8 @@
 import pytest
 from django.test import override_settings
 
-from wagtailtrans import sites
-
 from tests.factories.sites import SiteFactory, SiteLanguagesFactory
+from wagtailtrans import sites
 
 
 @pytest.mark.django_db

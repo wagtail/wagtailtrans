@@ -1,12 +1,11 @@
 import pytest
 from django.test import override_settings
 
+from tests.factories import language, sites
+from tests.factories.pages import HomePageFactory, WagtailPageFactory
 from wagtailtrans import signals
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
-
-from tests.factories import language, sites
-from tests.factories.pages import HomePageFactory, WagtailPageFactory
 
 
 @pytest.mark.django_db

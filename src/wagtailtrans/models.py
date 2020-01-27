@@ -11,7 +11,6 @@ from django.utils.encoding import force_text
 from django.utils.functional import cached_property
 from django.utils.translation import activate
 from django.utils.translation import ugettext_lazy as _
-
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.contrib.settings.models import BaseSetting

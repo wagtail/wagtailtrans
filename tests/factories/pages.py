@@ -1,12 +1,10 @@
 import factory
 from wagtail.core.models import Page
-from wagtail.images.tests.utils import (
-    get_image_model, get_test_image_file)
-
-from wagtailtrans import models
+from wagtail.images.tests.utils import get_image_model, get_test_image_file
 
 from tests._sandbox.pages.models import HomePage
 from tests.factories import language
+from wagtailtrans import models
 
 
 class TranslatableSiteRootFactory(factory.DjangoModelFactory):

@@ -54,7 +54,7 @@ lint:
 	@flake8 src --exclude migrations
 
 isort:
-	isort `find . -name '*.py' -not -path '*/migrations/*'`
+	isort --recursive src tests --skip migrations
 
 dist: clean
 	@python setup.py sdist bdist_wheel

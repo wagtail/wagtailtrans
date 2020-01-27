@@ -1,14 +1,13 @@
 import pytest
+import six
 from django.core.exceptions import ValidationError
 from django.test import override_settings
-from django.utils import six
 from wagtail.admin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import TranslatablePageFactory
-from tests.factories.sites import SiteFactory, create_site_tree, SiteLanguagesFactory
+from tests.factories.sites import SiteFactory, SiteLanguagesFactory, create_site_tree
 from tests.factories.users import UserFactory
-
 from wagtailtrans import models
 
 

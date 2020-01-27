@@ -7,7 +7,7 @@ We appreciate all kinds of support, whether it's on bug reports, code, documenta
 
 ## Issue tracker
 
-The Github [issue tracker](https://github.com/LUKKIEN/wagtailtrans/issues) is the preferred channel for bug reports,
+The Github [issue tracker](https://github.com/wagtail/wagtailtrans/issues) is the preferred channel for bug reports,
 feature requests and submitting pull-requests. Please don't use this for support of any kind.
 
 

@@ -9,8 +9,8 @@ sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version  # noqa isort:skip
 
 sandbox_require = [
-    'Django>=2.1',
-    'Wagtail>=2.3rc1',
+    'Django>=3.0',
+    'Wagtail>=2.8rc1',
     'psycopg2>=2.5.4',
     'djangorestframework>=3.7',
 ]
@@ -60,10 +60,12 @@ setup(
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
         'Framework :: Django',
         'Framework :: Django :: 1.11',
         'Framework :: Django :: 2.1',
         'Framework :: Django :: 2.2',
+        'Framework :: Django :: 3.0',
         'Framework :: Wagtail',
         'Topic :: Internet :: WWW/HTTP :: Site Management',
     ]

@@ -1,11 +1,9 @@
 import factory
-
 from wagtail.core.models import Site
-
-from wagtailtrans import models
 
 from tests.factories.language import LanguageFactory
 from tests.factories.pages import HomePageFactory, TranslatableSiteRootFactory
+from wagtailtrans import models
 
 
 class SiteFactory(factory.DjangoModelFactory):

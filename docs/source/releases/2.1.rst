@@ -1,0 +1,27 @@
+==============================
+Wagtailtrans 2.1 release notes
+==============================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+This release is a new major since it will only support Wagtail 2.3 and up.
+
+Features
+~~~~~~~~
+
+- Dropped support for Wagtail versions earlier than 2.3
+- Added support for Wagtail 2.8 and therefore Django 3.0
+
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
+This release drops support for Wagtail versions below 2.3.
