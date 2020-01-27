@@ -1,8 +1,8 @@
+import pytest
 from django.conf import settings
 from django.http import HttpResponse
 from django.test import override_settings
 
-import pytest
 from tests.factories.language import LanguageFactory
 from tests.factories.sites import SiteFactory, SiteLanguagesFactory
 from wagtailtrans.middleware import TranslationMiddleware

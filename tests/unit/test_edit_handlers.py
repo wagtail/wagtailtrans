@@ -1,8 +1,8 @@
 import pytest
 
-from wagtailtrans.edit_handlers import ReadOnlyWidget, CanonicalPageWidget
-from wagtailtrans.models import Language
 from tests.factories import sites
+from wagtailtrans.edit_handlers import CanonicalPageWidget, ReadOnlyWidget
+from wagtailtrans.models import Language
 
 
 @pytest.mark.django_db

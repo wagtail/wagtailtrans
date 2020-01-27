@@ -1,13 +1,11 @@
 import pytest
-
 from django.contrib.auth.models import Permission
 from django.test import override_settings
 
-from wagtailtrans.models import Language
-from wagtailtrans import permissions
-
-from tests.factories.users import UserFactory
 from tests.factories import sites
+from tests.factories.users import UserFactory
+from wagtailtrans import permissions
+from wagtailtrans.models import Language
 
 
 @pytest.mark.django_db
@@ -45,4 +43,3 @@ class TestTranslatableUserProxyPermission:
         permission = permissions.TranslatableUserPagePermissionsProxy(self.editor_user)
         # Only Super user can delete, Though permission has given
         assert not permission.for_page(self.last_page).can_delete()
-

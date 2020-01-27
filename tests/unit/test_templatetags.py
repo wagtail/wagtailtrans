@@ -3,8 +3,7 @@ from django.test import override_settings
 
 from tests.factories.pages import TranslatablePageFactory, WagtailPageFactory
 from tests.factories.sites import SiteFactory, create_site_tree
-from wagtailtrans.templatetags import (
-    translations_wagtail_admin, wagtailtrans_tags)
+from wagtailtrans.templatetags import translations_wagtail_admin, wagtailtrans_tags
 
 
 @pytest.mark.django_db

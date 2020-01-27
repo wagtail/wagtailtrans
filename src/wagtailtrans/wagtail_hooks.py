@@ -4,10 +4,10 @@ from django.urls import reverse
 from django.utils.encoding import force_text
 from django.utils.html import format_html
 from django.utils.translation import ugettext_lazy as _
-
 from wagtail.admin import widgets
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.core import hooks
+
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, TranslatablePage
 from wagtailtrans.urls import translations

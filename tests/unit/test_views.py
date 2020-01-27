@@ -4,10 +4,9 @@ from django.db.models import signals
 from django.http import Http404
 from django.test import override_settings
 
+from tests.factories import language, pages, sites
 from wagtailtrans.models import TranslatablePage
 from wagtailtrans.views.translation import TranslationView
-
-from tests.factories import language, pages, sites
 
 
 @pytest.mark.django_db

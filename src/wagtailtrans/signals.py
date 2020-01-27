@@ -3,9 +3,9 @@ from functools import wraps
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models.signals import m2m_changed, post_save, pre_delete
-
 from wagtail.admin.signals import init_new_page
 from wagtail.core.models import Site, get_page_models
+
 from wagtailtrans.conf import get_wagtailtrans_setting
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.permissions import create_group_permissions, get_or_create_language_group

@@ -1,11 +1,10 @@
+import pytest
 from django.forms.widgets import Select
 from django.test import override_settings
-
-import pytest
-from tests.factories import sites
 from wagtail.contrib.settings.views import get_setting_edit_handler
-from wagtailtrans.models import (Language, SiteLanguages,
-                                 register_site_languages)
+
+from tests.factories import sites
+from wagtailtrans.models import Language, SiteLanguages, register_site_languages
 
 
 @pytest.mark.django_db
