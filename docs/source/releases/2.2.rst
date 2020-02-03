@@ -1,0 +1,23 @@
+==============================
+Wagtailtrans 2.2 release notes
+==============================
+
+.. contents::
+    :local:
+    :depth: 1
+
+
+-----------
+What is new
+-----------
+
+
+
+Features
+~~~~~~~~
+
+
+------------------------------
+Backwards incompatible changes
+------------------------------
+
