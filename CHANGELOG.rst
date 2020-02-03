@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.1 (XX-XX-XXXX)
+2.1 (03-02-2020)
 ----------------
 
 - Dropped support for Wagtail versions earlier than 2.3
