@@ -36,11 +36,11 @@ Installation
     This needs to be added to ``INSTALLED_APPS`` as well.
 
 
-3. Add ``wagtailtrans.middleware.TranslationMiddleware`` to your ``MIDDLEWARE_CLASSES``::
+3. Add ``wagtailtrans.middleware.TranslationMiddleware`` to your ``MIDDLEWARE``::
 
 .. code-block:: python
 
-    MIDDLEWARE_CLASSES = [
+    MIDDLEWARE = [
         # ...
         'django.contrib.sessions.middleware.SessionMiddleware',
         'wagtail.core.middleware.SiteMiddleware',
