@@ -70,7 +70,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
         if hasattr(page, 'language') and page.language:
             exclude_lang = page.language
 
-        other_languages = set(Language.objects.live().exclude(pk=exclude_lang.pk).order_by('position'))
+        other_languages = set(Language.objects.exclude(pk=exclude_lang.pk).order_by('position'))
 
         translations = page.get_translations(only_live=False).select_related('language')
         taken_languages = set(t.language for t in translations)
