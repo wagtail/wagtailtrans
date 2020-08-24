@@ -2,7 +2,7 @@ import factory
 from django.contrib.auth import get_user_model
 
 
-class UserFactory(factory.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory):
 
     first_name = 'John'
     last_name = 'Doe'

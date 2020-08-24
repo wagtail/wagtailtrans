@@ -7,7 +7,7 @@ from tests.factories import language
 from wagtailtrans import models
 
 
-class TranslatableSiteRootFactory(factory.DjangoModelFactory):
+class TranslatableSiteRootFactory(factory.django.DjangoModelFactory):
     title = 'translatable-site-root'
     depth = 2
 
@@ -24,7 +24,7 @@ class TranslatableSiteRootFactory(factory.DjangoModelFactory):
         return root.add_child(title=kwargs['title'])
 
 
-class TranslatablePageFactory(factory.DjangoModelFactory):
+class TranslatablePageFactory(factory.django.DjangoModelFactory):
     language = factory.SubFactory(language.LanguageFactory)
 
     class Meta:
@@ -38,7 +38,7 @@ class TranslatablePageFactory(factory.DjangoModelFactory):
         return obj
 
 
-class ImageFactory(factory.DjangoModelFactory):
+class ImageFactory(factory.django.DjangoModelFactory):
     title = factory.Faker('word')
     file = get_test_image_file()
 
@@ -66,7 +66,7 @@ class HomePageFactory(TranslatablePageFactory):
         return obj
 
 
-class WagtailPageFactory(factory.DjangoModelFactory):
+class WagtailPageFactory(factory.django.DjangoModelFactory):
     depth = 0
     title = 'root'
 

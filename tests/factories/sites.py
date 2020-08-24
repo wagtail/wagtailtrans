@@ -6,7 +6,7 @@ from tests.factories.pages import HomePageFactory, TranslatableSiteRootFactory
 from wagtailtrans import models
 
 
-class SiteFactory(factory.DjangoModelFactory):
+class SiteFactory(factory.django.DjangoModelFactory):
     hostname = 'localhost'
     port = 8000
     site_name = 'TestSite'
@@ -36,7 +36,7 @@ def create_site_tree(language, site=None, *items, **homepage_kwargs):
     return pages
 
 
-class SiteLanguagesFactory(factory.DjangoModelFactory):
+class SiteLanguagesFactory(factory.django.DjangoModelFactory):
     site = factory.SubFactory(SiteFactory)
     default_language = factory.SubFactory(LanguageFactory)
 

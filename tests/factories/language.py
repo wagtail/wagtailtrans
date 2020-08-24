@@ -3,7 +3,7 @@ import factory
 from wagtailtrans import models
 
 
-class LanguageFactory(factory.DjangoModelFactory):
+class LanguageFactory(factory.django.DjangoModelFactory):
     code = 'en-gb'
     position = 0
     is_default = True
