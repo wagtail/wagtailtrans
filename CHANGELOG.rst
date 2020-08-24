@@ -7,7 +7,9 @@ Changelog
 - Added official support for Wagtail 2.9 and 2.10
 - Make the permission `can_delete` compatible with Wagtail 2.10
 - Make the page method `move` compatible with Wagtail 2.10
-- Dropped support for Wagtail versions earlier than 2.7
+- Dropped support for Wagtail versions earlier than 2.7 (LTS)
+- Replace deprecated ugettext, ugettext_lazy with gettext and gettext_lazy
+- Replace deprecated force_text with force_str
 
 
 2.1 (03-02-2020)
