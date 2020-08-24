@@ -1,9 +1,9 @@
 from django.conf.urls import include, url
 from django.templatetags.static import static
 from django.urls import reverse
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.html import format_html
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin import widgets
 from wagtail.contrib.modeladmin.options import ModelAdmin, modeladmin_register
 from wagtail.core import hooks
@@ -78,7 +78,7 @@ if not get_wagtailtrans_setting('SYNC_TREE'):
         translation_targets = other_languages - taken_languages
         for language in translation_targets:
             yield widgets.Button(
-                force_text(language),
+                force_str(language),
                 reverse('wagtailtrans_translations:add', kwargs={
                     'instance_id': page.pk,
                     'language_code': language.code,
@@ -152,7 +152,7 @@ def edit_in_language_items(page, page_perms, is_parent=False):
         next_url = reverse('wagtailadmin_explore', args=(return_page.get_parent().pk,))
 
         yield widgets.Button(
-            force_text(language_page.language),
+            force_str(language_page.language),
             "{edit_url}?next={next_url}".format(
                 edit_url=edit_url,
                 next_url=next_url

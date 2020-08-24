@@ -7,10 +7,10 @@ from django.db import models
 from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import redirect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.functional import cached_property
 from django.utils.translation import activate
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooserPanel
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.contrib.settings.models import BaseSetting
@@ -107,7 +107,7 @@ class Language(models.Model):
         verbose_name_plural = _('Languages')
 
     def __str__(self):
-        return force_text(dict(settings.LANGUAGES).get(self.code))
+        return force_str(dict(settings.LANGUAGES).get(self.code))
 
     def has_pages_in_site(self, site):
         return self.pages.filter(path__startswith=site.root_page.path).exists()
