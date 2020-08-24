@@ -9,25 +9,6 @@ addons:
 
 matrix:
   include:
-    # Wagtail 2.3 LTS to cover support until 2.7
-    # Django 1.11
-    - env: TOXENV=py35-dj111-wt23
-      python: 3.5
-    - env: TOXENV=py36-dj111-wt23
-      python: 3.6
-
-    # Django 2.0
-    - env: TOXENV=py35-dj20-wt23
-      python: 3.5
-    - env: TOXENV=py36-dj20-wt23
-      python: 3.6
-
-    # Django 2.1
-    - env: TOXENV=py35-dj21-wt23
-      python: 3.5
-    - env: TOXENV=py36-dj21-wt23
-      python: 3.6
-    
     # Wagtail 2.7 LTS
     # Django 2.0
     - env: TOXENV=py35-dj20-wt27
