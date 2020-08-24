@@ -88,6 +88,31 @@ matrix:
       python: 3.7
     - env: TOXENV=py38-dj30-wt29
       python: 3.8
+    
+    # Wagtail 2.10
+    # Django 2.2
+    - env: TOXENV=py36-dj22-wt210
+      python: 3.6
+    - env: TOXENV=py37-dj22-wt210
+      python: 3.7
+    - env: TOXENV=py38-dj22-wt210
+      python: 3.8
+
+    # Django 3.0
+    - env: TOXENV=py36-dj30-wt210
+      python: 3.6
+    - env: TOXENV=py37-dj30-wt210
+      python: 3.7
+    - env: TOXENV=py38-dj30-wt210
+      python: 3.8
+    
+    # Django 3.1
+    - env: TOXENV=py36-dj31-wt210
+      python: 3.6
+    - env: TOXENV=py37-dj31-wt210
+      python: 3.7
+    - env: TOXENV=py38-dj31-wt210
+      python: 3.8
 
     # Flake 8
     - env: TOXENV=flake8
