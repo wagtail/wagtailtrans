@@ -301,15 +301,14 @@ class TestTranslatableSiteRootPage:
         assert not perms.can_publish()
 
     def test_serve(self,rf):
+        site = SiteFactory()
         request = rf.get('/home/')
-        request.site = SiteFactory()
-        response = request.site.root_page.serve(request)
+        response = site.root_page.serve(request)
         assert response.status_code == 200
 
     def test_get_user_language(self, rf):
         request = rf.get('/en/')
         sitelanguages = SiteLanguagesFactory(default_language__code='fr')
-        request.site = sitelanguages.site
 
         lang = models.get_user_language(request)
         assert lang.code == 'en'

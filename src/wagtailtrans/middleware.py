@@ -4,6 +4,8 @@ from django.utils.deprecation import MiddlewareMixin
 from django.utils.translation import LANGUAGE_SESSION_KEY, check_for_language, get_language_from_path
 from django.utils.translation.trans_real import get_languages, get_supported_language_variant
 
+from wagtail.core.models import Site
+
 from .models import Language
 from .sites import get_languages_for_site
 
@@ -42,11 +44,18 @@ class TranslationMiddleware(MiddlewareMixin):
 
         language_from_request = get_language_from_request(request)
         requested_languages = request.META.get('HTTP_ACCEPT_LANGUAGE')
+
+        # Backwards-compatible lookup for the deprecation of Wagtails SiteMiddleware per 2.9
+        if 'wagtail.core.middleware.SiteMiddleware' in settings.MIDDLEWARE:
+            site = request.site
+        else:
+            site = Site.find_for_request(request)
+
         if language_from_request:
             active_language = language_from_request
         elif requested_languages:
             requested_languages = requested_languages.split(',')
-            codes = tuple(language.code for language in get_languages_for_site(request.site) if language)
+            codes = tuple(language.code for language in get_languages_for_site(site) if language)
 
             for language in requested_languages:
                 language = language.split(';')[0]
@@ -58,7 +67,7 @@ class TranslationMiddleware(MiddlewareMixin):
                     break
 
         if active_language is None:
-            default_language = Language.objects.default_for_site(site=request.site)
+            default_language = Language.objects.default_for_site(site=site)
 
             if default_language:
                 active_language = default_language.code

@@ -43,7 +43,6 @@ Installation
     MIDDLEWARE = [
         # ...
         'django.contrib.sessions.middleware.SessionMiddleware',
-        'wagtail.core.middleware.SiteMiddleware',
         'wagtailtrans.middleware.TranslationMiddleware',
         'django.middleware.common.CommonMiddleware',
         # ...
@@ -52,11 +51,6 @@ Installation
 .. note::
 
     Keep in mind ``wagtailtrans.middleware.TranslationMiddleware`` is a replacement for ``django.middleware.locale.LocaleMiddleware``.
-
-.. note::
-
-    It relies on ``wagtail.core.middleware.SiteMiddleware``, which should come before it.
-    See http://docs.wagtail.io/en/latest/getting_started/integrating_into_django.html#settings for more information.
 
 
 -------------
