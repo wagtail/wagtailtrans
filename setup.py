@@ -12,7 +12,6 @@ sandbox_require = [
     'Django>=3.0',
     'Wagtail>=2.8rc1',
     'psycopg2-binary>=2.5.4',
-    'djangorestframework>=3.7',
 ]
 
 docs_require = [
