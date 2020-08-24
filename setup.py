@@ -8,9 +8,13 @@ PROJECT_DIR = os.path.dirname(__file__)
 sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version  # noqa isort:skip
 
+install_requires = [
+    'wagtail>=2.7,<2.11'
+]
+
 sandbox_require = [
-    'Django>=3.0',
-    'Wagtail>=2.8rc1',
+    'Django>=3.1',
+    'Wagtail>=2.10',
     'psycopg2-binary>=2.5.4',
 ]
 
@@ -39,6 +43,7 @@ setup(
     author='Lukkien BV',
     author_email='support@lukkien.com',
     url='https://lukkien.com/',
+    install_requires=install_requires,
     extras_require={
         'test': tests_require,
         'doc': docs_require,

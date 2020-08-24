@@ -4,6 +4,9 @@ Changelog
 2.2 (XX-XX-XXXX)
 ----------------
 
+- Added official support for Wagtail 2.9 and 2.10
+- Make the permission `can_delete` compatible with Wagtail 2.10
+- Make the page method `move` compatible with Wagtail 2.10
 - Dropped support for Wagtail versions earlier than 2.7
 
 

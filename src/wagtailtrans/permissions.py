@@ -77,7 +77,7 @@ def create_group_page_permission(page, language):
 class TranslatablePagePermissionTester(PagePermissionTester):
     """Custom permissions tester for translatable pages."""
 
-    def can_delete(self):
+    def can_delete(self, *args, **kwargs):
         """Check if a page can be deleted
         We make the check if the translated sites are kept in sync and
         if the page is a translated page (it has a canonical page)
@@ -91,7 +91,7 @@ class TranslatablePagePermissionTester(PagePermissionTester):
             not self.user.is_superuser
         ):
             return False
-        return super().can_delete()
+        return super().can_delete(*args, **kwargs)
 
 
 class TranslatableUserPagePermissionsProxy(UserPagePermissionsProxy):

@@ -172,7 +172,7 @@ class TranslatablePage(Page):
         activate(self.language.code)
         return super().serve(request, *args, **kwargs)
 
-    def move(self, target, pos=None, suppress_sync=False):
+    def move(self, target, pos=None, suppress_sync=False, *args, **kwargs):
         """Move the page to another target.
 
         :param target: the new target to move the page to
@@ -180,7 +180,7 @@ class TranslatablePage(Page):
         :param suppress_sync: suppress syncing the translated pages
 
         """
-        super().move(target, pos)
+        super().move(target, pos, *args, **kwargs)
 
         if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
             site = self.get_site()
