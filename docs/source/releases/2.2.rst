@@ -11,13 +11,29 @@ Wagtailtrans 2.2 release notes
 What is new
 -----------
 
-
+This release is a new minor as it will only be supporting Wagtail 2.7 (LTS) and up.
 
 Features
 ~~~~~~~~
 
+- Dropped support for Wagtail versions earlier than 2.7 (LTS)
+- Adds support for Wagtail 2.9 and 2.10
+- Make the permission `can_delete` compatible with Wagtail 2.10
+- Make the page method `move` compatible with Wagtail 2.10
+
+Bugfixes
+~~~~~~~~
+
+- Languages in a Draft state result in failed routing from browser language
+
+Other
+~~~~~
+
+- Replace Django's deprecated ugettext, ugettext_lazy with gettext and gettext_lazy
+- Replace Django's deprecated force_text with force_str
 
 ------------------------------
 Backwards incompatible changes
 ------------------------------
 
+This release drops offical support for Wagtail versions below 2.7 (LTS).

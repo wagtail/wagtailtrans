@@ -1,7 +1,7 @@
 Changelog
 =========
 
-2.2 (XX-XX-XXXX)
+2.2 (25-05-2020)
 ----------------
 
 - Added official support for Wagtail 2.9 and 2.10
@@ -10,6 +10,7 @@ Changelog
 - Dropped support for Wagtail versions earlier than 2.7 (LTS)
 - Replace deprecated ugettext, ugettext_lazy with gettext and gettext_lazy
 - Replace deprecated force_text with force_str
+- Fix: Languages in a Draft state result in failed routing from browser language
 
 
 2.1 (03-02-2020)
