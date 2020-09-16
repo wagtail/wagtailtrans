@@ -1,11 +1,13 @@
 Changelog
 =========
 
-2.3 (XX-XX-XXXX)
-----------------
+2.2.1 (16-09-2020)
+------------------
+
+- Make the dependency on `wagtail.core.middleware.SiteMiddleware` optional as it already can be removed in Wagtail 2.9
 
 
-2.2 (25-05-2020)
+2.2 (25-08-2020)
 ----------------
 
 - Added official support for Wagtail 2.9 and 2.10

@@ -1,0 +1,12 @@
+================================
+Wagtailtrans 2.2.1 release notes
+================================
+
+.. contents::
+    :local:
+    :depth: 1
+
+Bugfixes
+~~~~~~~~
+
+- Make the dependency on `wagtail.core.middleware.SiteMiddleware` optional as it already can be removed in Wagtail 2.9
