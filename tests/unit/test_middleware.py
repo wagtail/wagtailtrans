@@ -30,7 +30,11 @@ class TestTranslationMiddleware:
         SiteLanguagesFactory(default_language__code='fr')
 
         request = rf.get('/random/page/')
-        request.site = SiteFactory()
+
+        # Backwards-compatible lookup for the deprecation of Wagtails SiteMiddleware per 2.9
+        if 'wagtail.core.middleware.SiteMiddleware' in settings.MIDDLEWARE:
+            request.site = SiteFactory()
+        
         with override_settings(WAGTAILTRANS_LANGUAGES_PER_SITE=True):
             TranslationMiddleware().process_request(request)
 

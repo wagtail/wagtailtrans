@@ -15,7 +15,7 @@ from wagtail.admin.edit_handlers import FieldPanel, MultiFieldPanel, PageChooser
 from wagtail.admin.forms import WagtailAdminModelForm, WagtailAdminPageForm
 from wagtail.contrib.settings.models import BaseSetting
 from wagtail.contrib.settings.registry import register_setting
-from wagtail.core.models import Page
+from wagtail.core.models import Page, Site
 from wagtail.search.index import FilterField
 
 from .conf import get_wagtailtrans_setting
@@ -322,7 +322,14 @@ def get_user_language(request):
         language = Language.objects.live().filter(code=request.LANGUAGE_CODE).first()
         if language:
             return language
-    return Language.objects.default_for_site(site=request.site)
+
+    # Backwards-compatible lookup for the deprecation of Wagtails SiteMiddleware per 2.9
+    if 'wagtail.core.middleware.SiteMiddleware' in settings.MIDDLEWARE:
+        site = request.site
+    else:
+        site = Site.find_for_request(request)
+
+    return Language.objects.default_for_site(site=site)
 
 
 class TranslatableSiteRootPage(Page):

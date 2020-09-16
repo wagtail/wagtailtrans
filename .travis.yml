@@ -118,10 +118,11 @@ matrix:
     - env: TOXENV=flake8
       python: 3.7
 
-  allow_failures:
-    # wagtail dev
     - env: TOXENV=wagtaildev
       python: 3.7
+
+  allow_failures:
+    - env: TOXENV=wagtaildev
 
 # Package installation
 install:

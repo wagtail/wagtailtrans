@@ -12,6 +12,8 @@
 """
 import os
 
+from wagtail import VERSION as WAGTAIL_VERSION
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -60,19 +62,31 @@ INSTALLED_APPS = [
 ]
 
 
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'wagtail.core.middleware.SiteMiddleware',
-    'wagtail.contrib.redirects.middleware.RedirectMiddleware',
-    'wagtailtrans.middleware.TranslationMiddleware'
-]
+if WAGTAIL_VERSION >= (2, 9):
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+        'wagtailtrans.middleware.TranslationMiddleware'
+    ]
+else:
+    MIDDLEWARE = [
+        'django.middleware.security.SecurityMiddleware',
+        'django.contrib.sessions.middleware.SessionMiddleware',
+        'django.middleware.common.CommonMiddleware',
+        'django.middleware.csrf.CsrfViewMiddleware',
+        'django.contrib.auth.middleware.AuthenticationMiddleware',
+        'django.contrib.messages.middleware.MessageMiddleware',
+        'django.middleware.clickjacking.XFrameOptionsMiddleware',
+        'wagtail.core.middleware.SiteMiddleware',
+        'wagtail.contrib.redirects.middleware.RedirectMiddleware',
+        'wagtailtrans.middleware.TranslationMiddleware'
+    ]
 
 ROOT_URLCONF = 'tests._sandbox.urls'
 
