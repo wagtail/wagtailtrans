@@ -63,3 +63,16 @@ available sites.
 If set to ``True`` the CMS user will only see the tree of the canonical
 language, with an ``edit in`` button where they can choose the language to edit
 the page in.
+
+
+``WAGTAILTRANS_APPEND_LANGUAGE_TO_SLUG``
+--------------------------
+
+:Default: ``True``
+
+If set to ``False`` and ``WAGTAILTRANS_SYNC_TREE`` set to ``True`` wagtailtrans will
+not add language code as a suffix for a slug of newly created page during the translation
+trees synchronization.
+
+.. seealso::
+    The documentation about :ref:`synchronized_trees`

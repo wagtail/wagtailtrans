@@ -256,13 +256,14 @@ class TranslatablePage(Page):
         )
         return translation_parent
 
-    def create_translation(self, language, copy_fields=False, parent=None):
+    def create_translation(self, language, copy_fields=False, parent=None, append_language_to_slug=True):
         """Create a translation for this page. If tree syncing is enabled the
         copy will also be moved to the corresponding language tree.
 
         :param language: Language instance
         :param copy_fields: Boolean specifying if the content should be copied
         :param parent: Parent page instance for the translation
+        :param append_language_to_slug: Boolean specifying if the language code should be used as a suffix for slug
         :return: new Translated page (or subclass) instance
 
         """
@@ -274,8 +275,10 @@ class TranslatablePage(Page):
 
         if self.slug == self.language.code:
             slug = language.code
-        else:
+        elif append_language_to_slug:
             slug = '%s-%s' % (self.slug, language.code)
+        else:
+            slug = self.slug
 
         update_attrs = {
             'title': self.title,
