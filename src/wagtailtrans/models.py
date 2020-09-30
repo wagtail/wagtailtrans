@@ -169,6 +169,12 @@ class TranslatablePage(Page):
         return "{} ({})".format(super().get_admin_display_title(), self.language)
 
     def serve(self, request, *args, **kwargs):
+        if get_wagtailtrans_setting('REDIRECT_UNPREFIXED_PATHS'):
+            language = get_user_language(request)
+            if not request.path.startswith('/{}/'.format(language.code)):
+                if not get_wagtailtrans_setting('NO_PREFIX_FOR_DEFAULT_LANGUAGE') or not language.is_default:
+                    return redirect(self.url)
+
         activate(self.language.code)
         return super().serve(request, *args, **kwargs)
 
@@ -355,6 +361,31 @@ class TranslatableSiteRootPage(Page):
             return redirect(translation.url)
         except TranslatablePage.DoesNotExist:
             raise Http404
+
+    def route(self, request, path_components):
+        path_components = self.prepend_language_code_to_path_components(request, path_components)
+        return super().route(request, path_components)
+
+    def prepend_language_code_to_path_components(self, request, path_components):
+        """Prepend path_components with a language code if needed
+
+        :param request: Request object
+        :param path_components: List containing path elements
+        :return: List containing path elements
+
+        """
+        if (
+            get_wagtailtrans_setting('NO_PREFIX_FOR_DEFAULT_LANGUAGE') or
+            get_wagtailtrans_setting('REDIRECT_UNPREFIXED_PATHS')
+        ):
+            language = get_user_language(request)
+            if language.is_default or get_wagtailtrans_setting('REDIRECT_UNPREFIXED_PATHS'):
+                if path_components:
+                    if language.code != path_components[0]:
+                        path_components.insert(0, language.code)
+                else:
+                    path_components = [language.code]
+        return path_components
 
 
 def page_permissions_for_user(self, user):
