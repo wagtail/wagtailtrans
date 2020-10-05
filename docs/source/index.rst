@@ -35,6 +35,7 @@ Table of contents
    getting_started
    migrating
    settings
+   recipes
    reference/index
    releases/index
    contributing
