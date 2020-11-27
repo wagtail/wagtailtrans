@@ -20,7 +20,7 @@ def _get_translations(page, homepage_fallback=True, include_self=True):
     available_translations = {}
     available_languages = get_languages_for_site(site)
     if hasattr(page, 'language'):
-        if not include_self:
+        if not include_self and page.language in available_languages:
             available_languages.remove(page.language)
 
         page_translations = page.get_translations(only_live=True, include_self=include_self)
