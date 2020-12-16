@@ -5,9 +5,14 @@ from wagtail.core.models import Page
 from wagtailtrans.models import TranslatablePage
 
 
+class DraftAwareModelChoiceField(forms.ModelChoiceField):
+    def label_from_instance(self, page):
+        return page.get_admin_display_title()
+
+
 class TranslationForm(forms.ModelForm):
     copy_from_canonical = forms.BooleanField(required=False)
-    parent_page = forms.ModelChoiceField(queryset=TranslatablePage.objects.none())
+    parent_page = DraftAwareModelChoiceField(queryset=TranslatablePage.objects.none())
 
     class Meta:
         model = TranslatablePage
