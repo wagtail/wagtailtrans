@@ -8,6 +8,13 @@
 Welcome to wagtailtrans's documentation
 =======================================
 
+.. warning::
+   Wagtailtrans is compatible with 2.10.x and lower.
+   If you want migrate to Wagtail 2.11 and up,
+   and switch to the new native wagtail translation system introduced in version 2.11,
+   you can follow the `migration guide written by Christian Haintz of the Carrot & Company <https://www.cnc.io/en/blog/wagtailtrans-to-wagtail-localize-migration>`_.
+   We will accept pull requests to make Wagtailtrans compatible with Wagtail 2.11 and up.
+
 Wagtailtrans is a package that can be used to facilitate multi language sites in Wagtail. We developed wagtailtrans with two implementations in mind.
 
     - A **synchronised** tree
