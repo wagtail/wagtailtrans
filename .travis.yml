@@ -19,7 +19,7 @@ matrix:
       python: 3.7
     - env: TOXENV=py38-dj20-wt27
       python: 3.8
-    
+
     # Django 2.1
     - env: TOXENV=py35-dj21-wt27
       python: 3.5
@@ -51,7 +51,7 @@ matrix:
       python: 3.7
     - env: TOXENV=py38-dj21-wt28
       python: 3.8
-    
+
     # Django 2.2
     - env: TOXENV=py35-dj22-wt28
       python: 3.5
@@ -70,7 +70,7 @@ matrix:
     - env: TOXENV=py38-dj30-wt28
       python: 3.8
 
-    # Wagtail 2.9  
+    # Wagtail 2.9
     # Django 2.2
     - env: TOXENV=py35-dj22-wt29
       python: 3.5
@@ -88,7 +88,7 @@ matrix:
       python: 3.7
     - env: TOXENV=py38-dj30-wt29
       python: 3.8
-    
+
     # Wagtail 2.10
     # Django 2.2
     - env: TOXENV=py36-dj22-wt210
@@ -105,13 +105,38 @@ matrix:
       python: 3.7
     - env: TOXENV=py38-dj30-wt210
       python: 3.8
-    
+
     # Django 3.1
     - env: TOXENV=py36-dj31-wt210
       python: 3.6
     - env: TOXENV=py37-dj31-wt210
       python: 3.7
     - env: TOXENV=py38-dj31-wt210
+      python: 3.8
+
+    # Wagtail 2.11
+    # Django 2.2
+    - env: TOXENV=py36-dj22-wt211
+      python: 3.6
+    - env: TOXENV=py37-dj22-wt211
+      python: 3.7
+    - env: TOXENV=py38-dj22-wt211
+      python: 3.8
+
+    # Django 3.0
+    - env: TOXENV=py36-dj30-wt211
+      python: 3.6
+    - env: TOXENV=py37-dj30-wt211
+      python: 3.7
+    - env: TOXENV=py38-dj30-wt211
+      python: 3.8
+
+    # Django 3.1
+    - env: TOXENV=py36-dj31-wt211
+      python: 3.6
+    - env: TOXENV=py37-dj31-wt211
+      python: 3.7
+    - env: TOXENV=py38-dj31-wt211
       python: 3.8
 
     # Flake 8
