@@ -72,7 +72,6 @@ jobs:
             - py38-dj30-wt29
 
             # Wagtail 2.10
-            - py35-dj22-wt210
             - py36-dj22-wt210
             - py37-dj22-wt210
             - py38-dj22-wt210
@@ -82,7 +81,6 @@ jobs:
             - py38-dj30-wt210
 
             # Wagtail 2.11
-            - py35-dj22-wt211
             - py36-dj22-wt211
             - py37-dj22-wt211
             - py38-dj22-wt211
