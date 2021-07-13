@@ -228,11 +228,10 @@ jobs:
           - toxenv: py38-dj31-wt211
             python-version: 3.8
 
+          # Wagtail dev
           - toxenv: wagtaildev
             python-version: 3.8
-
-          allow_failures:
-            - toxenv: wagtaildev
+            continue-on-error: true
 
     services:
       postgres:
@@ -261,3 +260,5 @@ jobs:
           DATABASE_USER: postgres
           DATABASE_PASS: postgres
           TOXENV: ${{ matrix.toxenv }}
+
+      - continue-on-error: ${{ matrix.continue-on-error || false }}
