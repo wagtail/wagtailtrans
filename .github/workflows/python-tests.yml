@@ -1,0 +1,262 @@
+name: test
+
+on: [pull_request, push]
+
+jobs:
+  lint:
+    name: lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Run tox -e flake8
+        run: tox
+        env:
+          TOXENV: flake8
+
+  test:
+    name: unittests
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        toxenv:
+            # Wagtail 2.7
+            - py35-dj20-wt27
+            - py36-dj20-wt27
+            - py37-dj20-wt27
+            - py38-dj20-wt27
+
+            - py35-dj21-wt27
+            - py36-dj21-wt27
+            - py37-dj21-wt27
+            - py38-dj21-wt27
+
+            - py35-dj22-wt27
+            - py36-dj22-wt27
+            - py37-dj22-wt27
+            - py38-dj22-wt27
+
+            # Wagtail 2.8
+            - py35-dj21-wt28
+            - py36-dj21-wt28
+            - py37-dj21-wt28
+            - py38-dj21-wt28
+
+            - py35-dj22-wt28
+            - py36-dj22-wt28
+            - py37-dj22-wt28
+            - py38-dj22-wt28
+
+            - py36-dj30-wt28
+            - py37-dj30-wt28
+            - py38-dj30-wt28
+
+            # Wagtail 2.9
+            - py35-dj22-wt29
+            - py36-dj22-wt29
+            - py37-dj22-wt29
+            - py38-dj22-wt29
+
+            - py36-dj30-wt29
+            - py37-dj30-wt29
+            - py38-dj30-wt29
+
+            # Wagtail 2.10
+            - py36-dj22-wt210
+            - py37-dj22-wt210
+            - py38-dj22-wt210
+
+            - py36-dj30-wt210
+            - py37-dj30-wt210
+            - py38-dj30-wt210
+
+            # Wagtail 2.11
+            - py36-dj22-wt211
+            - py37-dj22-wt211
+            - py38-dj22-wt211
+
+            - py36-dj30-wt211
+            - py37-dj30-wt211
+            - py38-dj30-wt211
+
+            - py36-dj31-wt211
+            - py37-dj31-wt211
+            - py38-dj31-wt211
+
+            # Wagtail dev
+            - wagtaildev
+
+        include:
+          # Wagtail 2.7 LTS
+          # Django 2.0
+          - toxenv: py35-dj20-wt27
+            python-version: 3.5
+          - toxenv: py36-dj20-wt27
+            python-version: 3.6
+          - toxenv: py37-dj20-wt27
+            python-version: 3.7
+          - toxenv: py38-dj20-wt27
+            python-version: 3.8
+
+          # Django 2.1
+          - toxenv: py35-dj21-wt27
+            python-version: 3.5
+          - toxenv: py36-dj21-wt27
+            python-version: 3.6
+          - toxenv: py37-dj21-wt27
+            python-version: 3.7
+          - toxenv: py38-dj21-wt27
+            python-version: 3.8
+
+          # Django 2.2
+          - toxenv: py35-dj22-wt27
+            python-version: 3.5
+          - toxenv: py36-dj22-wt27
+            python-version: 3.6
+          - toxenv: py37-dj22-wt27
+            python-version: 3.7
+          - toxenv: py38-dj22-wt27
+            python-version: 3.8
+
+          # Wagtail 2.8
+          # Django 2.1
+          - toxenv: py35-dj21-wt28
+            python-version: 3.5
+          - toxenv: py36-dj21-wt28
+            python-version: 3.6
+          - toxenv: py37-dj21-wt28
+            python-version: 3.7
+          - toxenv: py38-dj21-wt28
+            python-version: 3.8
+
+          # Django 2.2
+          - toxenv: py35-dj22-wt28
+            python-version: 3.5
+          - toxenv: py36-dj22-wt28
+            python-version: 3.6
+          - toxenv: py37-dj22-wt28
+            python-version: 3.7
+          - toxenv: py38-dj22-wt28
+            python-version: 3.8
+
+          # Django 3.0
+          - toxenv: py36-dj30-wt28
+            python-version: 3.6
+          - toxenv: py37-dj30-wt28
+            python-version: 3.7
+          - toxenv: py38-dj30-wt28
+            python-version: 3.8
+
+          # Wagtail 2.9
+          # Django 2.2
+          - toxenv: py35-dj22-wt29
+            python-version: 3.5
+          - toxenv: py36-dj22-wt29
+            python-version: 3.6
+          - toxenv: py37-dj22-wt29
+            python-version: 3.7
+          - toxenv: py38-dj22-wt29
+            python-version: 3.8
+
+          # Django 3.0
+          - toxenv: py36-dj30-wt29
+            python-version: 3.6
+          - toxenv: py37-dj30-wt29
+            python-version: 3.7
+          - toxenv: py38-dj30-wt29
+            python-version: 3.8
+
+          # Wagtail 2.10
+          # Django 2.2
+          - toxenv: py36-dj22-wt210
+            python-version: 3.6
+          - toxenv: py37-dj22-wt210
+            python-version: 3.7
+          - toxenv: py38-dj22-wt210
+            python-version: 3.8
+
+          # Django 3.0
+          - toxenv: py36-dj30-wt210
+            python-version: 3.6
+          - toxenv: py37-dj30-wt210
+            python-version: 3.7
+          - toxenv: py38-dj30-wt210
+            python-version: 3.8
+
+          # Django 3.1
+          - toxenv: py36-dj31-wt210
+            python-version: 3.6
+          - toxenv: py37-dj31-wt210
+            python-version: 3.7
+          - toxenv: py38-dj31-wt210
+            python-version: 3.8
+
+          # Wagtail 2.11
+          # Django 2.2
+          - toxenv: py36-dj22-wt211
+            python-version: 3.6
+          - toxenv: py37-dj22-wt211
+            python-version: 3.7
+          - toxenv: py38-dj22-wt211
+            python-version: 3.8
+
+          # Django 3.0
+          - toxenv: py36-dj30-wt211
+            python-version: 3.6
+          - toxenv: py37-dj30-wt211
+            python-version: 3.7
+          - toxenv: py38-dj30-wt211
+            python-version: 3.8
+
+          # Django 3.1
+          - toxenv: py36-dj31-wt211
+            python-version: 3.6
+          - toxenv: py37-dj31-wt211
+            python-version: 3.7
+          - toxenv: py38-dj31-wt211
+            python-version: 3.8
+
+          # Wagtail dev
+          - toxenv: wagtaildev
+            python-version: 3.8
+            continue-on-error: true
+
+    services:
+      postgres:
+        image: postgres:10.8
+        ports:
+          - 5432:5432
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install tox
+      - name: Run tox
+        run: |
+            tox
+        env:
+          DATABASE_HOST: localhost
+          DATABASE_USER: postgres
+          DATABASE_PASS: postgres
+          TOXENV: ${{ matrix.toxenv }}
+
+        continue-on-error: ${{ matrix.continue-on-error || false }}

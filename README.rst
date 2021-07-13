@@ -2,8 +2,7 @@
     :alt: Wagtailtrans logo
 
 
-.. image:: https://travis-ci.org/wagtail/wagtailtrans.svg?branch=master
-    :target: https://travis-ci.org/wagtail/wagtailtrans
+.. image:: https://github.com/wagtail/wagtailtrans/workflows/test/badge.svg
     :alt: Build status
 
 .. image:: https://codecov.io/gh/wagtail/wagtailtrans/branch/master/graph/badge.svg

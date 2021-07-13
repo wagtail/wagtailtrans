@@ -9,12 +9,12 @@ sys.path.append(os.path.join(PROJECT_DIR, 'src'))
 from wagtailtrans import get_version  # noqa isort:skip
 
 install_requires = [
-    'wagtail>=2.7,<2.11'
+    'wagtail>=2.7,<2.12'
 ]
 
 sandbox_require = [
     'Django>=3.1',
-    'Wagtail>=2.10',
+    'Wagtail>=2.11',
     'psycopg2-binary>=2.5.4',
 ]
 
@@ -30,7 +30,7 @@ tests_require = [
     'pytest-django',
     'coverage',
     'factory-boy',
-    'psycopg2-binary>=2.5.4',
+    'psycopg2-binary>=2.5.4,<2.9',
     # Linting
     'flake8',
     'isort',
