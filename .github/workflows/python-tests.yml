@@ -261,4 +261,4 @@ jobs:
           DATABASE_PASS: postgres
           TOXENV: ${{ matrix.toxenv }}
 
-      - continue-on-error: ${{ matrix.continue-on-error || false }}
+        continue-on-error: ${{ matrix.continue-on-error || false }}
