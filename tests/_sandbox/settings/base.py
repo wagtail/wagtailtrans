@@ -112,7 +112,7 @@ WSGI_APPLICATION = 'tests._sandbox.wsgi.application'
 # https://docs.djangoproject.com/en/1.10/ref/settings/#databases
 DATABASES = {
     'default': {
-        'ENGINE': os.getenv('DATABASE_ENGINE' , 'django.db.backends.postgresql_psycopg2'),
+        'ENGINE': os.getenv('DATABASE_ENGINE', 'django.db.backends.postgresql_psycopg2'),
         'NAME': os.getenv('DATABASE_NAME', 'wagtailtrans_sandbox'),
         'HOST': os.getenv('DATABASE_HOST', ''),
         'USER': os.getenv('DATABASE_USER', ''),
