@@ -63,3 +63,37 @@ available sites.
 If set to ``True`` the CMS user will only see the tree of the canonical
 language, with an ``edit in`` button where they can choose the language to edit
 the page in.
+
+
+``WAGTAILTRANS_NO_PREFIX_FOR_DEFAULT_LANGUAGE``
+-----------------------------------------------
+
+:Default: ``False``
+
+If set to ``True`` wagtailtrans will allow user to access pages defined under
+the default language tree without the language prefix.
+
+.. note::
+
+    Let's assume English as a default language and a ``TranslatablePage`` available
+    under the following path - ``/en/news/``. With ``NO_PREFIX_FOR_DEFAULT_LANGUAGE``
+    set to ``True`` the page will be available under ``/news/`` page as well.
+
+
+``WAGTAILTRANS_REDIRECT_UNPREFIXED_PATHS``
+------------------------------------------
+
+:Default: ``False``
+
+If set to ``True`` wagtailtrans will redirect all unprefixed paths to a prefixed version.
+
+.. note::
+
+    Let's assume English as the language selected by the user and a ``TranslatablePage``
+    available under the following path - ``/en/news/``. With ``REDIRECT_UNPREFIXED_PATHS``
+    set to ``True`` all requests to ``/news/`` will redirect user to ``/en/news/``.
+
+.. note::
+
+    If ``NO_PREFIX_FOR_DEFAULT_LANGUAGE`` is set to ``True`` as well as ``REDIRECT_UNPREFIXED_PATHS``
+    there will be no redirection for the default langue.

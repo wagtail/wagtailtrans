@@ -2,10 +2,11 @@ import pytest
 import six
 from django.core.exceptions import ValidationError
 from django.test import override_settings
+from django.utils import translation
 from wagtail.admin.edit_handlers import get_form_for_model
 
 from tests.factories.language import LanguageFactory
-from tests.factories.pages import TranslatablePageFactory
+from tests.factories.pages import HomePageFactory, TranslatablePageFactory
 from tests.factories.sites import SiteFactory, SiteLanguagesFactory, create_site_tree
 from tests.factories.users import UserFactory
 from wagtailtrans import models
@@ -111,10 +112,53 @@ class TestTranslatablePage:
     def test_create(self):
         assert self.canonical_page.language.code == 'en'
 
-    def test_serve(self, rf):
-        request = rf.get('/en/')
-        response = self.canonical_page.serve(request)
-        assert response.status_code == 200
+    @pytest.mark.parametrize(
+        "path,request_language,no_prefix_for_default_language,redirect_unprefixed_paths,expected", [
+        # Default settings - no redirection
+        ('/en/', 'en', False, False, 200),
+        ('/en/subpage/', 'en', False, False, 200),
+        ('/fr/subpage-fr/', 'fr', False, False, 200),
+        ('/', 'en', False, False, 200),
+        ('/subpage/', 'en', False, False, 200),
+        ('/subpage-fr/', 'fr', False, False, 200),
+        # NO_PREFIX_FOR_DEFAULT_LANGUAGE set to True - no redirection
+        ('/en/', 'en', True, False, 200),
+        ('/en/subpage/', 'en', True, False, 200),
+        ('/fr/subpage-fr/', 'fr', True, False, 200),
+        ('/', 'en', True, False, 200),
+        ('/subpage/', 'en', True, False, 200),
+        ('/subpage-fr/', 'fr', True, False, 200),
+        # REDIRECT_UNPREFIXED_PATHS set to True
+        # Redirect paths without a language code prefix to a prefixed version
+        ('/en/', 'en', False, True, 200),
+        ('/en/subpage/', 'en', False, True, 200),
+        ('/fr/subpage-fr/', 'fr', False, True, 200),
+        ('/', 'en', False, True, 302),
+        ('/subpage/', 'en', False, True, 302),
+        ('/subpage-fr/', 'fr', False, True, 302),
+        # REDIRECT_UNPREFIXED_PATHS set to True and NO_PREFIX_FOR_DEFAULT_LANGUAGE set to True
+        # Redirect paths without a language code prefix to a prefixed version except for default language
+        ('/en/', 'en', True, True, 200),
+        ('/en/subpage/', 'en', True, True, 200),
+        ('/fr/subpage-fr/', 'fr', True, True, 200),
+        ('/', 'en', True, True, 200),
+        ('/subpage/', 'en', True, True, 200),
+        ('/subpage-fr/', 'fr', True, True, 302),
+    ])
+    def test_serve(self, rf, languages, path, request_language, no_prefix_for_default_language,
+            redirect_unprefixed_paths, expected):
+        en = languages.get(code='en')
+        models.Language.objects.filter(code='fr').update(is_default=False)
+
+        # Set request's language
+        request = rf.get(path)
+        request.LANGUAGE_CODE = request_language
+
+        with override_settings(WAGTAILTRANS_NO_PREFIX_FOR_DEFAULT_LANGUAGE=no_prefix_for_default_language):
+            with override_settings(WAGTAILTRANS_REDIRECT_UNPREFIXED_PATHS=redirect_unprefixed_paths):
+                response = self.canonical_page.serve(request)
+
+        assert response.status_code == expected
 
     def test_get_admin_display_title(self):
         en_root = self.canonical_page
@@ -300,7 +344,42 @@ class TestTranslatableSiteRootPage:
         perms = self.site_root.permissions_for_user(another_user)
         assert not perms.can_publish()
 
-    def test_serve(self,rf):
+    @pytest.mark.parametrize(
+        "path,path_components,request_language,no_prefix_for_default_language,redirect_unprefixed_paths,expected", [
+        # Default settings - path_components returned without changes
+        ('/en/', ['en'], 'en', False, False, ['en']),
+        ('/en/news/', ['en', 'news'], 'en', False, False, ['en', 'news']),
+        ('/news/', ['news'], 'en', False, False, ['news']),
+        # NO_PREFIX_FOR_DEFAULT_LANGUAGE set to True - path_components prepended with default language code only
+        ('/en/news/', ['en', 'news'], 'en', True, False, ['en', 'news']),
+        ('/news/', ['news'], 'en', True, False, ['en', 'news']),
+        ('/news/', ['news'], 'en', True, False, ['en', 'news']),
+        ('/news/', ['news'], 'fr', True, False, ['news']),
+        # REDIRECT_UNPREFIXED_PATHS set to True - path_components prepended with language code for all languages
+        ('/en/news/', ['en', 'news'], 'en', False, True, ['en', 'news']),
+        ('/news/', ['news'], 'en', False, True, ['en', 'news']),
+        ('/news/', ['news'], 'fr', False, True, ['fr', 'news']),
+        # REDIRECT_UNPREFIXED_PATHS set to True and NO_PREFIX_FOR_DEFAULT_LANGUAGE set to True
+        # path_components prepended with language code for all languages
+        ('/en/news/', ['en', 'news'], 'en', True, True, ['en', 'news']),
+        ('/news/', ['news'], 'en', True, True, ['en', 'news']),
+        ('/news/', ['news'], 'fr', True, True, ['fr', 'news']),
+    ])
+    def test_prepend_language_code_to_path_components(self, rf, languages, path, path_components,
+            request_language, no_prefix_for_default_language, redirect_unprefixed_paths, expected):
+        models.Language.objects.filter(code='fr').update(is_default=False)
+
+        # Set request's language
+        request = rf.get(path)
+        request.LANGUAGE_CODE = request_language
+
+        with override_settings(WAGTAILTRANS_NO_PREFIX_FOR_DEFAULT_LANGUAGE=no_prefix_for_default_language):
+            with override_settings(WAGTAILTRANS_REDIRECT_UNPREFIXED_PATHS=redirect_unprefixed_paths):
+                result = self.site_root.prepend_language_code_to_path_components(request, path_components)
+
+        assert result == expected
+
+    def test_serve(self, rf):
         site = SiteFactory()
         request = rf.get('/home/')
         response = site.root_page.serve(request)
