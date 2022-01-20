@@ -1,8 +1,11 @@
+import datetime
+
 import factory
+from factory.fuzzy import FuzzyDate
 from wagtail.core.models import Page
 from wagtail.images.tests.utils import get_image_model, get_test_image_file
 
-from tests._sandbox.pages.models import HomePage
+from tests._sandbox.pages.models import HomePage, Article
 from tests.factories import language
 from wagtailtrans import models
 
@@ -72,3 +75,35 @@ class WagtailPageFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = Page
+
+    @classmethod
+    def _create(cls, *args, **kwargs):
+        model = args[0]
+        parent = kwargs.pop(
+            'parent',
+            Page.objects.get(path='0001')
+        )
+
+        try:
+            return model.objects.get(title=kwargs['title'])
+        except model.DoesNotExist:
+            kwargs['depth'] = parent.depth + 1
+
+            if kwargs['depth'] == 0:
+                return model.add_root(**kwargs)
+            else:
+                return parent.add_child(
+                    instance=model(
+                        **kwargs
+                    )
+                )
+
+
+class ArticleFactory(WagtailPageFactory):
+    title = 'Article 1'
+    intro_text = 'This is an article'
+    date = FuzzyDate(datetime.date(2019, 1, 1))
+    language = factory.SubFactory(language.LanguageFactory)
+
+    class Meta:
+        model = Article

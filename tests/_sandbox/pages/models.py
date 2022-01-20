@@ -22,3 +22,16 @@ class HomePage(TranslatablePage):
     ]
 
     subpage_types = ['HomePage']
+
+
+class Article(Page):
+    date = models.DateField()
+    language = models.ForeignKey('wagtailtrans.Language', on_delete=models.SET_NULL, null=True)
+    intro_text = RichTextField()
+
+    content_panels = [
+        FieldPanel('title', 'full title'),
+        FieldPanel('date'),
+        FieldPanel('intro_text'),
+        FieldPanel('language'),
+    ]

@@ -41,13 +41,12 @@ if get_wagtailtrans_setting('LANGUAGES_PER_SITE'):
                 path=static('wagtailtrans/js/site_languages_editor.js'))
         )
 
-
 if not get_wagtailtrans_setting('SYNC_TREE'):
     """Only load hooks when WAGTAILTRANS_SYNC_TREE is disabled"""
 
     @hooks.register('register_page_listing_buttons')
     def page_translations_menu(page, page_perms, is_parent=False):
-        if not hasattr(page, 'language'):
+        if not issubclass(page.__class__, TranslatablePage):
             return
 
         if hasattr(page, 'canonical_page') and page.canonical_page:
@@ -116,7 +115,7 @@ def edit_in_language_button(page, page_perms, is_parent=False):
     clear interface to work in.
 
     """
-    if not hasattr(page, 'language'):
+    if not issubclass(page.__class__, TranslatablePage):
         return
 
     yield widgets.ButtonWithDropdownFromHook(
