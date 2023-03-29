@@ -4,6 +4,7 @@ DEFAULT_SETTINGS = {
     'SYNC_TREE': True,
     'LANGUAGES_PER_SITE': False,
     'HIDE_TRANSLATION_TREES': False,
+    'APPEND_LANGUAGE_TO_SLUG': True,
 }
 
 

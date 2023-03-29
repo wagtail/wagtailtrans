@@ -49,8 +49,9 @@ def synchronize_trees(sender, instance, **kwargs):
     if not kwargs.get('created') or not getattr(instance, 'language', False) or not is_default_language:
         return
 
+    append_language_to_slug = get_wagtailtrans_setting('APPEND_LANGUAGE_TO_SLUG')
     for lang in other_languages:
-        instance.create_translation(language=lang, copy_fields=True)
+        instance.create_translation(language=lang, copy_fields=True, append_language_to_slug=append_language_to_slug)
 
 
 @disable_for_loaddata

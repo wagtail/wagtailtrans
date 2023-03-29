@@ -23,3 +23,4 @@ Contributors
  - Nazmul Hasan
  - Michael van de Waeter
  - Michael van Tellingen
+ - Mateusz Kleinert

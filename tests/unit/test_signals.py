@@ -3,6 +3,7 @@ from django.test import override_settings
 
 from tests.factories import language, sites
 from tests.factories.pages import HomePageFactory, WagtailPageFactory
+from tests.factories.sites import SiteFactory
 from wagtailtrans import signals
 from wagtailtrans.models import Language, SiteLanguages, TranslatablePage
 from wagtailtrans.signals import register_signal_handlers
@@ -37,6 +38,33 @@ class TestSignals:
         lang = language.LanguageFactory(is_default=False, code='fr', position=2)
 
         assert TranslatablePage.objects.filter(language=lang, canonical_page=self.last_page).exists()
+
+    @override_settings(WAGTAILTRANS_SYNC_TREE=True)
+    @override_settings(WAGTAILTRANS_APPEND_LANGUAGE_TO_SLUG=False)
+    def test_do_not_append_language_code_to_slug(self):
+        """Test `synchronize_trees()` signal handler."""
+        en = Language.objects.get(code='en')
+        fr = language.LanguageFactory(is_default=False, code='fr', position=2)
+
+        # Let's create the following structure
+        #   en
+        #    |- subpage
+        #   fr
+        #    |- subpage
+
+        site = SiteFactory()
+        homepage = HomePageFactory.build(language=en, title='en')
+        site.root_page.add_child(instance=homepage)
+        subpage = HomePageFactory.build(language=en, title='subpage')
+        homepage.add_child(instance=subpage)
+
+        # For top level nodes slug should be equal to the language code
+        page = TranslatablePage.objects.filter(language=fr, canonical_page=homepage).get()
+        assert page.slug == 'fr'
+
+        # For the same page, but in a different translation tree slugs should be identical
+        page = TranslatablePage.objects.filter(language=fr, canonical_page=subpage).get()
+        assert page.slug == subpage.slug
 
 
 @pytest.mark.django_db
